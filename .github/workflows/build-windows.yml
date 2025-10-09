@@ -1,0 +1,45 @@
+name: Build Windows Desktop App
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+        
+    - name: Enable Windows Desktop
+      run: flutter config --enable-windows-desktop
+      
+    - name: Install dependencies
+      run: flutter pub get
+      working-directory: ./desktop
+      
+    - name: Build Windows app
+      run: flutter build windows --release
+      working-directory: ./desktop
+      
+    - name: Create release archive
+      run: |
+        cd desktop/build/windows/runner/Release
+        7z a -tzip ../../../../../qingzhi-desktop-windows.zip *
+        
+    - name: Upload Windows build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: qingzhi-desktop-windows
+        path: qingzhi-desktop-windows.zip
+        retention-days: 30
