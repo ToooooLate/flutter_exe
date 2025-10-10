@@ -1,5 +1,5 @@
 {
-  "webBaseUrl": "http://127.0.0.1:5888/",
+  "webBaseUrl": "http://192.168.120.55:5888/",
   "healthCheckPath": "auth/login",
   "timeoutMs": 3000
 }
