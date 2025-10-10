@@ -34,14 +34,18 @@ jobs:
       
     - name: Create release archive
       run: |
-        if (Test-Path "desktop/build/windows/runner/Release") {
-          cd desktop/build/windows/runner/Release
-          7z a -tzip ../../../../../qingzhi-desktop-windows.zip *
+        $releaseDirPreferred = "desktop/build/windows/x64/runner/Release"
+        $releaseDirLegacy = "desktop/build/windows/runner/Release"
+        if (Test-Path $releaseDirPreferred) {
+          cd $releaseDirPreferred
+        } elseif (Test-Path $releaseDirLegacy) {
+          cd $releaseDirLegacy
         } else {
-          Write-Host "Release directory not found, checking build output..."
-          Get-ChildItem -Recurse desktop/build/windows/ -Name
+          Write-Host "Release directory not found. Printing build tree for debugging:"
+          Get-ChildItem -Recurse "desktop/build/windows" -Name
           exit 1
         }
+        7z a -tzip "$env:GITHUB_WORKSPACE/qingzhi-desktop-windows.zip" *
       shell: pwsh
         
     - name: Upload Windows build artifact
