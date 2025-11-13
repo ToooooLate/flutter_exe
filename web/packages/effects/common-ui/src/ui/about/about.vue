@@ -89,7 +89,7 @@ const vbenDescriptionItems: DescriptionItem[] = [
   },
   {
     content: renderLink(VBEN_GITHUB_URL, '点击查看'),
-    title: 'Github',
+    title: 'GitLab',
   },
   {
     content: h('div', [

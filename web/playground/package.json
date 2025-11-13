@@ -2,10 +2,10 @@
   "name": "@vben/playground",
   "version": "5.5.9",
   "homepage": "https://vben.pro",
-  "bugs": "https://github.com/vbenjs/vue-vben-admin/issues",
+  "bugs": "https://gitlab.sangoai.com/fat/qingzhi-fronted/-/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vbenjs/vue-vben-admin.git",
+    "url": "git+https://gitlab.sangoai.com/fat/qingzhi-fronted.git",
     "directory": "playground"
   },
   "license": "MIT",
