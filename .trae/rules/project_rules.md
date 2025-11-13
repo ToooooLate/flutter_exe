@@ -136,6 +136,32 @@
 - M2：前端 `engine` 模块页面骨架与图表联调；桌面端导航限制与错误页完善。
 - M3：接口联通与性能优化；打包与分发流程固化；验收测试通过。
 
+**系统角色权限与数据同步方案**
+- 角色权限设计
+  - `admin`：管理员角色，可填写修改实验数据，负责数据同步操作。
+  - `guest`：访客角色，只读权限，接收WebSocket推送实时更新页面。
+  - `normal`：普通用户角色，只读权限，接收WebSocket推送实时更新页面。
+  - 权限控制：admin显示编辑功能和"数据同步"按钮；guest/normal所有组件只读状态。
+- WebSocket消息分类机制
+  - 可修改数据消息：`experiment_data_update`、`appearance_data_update`、`environment_data_update`、`performance_data_update`（仅guest/normal处理）。
+  - 只读消息：`system_notification`、`experiment_status_change`、`user_online_status`、`heartbeat`（所有角色处理）。
+  - 消息处理策略：admin只处理只读消息避免数据冲突；guest/normal处理所有消息实时更新。
+- 数据收集器模式
+  - 核心思想：使用观察者模式统一管理分散在各组件中的可修改数据。
+  - 数据收集器接口：`name`（收集器名称）、`type`（数据类型）、`collect()`（收集方法）、`hasChanges()`（变更检测）。
+  - 组件注册机制：mounted时注册收集器，销毁时注销，同步时遍历收集。
+- 数据同步流程
+  - 数据修改：admin在各组件修改数据，暂存组件本地状态。
+  - 数据收集：点击"数据同步"按钮，遍历所有注册的数据收集器。
+  - 本地同步：将收集数据同步到本地store。
+  - 后端提交：通过`POST /api/experiment/sync`提交数据。
+  - WebSocket推送：后端向guest/normal推送更新消息。
+  - 页面更新：guest/normal接收消息更新页面显示。
+- 技术实现
+  - Store设计：``（同步管理）、`useWebSocketStore`（消息处理）、`useAuthStore`（权限管理）。
+  - 组件改造：角色权限判断、数据收集器注册、区分本地变更和WebSocket更新。
+  - 接口设计：数据同步接口`POST /api/experiment/sync`，WebSocket推送`/ws/experiment/updates`。
+
 **参考与备注**
 - Vben Admin v5 特性与用法、初始化命令与分支说明见项目主页（Vue 3、Vite、TypeScript、主题、国际化、权限、动态路由等），项目地址 `https://github.com/vbenjs/vue-vben-admin`。
 - 前端部署建议使用内网服务器并开放 `/health`，以提升桌面端可达性判断的准确性。
