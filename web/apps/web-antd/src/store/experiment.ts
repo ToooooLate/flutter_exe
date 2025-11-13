@@ -262,7 +262,7 @@ interface SteadySpeedSubItem {
 }
 
 // 综合检查项目接口
-interface IntegratedCheckItem {
+export interface IntegratedCheckItem {
   id?: string;
   serialNumber?: number;
   loadPercent?: string;

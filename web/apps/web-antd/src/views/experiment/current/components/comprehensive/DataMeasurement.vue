@@ -1,10 +1,11 @@
 <template>
   <div class="data-measurement">
-    <Tabs v-model="activeTab" type="card">
+    <Tabs v-model="activeTab" type="card" :destroy-inactive-tab-pane="false">
       <TabPane
         v-for="(experiment, index) in experiments"
         :key="experiment.key"
         :tab="experiment.tab"
+        :force-render="true"
       >
         <IntegratedCheckForm
           :ref="(el) => (integratedFormRefs[index] = el)"

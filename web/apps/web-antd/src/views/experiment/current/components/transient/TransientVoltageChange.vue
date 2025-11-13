@@ -116,7 +116,7 @@
             "
             x-axis-name="时间 (s)"
             y-axis-name="电压 (V)"
-            height="360px"
+            height="468px"
             line-color="#1890ff"
             :auto-resize="true"
           />
@@ -718,6 +718,9 @@ const gridOptions: VxeGridProps = {
   },
   pagerConfig: {
     enabled: false,
+  },
+  rowConfig: {
+    height: 48,
   },
   border: true,
   stripe: true,
