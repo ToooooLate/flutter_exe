@@ -5,7 +5,7 @@
         {{ title }}
       </div>
       <div class="chart-actions">
-        <button type="button" class="download-btn" @click="downloadChart">
+        <button type="button" class="download-btn" @click="downloadChart()">
           下载PNG
         </button>
       </div>
@@ -273,9 +273,10 @@ const downloadChart = (filename?: string) => {
 
   const link = document.createElement('a');
   link.href = url;
+  console.log(filename, 'filename');
   const name =
-    filename && filename.trim().length > 0
-      ? filename
+    typeof filename === 'string' && filename.trim().length > 0
+      ? filename.trim()
       : `${props.title}_${new Date().getTime()}`;
   link.download = `${name}.png`;
   document.body.appendChild(link);
