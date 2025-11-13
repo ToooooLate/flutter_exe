@@ -69,6 +69,17 @@ const chartOptions = computed(() => {
   const xData = props.data.map((item) => item.x);
   const yData = props.data.map((item) => item.y);
   const maxX = Math.ceil(Math.max(...xData.map((item) => Number(item))));
+  // 基于数据范围动态计算 y 轴的起止位置，使折线居中显示
+  const yMin = Math.min(...yData);
+  const yMax = Math.max(...yData);
+  const yRange = yMax - yMin;
+  // 为上下各留 20% 的边距；若数据恒定则取 10% 的值或至少 1 作为边距
+  const yPadding =
+    yRange === 0 ? Math.max(1, Math.abs(yMax || 0) * 0.1) : yRange * 0.2;
+  // 将范围对齐到 10 的倍数，避免出现小数起始/结束值
+  const niceStep = 10;
+  const niceMin = Math.floor((yMin - yPadding) / niceStep) * niceStep;
+  const niceMax = Math.ceil((yMax + yPadding) / niceStep) * niceStep;
 
   // 构建系列数据
   const series: any[] = [
@@ -239,6 +250,10 @@ const chartOptions = computed(() => {
       axisLabel: {
         color: '#666',
       },
+      // 不强制包含 0，按数据范围显示，并加入上下边距以居中视觉效果
+      scale: true,
+      min: niceMin,
+      max: niceMax,
       splitLine: {
         lineStyle: {
           color: '#e8e8e8',
