@@ -146,7 +146,7 @@ const collector = {
           const dataSource = item.visible
             ? tableData.fullData.find(
                 (row) => row.serialNumber === item.serialNumber,
-              )
+              ) || item
             : item;
           return { ...dataSource };
         });

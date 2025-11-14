@@ -109,7 +109,7 @@ const selectedRows = ref<string[]>([]);
 // 构建 checkbox 选项
 const checkboxOptions = computed(() => {
   return localData.value.map((item) => ({
-    label: `${item.serialNumber}. 负载${item.loadPercent} - ${item.timeMin}min`,
+    label: `${item.serialNumber}. 负载${item.loadPercent} - ${item.timeMin}`,
     value: item.id,
   }));
 });
