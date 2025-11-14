@@ -52,11 +52,11 @@ export const setLocalExperimentStatus = (status: number) => {
   localStorage.setItem(EXPERIMENT_STORAGE_KEY, JSON.stringify(data));
 };
 
-// 判断消息是否属于当前实验（如果本地或消息缺少ID，则默认通过不拦截）
+// 判断消息是否属于当前实验（如果本地或消息缺少ID，则默认拦截）
 export const isSameExperimentId = (
   incomingId: string | number | null | undefined,
 ): boolean => {
   const localId = getLocalExperimentId();
-  if (incomingId == null || !localId) return true;
+  if (incomingId == null || !localId) return false;
   return String(incomingId) === String(localId);
 };

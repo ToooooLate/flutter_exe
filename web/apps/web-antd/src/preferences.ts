@@ -27,7 +27,7 @@ export const overridesPreferences = defineOverridesPreferences({
     languageToggle: true,
     lockScreen: false,
     notification: false,
-    refresh: true,
+    refresh: false,
     sidebarToggle: true,
     themeToggle: false,
   },
