@@ -77,7 +77,7 @@
         </div>
         <CheckboxGroup
           :value="selectedRows"
-          @update:value="(vals) => (selectedRows.value = vals)"
+          @update:value="onSelectedRowsUpdate"
           :options="checkboxOptions"
           class="flex flex-col gap-2"
         />
@@ -263,7 +263,7 @@ const tableData = ref<RowType[]>([
   {
     id: '7',
     serialNumber: 7,
-    loadChangeState: '50%突卸100%（第1次）',
+    loadChangeState: '50%突加100%（第1次）',
     beforeChangeFrequency: '',
     beforeChangePower: '',
     instantaneousFrequencyMaxMin: '',
@@ -276,7 +276,7 @@ const tableData = ref<RowType[]>([
   {
     id: '8',
     serialNumber: 8,
-    loadChangeState: '50%突卸100%（第2次）',
+    loadChangeState: '50%突加100%（第2次）',
     beforeChangeFrequency: '',
     beforeChangePower: '',
     instantaneousFrequencyMaxMin: '',
@@ -289,7 +289,7 @@ const tableData = ref<RowType[]>([
   {
     id: '9',
     serialNumber: 9,
-    loadChangeState: '50%突卸100%（第3次）',
+    loadChangeState: '50%突加100%（第3次）',
     beforeChangeFrequency: '',
     beforeChangePower: '',
     instantaneousFrequencyMaxMin: '',
@@ -328,6 +328,12 @@ const setChartRef = (id: string) => (el: any) => {
   chartRefs[id] = el;
 };
 
+// 项目控制弹窗
+const selectedRows = ref<string[]>([]);
+const onSelectedRowsUpdate = (vals: string[]) => {
+  selectedRows.value = Array.isArray(vals) ? vals : [];
+};
+
 // 默认范围区间（使用当前实验的额定频率的 ±1%）
 const defaultRangeArea = computed<RangeArea>(() => {
   const baseVoltage = Number(
@@ -345,8 +351,7 @@ const defaultRangeArea = computed<RangeArea>(() => {
   };
 });
 
-// 按钮处理函数
-const handleMeasure = async (row: RowType) => {
+const updateAllData = async () => {
   // 执行数据同步队列
   const syncSuccess = await executeSyncQueue();
 
@@ -357,6 +362,11 @@ const handleMeasure = async (row: RowType) => {
     message.error('数据收集器同步失败');
     return;
   }
+};
+
+// 按钮处理函数
+const handleMeasure = async (row: RowType) => {
+  await updateAllData();
   if (!experimentStore.state.currentExperiment?.benchPosition) {
     message.error('实验台位为空');
     return;
@@ -486,9 +496,6 @@ const handleEditProject = (row: RowType) => {
   modalApi.open();
 };
 
-// 项目控制弹窗
-const selectedRows = ref<string[]>([]);
-
 // 构建 checkbox 选项
 const checkboxOptions = computed(() => {
   return tableData.value.map((item) => ({
@@ -504,6 +511,7 @@ const [ProjectControlModal, modalApi] = useVbenModal({
   onConfirm() {
     // 确认时更新visible状态
     handleConfirmProjectControl();
+    updateAllData();
     modalApi.close();
   },
   onOpened() {
@@ -543,9 +551,6 @@ const handleTransientSpeedData = (type: WebSocketMessageType, data: any) => {
   if (!data) {
     message.error(data.msg || '瞬态数据推送失败');
     return;
-  }
-  if (type === WebSocketMessageType.TRANSIENT_SPEED) {
-    console.log('handleTransientSpeedData11111', data);
   }
 
   // 设置标志位，避免触发循环更新

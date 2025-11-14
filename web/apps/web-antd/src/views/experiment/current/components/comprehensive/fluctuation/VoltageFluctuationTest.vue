@@ -40,7 +40,6 @@ import { useDataCollector } from '#/composables/useDataCollector';
 import { useExperimentStore } from '#/store/experiment';
 import { useUserRole } from '#/composables/useUserRole';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
-import type { VoltageFluctuationItem } from '#/store/experiment';
 
 // Store 和权限
 const experimentStore = useExperimentStore();
@@ -52,7 +51,9 @@ const { registerCollector, unregisterCollector } = useDataCollector();
 const isUpdatingFromStore = ref(false);
 
 // 表格数据
-const tableData = ref<VoltageFluctuationItem[]>([]);
+const tableData = ref<any[]>([]);
+// 保留完整数据（含 visible=false 的行），用于提交
+const fullTableData = ref<any[]>([]);
 const voltageFluctuationStandard = ref('');
 // 响应式数据
 const conclusion = ref('');
@@ -179,8 +180,11 @@ const handleVoltageFluctuationData = (data: any) => {
     const conclusionItem = (data as any).voltageFluctuationList.at(-1);
     const tableItems = (data as any).voltageFluctuationList.slice(0, -1);
 
-    // 更新表格数据
-    tableData.value = tableItems;
+    // 更新完整数据与可见数据（渲染时仅显示 visible !== false 的行）
+    fullTableData.value = tableItems;
+    tableData.value = fullTableData.value.filter(
+      (row: any) => row?.visible !== false,
+    );
     setTimeout(() => {
       GridApi.grid?.loadData(tableData.value);
     }, 0);
@@ -206,18 +210,28 @@ const collector = {
   component: 'VoltageFluctuationTest',
   type: 'voltageFluctuationList',
   collect: () => {
-    const gridData = GridApi.grid?.getTableData()?.fullData || [];
-    const voltageFluctuationData = gridData
-      .map((item: any, index: number) => ({
-        ...item,
-        id: item.id || `voltage-fluctuation-${index + 1}`,
-      }))
-      .concat([
-        {
-          voltageFluctuationStandard: voltageFluctuationStandard.value || '',
-          conclusion: conclusion.value || '',
-        },
-      ]);
+    // 仅渲染的可见数据（用户可能对其做了编辑）
+    const visibleData = GridApi.grid?.getTableData()?.fullData || [];
+    // 以 serialNumber 或 id 作为合并键，回填编辑结果到完整数据
+    const editedMap = new Map<string | number, any>();
+    visibleData.forEach((row: any, idx: number) => {
+      const key = row?.serialNumber ?? row?.id ?? idx;
+      editedMap.set(key, row);
+    });
+    const mergedFull = fullTableData.value.map((row: any, idx: number) => {
+      const key = row?.serialNumber ?? row?.id ?? idx;
+      const edited = editedMap.get(key);
+      const merged = edited ? { ...row, ...edited } : row;
+      if (merged?.id === undefined && row?.id !== undefined) merged.id = row.id;
+      return merged;
+    });
+
+    const voltageFluctuationData = mergedFull.concat([
+      {
+        voltageFluctuationStandard: voltageFluctuationStandard.value || '',
+        conclusion: conclusion.value || '',
+      },
+    ]);
 
     return voltageFluctuationData;
   },

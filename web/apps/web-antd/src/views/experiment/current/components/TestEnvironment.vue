@@ -50,6 +50,7 @@ import { ref, nextTick, onMounted, onUnmounted } from 'vue';
 import { useExperimentStore } from '#/store/experiment';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
+import dayjs from 'dayjs';
 import {
   Input,
   InputNumber,
@@ -92,22 +93,41 @@ const initializeLocalData = () => {
       temperature: env.temperature || 0,
       relativeHumidity: env.relativeHumidity || 0,
       atmosphericPressure: env.atmosphericPressure || 0,
-      testDate: env.testDate || null,
+      testDate: dateTransform(env.testDate),
     };
   }
 };
 
+const dateTransform = (value: any) => {
+  if (value === null || value === undefined || value === '') return null;
+  if (typeof value === 'number')
+    return dayjs(value).format('YYYY-MM-DDTHH:mm:ss');
+  if (value instanceof Date) return dayjs(value).format('YYYY-MM-DDTHH:mm:ss');
+  if (typeof value === 'string') {
+    if (/^\d{13}$/.test(value))
+      return dayjs(Number(value)).format('YYYY-MM-DDTHH:mm:ss');
+    return value;
+  }
+  return null;
+};
+
 // WebSocket 监听器函数 - 处理环境数据更新
-const handleEnvironmentData = (data: Partial<EnvironmentData>) => {
-  console.log('收到环境数据更新:', data);
+const handleEnvironmentData = (data: any) => {
+  console.log('收到环境数据更新:', data.env);
+
+  // 检查是否有环境数据
+  if (!data.env) return;
 
   // 设置标志位，避免触发循环更新
+  if (isUpdatingFromStore.value) return;
   isUpdatingFromStore.value = true;
+  console.log('localData.value:', localData.value);
 
   // 更新本地数据
   localData.value = {
     ...localData.value,
-    ...data,
+    ...data.env,
+    testDate: dateTransform(data.env.testDate),
   };
 
   // 重置标志位
@@ -154,7 +174,7 @@ onMounted(() => {
 
   // 注册 WebSocket 监听器 - 监听环境数据更新
   webSocketStore.registerMessageListener(
-    WebSocketMessageType.ENVIRONMENT,
+    WebSocketMessageType.EXPERIMENT,
     handleEnvironmentData,
   );
 });
@@ -165,7 +185,7 @@ onUnmounted(() => {
 
   // 取消注册 WebSocket 监听器
   webSocketStore.unregisterMessageListener(
-    WebSocketMessageType.ENVIRONMENT,
+    WebSocketMessageType.EXPERIMENT,
     handleEnvironmentData,
   );
 });

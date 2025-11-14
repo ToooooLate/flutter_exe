@@ -80,6 +80,10 @@ const INTEGRATED_EXPERIMENT = (WebSocketMessageType as any)
 const steadySpeedSub1List = ref<SteadySpeedSubItem[]>([]);
 const steadySpeedSub2List = ref<SteadySpeedSubItem[]>([]);
 const steadySpeedSub3List = ref<SteadySpeedSubItem[]>([]);
+// 保留完整数据（包含 visible=false 的行），用于提交
+const fullSteadySpeedSub1List = ref<SteadySpeedSubItem[]>([]);
+const fullSteadySpeedSub2List = ref<SteadySpeedSubItem[]>([]);
+const fullSteadySpeedSub3List = ref<SteadySpeedSubItem[]>([]);
 
 // 稳态调速特性表格数据和配置
 const steadySpeedList = ref<SteadySpeedItem[]>(createSteadySpeedListData());
@@ -143,19 +147,19 @@ const handleSteadySpeedData = async (data: any) => {
       conclusion.value = data.steadySpeedList.at(-1)?.conclusion || '';
     }
     if (Array.isArray(data?.steadySpeedSub1List)) {
-      steadySpeedSub1List.value =
-        data.steadySpeedSub1List as SteadySpeedSubItem[];
+      // 赋值完整数据
+      fullSteadySpeedSub1List.value = data.steadySpeedSub1List as SteadySpeedSubItem[];
+      // 渲染时仅显示 visible!==false 的行（未设置 visible 视为可见）
+      steadySpeedSub1List.value = fullSteadySpeedSub1List.value.filter((row: any) => row?.visible !== false);
     }
     if (Array.isArray(data?.steadySpeedSub2List)) {
-      steadySpeedSub2List.value =
-        data.steadySpeedSub2List as SteadySpeedSubItem[];
+      fullSteadySpeedSub2List.value = data.steadySpeedSub2List as SteadySpeedSubItem[];
+      steadySpeedSub2List.value = fullSteadySpeedSub2List.value.filter((row: any) => row?.visible !== false);
     }
     if (Array.isArray(data?.steadySpeedSub3List)) {
-      steadySpeedSub3List.value =
-        data.steadySpeedSub3List as SteadySpeedSubItem[];
+      fullSteadySpeedSub3List.value = data.steadySpeedSub3List as SteadySpeedSubItem[];
+      steadySpeedSub3List.value = fullSteadySpeedSub3List.value.filter((row: any) => row?.visible !== false);
     }
-
-    await nextTick();
 
     setTimeout(() => {
       SteadySpeedGridApi.grid?.loadData?.(steadySpeedList.value as any);
@@ -192,27 +196,56 @@ const collector = {
 
     // 通过 GridApi 收集子表格数据
     const configs = tableConfigs.value;
-    const sub1Data =
+    const sub1Edited =
       configs
         .find((c) => c.key === 'sub1')
         ?.GridApi.grid?.getTableData()
         ?.fullData.map((item) => ({
           ...item,
         })) || [];
-    const sub2Data =
+    const sub2Edited =
       configs
         .find((c) => c.key === 'sub2')
         ?.GridApi.grid?.getTableData()
         ?.fullData.map((item) => ({
           ...item,
         })) || [];
-    const sub3Data =
+    const sub3Edited =
       configs
         .find((c) => c.key === 'sub3')
         ?.GridApi.grid?.getTableData()
         ?.fullData.map((item) => ({
           ...item,
         })) || [];
+
+    // 将可见表中的编辑合并回完整数据（按 serialNumber 合并）
+    const mergeBySerialNumber = (fullList: any[], editedList: any[]) => {
+      const editedMap = new Map(
+        editedList
+          .filter((i) => i && i.serialNumber != null)
+          .map((i) => [i.serialNumber, i]),
+      );
+      return fullList.map((row) => {
+        const sn = (row as any)?.serialNumber;
+        if (sn != null && editedMap.has(sn)) {
+          return { ...row, ...editedMap.get(sn) };
+        }
+        return row;
+      });
+    };
+
+    const sub1Data = mergeBySerialNumber(
+      fullSteadySpeedSub1List.value || [],
+      sub1Edited,
+    );
+    const sub2Data = mergeBySerialNumber(
+      fullSteadySpeedSub2List.value || [],
+      sub2Edited,
+    );
+    const sub3Data = mergeBySerialNumber(
+      fullSteadySpeedSub3List.value || [],
+      sub3Edited,
+    );
 
     // 收集结论数据
     const conclusionData = conclusion.value || '';

@@ -111,6 +111,8 @@ declare module '#/store/experiment' {
     updateTransientVoltageChangeList: (data: any) => void;
     updateTransientSpeedRegulationList: (data: any) => void;
     updateExperimentSettings: (data: any) => void;
+    // 补充缺失的动作，避免编辑器类型误报
+    updateLoadTestReport: (data: any) => void;
     submitExperimentData: () => Promise<void>;
   };
 }

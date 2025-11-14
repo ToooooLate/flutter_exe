@@ -317,15 +317,7 @@ let commandParams: any = {};
 
 // 按钮处理函数
 const handleMeasure = async (row: RowType) => {
-  // 执行数据同步队列
-  const syncSuccess = await executeSyncQueue();
-  if (syncSuccess) {
-    await experimentStore.submitExperimentData();
-    message.success('实验数据同步成功');
-  } else {
-    message.error('数据收集器同步失败');
-    return;
-  }
+  await updateAllData();
   if (!experimentStore.state.currentExperiment?.benchPosition) {
     message.error('实验台位为空');
     return;
@@ -473,6 +465,7 @@ const [ProjectControlModal, modalApi] = useVbenModal({
   onConfirm() {
     // 确认时更新visible状态
     handleConfirmProjectControl();
+    updateAllData();
     modalApi.close();
   },
   onOpened() {
@@ -501,6 +494,19 @@ function handleConfirmProjectControl() {
     .map((item) => ({ ...item })); // 使用展开运算符将 Proxy 转换为普通对象
   GridApi.grid.reloadData(filteredData);
 }
+
+// 同步并提交实验数据，保持与瞬态调速组件一致
+const updateAllData = async () => {
+  // 执行数据同步队列
+  const syncSuccess = await executeSyncQueue();
+  if (syncSuccess) {
+    await experimentStore.submitExperimentData();
+    message.success('实验数据同步成功');
+  } else {
+    message.error('数据收集器同步失败');
+    return;
+  }
+};
 
 // WebSocket 监听器函数 - 处理瞬态电压变化数据更新（区分推送类型）
 const handleTransientVoltageData = (type: WebSocketMessageType, data: any) => {

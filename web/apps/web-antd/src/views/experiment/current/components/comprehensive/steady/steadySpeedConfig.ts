@@ -18,7 +18,8 @@ export function createSteadySpeedGridOptions(data: SteadySpeedSubItem[]) {
       width: 100,
       align: 'center' as const,
       editRender: {
-        name: 'Input',
+        name: 'VxeInput',
+        props: { type: 'text' },
       },
     },
     {
@@ -27,7 +28,8 @@ export function createSteadySpeedGridOptions(data: SteadySpeedSubItem[]) {
       width: 100,
       align: 'center' as const,
       editRender: {
-        name: 'Input',
+        name: 'VxeInput',
+        props: { type: 'text' },
       },
     },
     {
@@ -36,7 +38,8 @@ export function createSteadySpeedGridOptions(data: SteadySpeedSubItem[]) {
       width: 100,
       align: 'center' as const,
       editRender: {
-        name: 'Input',
+        name: 'VxeInput',
+        props: { type: 'text' },
       },
     },
     {
@@ -45,7 +48,8 @@ export function createSteadySpeedGridOptions(data: SteadySpeedSubItem[]) {
       width: 120,
       align: 'center' as const,
       editRender: {
-        name: 'Input',
+        name: 'VxeInput',
+        props: { type: 'text' },
       },
     },
     {
@@ -54,7 +58,8 @@ export function createSteadySpeedGridOptions(data: SteadySpeedSubItem[]) {
       width: 100,
       align: 'center' as const,
       editRender: {
-        name: 'Input',
+        name: 'VxeInput',
+        props: { type: 'text' },
       },    
     },
     {
@@ -63,7 +68,8 @@ export function createSteadySpeedGridOptions(data: SteadySpeedSubItem[]) {
       width: 100,
       align: 'center' as const,
       editRender: {
-        name: 'Input',
+        name: 'VxeInput',
+        props: { type: 'text' },
       },
     },
     {
@@ -72,7 +78,8 @@ export function createSteadySpeedGridOptions(data: SteadySpeedSubItem[]) {
       width: 100,
       align: 'center' as const,
       editRender: {
-        name: 'Input',
+        name: 'VxeInput',
+        props: { type: 'text' },
       },
     },
     {
@@ -81,7 +88,8 @@ export function createSteadySpeedGridOptions(data: SteadySpeedSubItem[]) {
       width: 100,
       align: 'center' as const,
       editRender: {
-        name: 'Input',
+        name: 'VxeInput',
+        props: { type: 'text' },
       },
     },
     {
@@ -90,7 +98,8 @@ export function createSteadySpeedGridOptions(data: SteadySpeedSubItem[]) {
       width: 100,
       align: 'center' as const,
       editRender: {
-        name: 'Input',
+        name: 'VxeInput',
+        props: { type: 'text' },
       },  
     },
     {
@@ -99,7 +108,8 @@ export function createSteadySpeedGridOptions(data: SteadySpeedSubItem[]) {
       width: 100,
       align: 'center' as const,
       editRender: {
-        name: 'Input',
+        name: 'VxeInput',
+        props: { type: 'text' },
       },
     },
     {
@@ -108,7 +118,8 @@ export function createSteadySpeedGridOptions(data: SteadySpeedSubItem[]) {
       width: 120,
       align: 'center' as const,
       editRender: {
-        name: 'Input',
+        name: 'VxeInput',
+        props: { type: 'text' },
       },
     },
     {
@@ -117,7 +128,8 @@ export function createSteadySpeedGridOptions(data: SteadySpeedSubItem[]) {
       width: 140,
       align: 'center' as const,
       editRender: {
-        name: 'Input',
+        name: 'VxeInput',
+        props: { type: 'text' },
       },
     },
   ] as const;

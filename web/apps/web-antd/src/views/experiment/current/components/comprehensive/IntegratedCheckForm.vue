@@ -119,8 +119,7 @@ const countdownModalRef = ref();
 
 let commandParams = {};
 
-// 测定按钮处理函数
-const handleMeasure = async (row: IntegratedCheckItem) => {
+const updateAllData = async () => {
   // 执行数据同步队列
   const syncSuccess = await executeSyncQueue();
 
@@ -131,6 +130,11 @@ const handleMeasure = async (row: IntegratedCheckItem) => {
     message.error('数据收集器同步失败');
     return;
   }
+};
+
+// 测定按钮处理函数
+const handleMeasure = async (row: IntegratedCheckItem) => {
+  await updateAllData();
   if (!experimentStore.state.currentExperiment?.benchPosition) {
     message.error('实验台位为空');
     return;
@@ -218,6 +222,7 @@ const [ProjectControlModal, modalApi] = useVbenModal({
   onConfirm() {
     // 确认时更新visible状态
     handleConfirmProjectControl();
+    updateAllData();
     modalApi.close();
   },
   onOpened() {

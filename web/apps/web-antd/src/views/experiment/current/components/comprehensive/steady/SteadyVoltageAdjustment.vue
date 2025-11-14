@@ -66,6 +66,8 @@ const createEmptyMeasurementFields = () => ({
 
 // 表格数据
 const tableData = ref([]);
+// 保留完整数据（包含 visible=false 的行），用于提交
+const fullTableData = ref<any[]>([]);
 
 // 表格配置
 const gridOptions: VxeGridProps = {
@@ -185,16 +187,26 @@ const collector = {
   component: 'SteadyVoltageAdjustment',
   type: 'steadyVoltageList',
   collect: () => {
-    const gridData = GridApi.grid?.getTableData()?.fullData || [];
-    const steadyVoltageData = gridData
-      .map((item, index) => ({
-        ...item,
-      }))
-      .concat({
-        conclusion: conclusion.value || '',
-      });
+    const editedVisible = GridApi.grid?.getTableData()?.fullData || [];
 
-    return steadyVoltageData;
+    // 合并可见表的编辑回完整数据（优先使用 serialNumber 作为键，退化到 id）
+    const mergeByKey = (fullList: any[], editedList: any[]) => {
+      const editedMap = new Map(
+        editedList
+          .filter((i) => i && (i.serialNumber != null || i.id != null))
+          .map((i) => [i.serialNumber ?? i.id, i]),
+      );
+      return (fullList || []).map((row) => {
+        const key = row?.serialNumber ?? row?.id;
+        if (key != null && editedMap.has(key)) {
+          return { ...row, ...editedMap.get(key) };
+        }
+        return row;
+      });
+    };
+
+    const merged = mergeByKey(fullTableData.value || [], editedVisible);
+    return merged.concat({ conclusion: conclusion.value || '' });
   },
   hasChanges() {
     // 检查是否有数据变更
@@ -217,12 +229,13 @@ const handleSteadyVoltageData = async (data: any) => {
 
     // 处理稳态电压调整数据
     if (Array.isArray((data as any).steadyVoltageList)) {
-      // 更新表格数据
-      tableData.value = data.steadyVoltageList
+      // 更新完整数据（包含不可见行）
+      fullTableData.value = (data as any).steadyVoltageList
         .slice(0, -1)
-        .map((item: any) => ({
-          ...item,
-        }));
+        .map((item: any) => ({ ...item }));
+
+      // 渲染时仅显示 visible!==false 的行（未设置 visible 视为可见）
+      tableData.value = fullTableData.value.filter((row: any) => row?.visible);
 
       // 如果有结论数据，更新结论字段
       const lastItem = (data as any).steadyVoltageList.at(-1);

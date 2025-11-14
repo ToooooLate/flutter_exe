@@ -98,7 +98,9 @@ const generateTableData = () => {
   }));
 };
 
-// 表格数据 - 以测试项目为行
+// 全量数据（含不可见行），用于提交
+const fullTableData = ref<any[]>([]);
+// 表格数据 - 仅渲染可见行
 const tableData = ref(generateTableData());
 
 // 表格配置
@@ -379,8 +381,10 @@ const handleLoadTestData = (data: any) => {
   try {
     // 更新表格数据 - 从 WebSocket 数据中提取 loadList
     if (Array.isArray((data as any).loadList)) {
-      // 过滤出有效数据并更新表格
-      tableData.value = data.loadList.slice(0, -1);
+      // 缓存全量数据（含不可见行）用于提交
+      fullTableData.value = data.loadList.slice(0, -1);
+      // 仅渲染可见行
+      tableData.value = fullTableData.value.filter((item) => item.visible);
 
       // 更新结论 - 从最后一个项目的 conclusion 字段获取
       const lastItem = (data as any).loadList.at(-1);
@@ -408,15 +412,19 @@ const collector = {
   component: 'LoadTestReport',
   type: 'loadTestReport',
   collect: () => {
-    const gridData = GridApi.grid?.getTableData()?.fullData || [];
-    const loadTestData = gridData
-      .map((item) => ({
-        ...item,
-      }))
-      .concat({
-        conclusion: conclusion.value || '',
-      });
-
+    // 从表格读取已编辑的可见行数据
+    const visibleEdited = GridApi.grid?.getTableData()?.fullData || [];
+    // 将可见行的编辑结果合并回全量数据（根据 serialNumber 匹配）
+    const mergedFull = fullTableData.value.map((item) => {
+      const updated = visibleEdited.find(
+        (r: any) => r.serialNumber === item.serialNumber,
+      );
+      return updated ? { ...item, ...updated } : item;
+    });
+    // 追加结论行
+    const loadTestData = mergedFull.concat({
+      conclusion: conclusion.value || '',
+    });
     return loadTestData;
   },
   hasChanges() {

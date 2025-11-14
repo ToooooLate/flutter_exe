@@ -74,6 +74,8 @@ const createEmptyMeasurementFields = () => ({
 
 // 表格数据
 const tableData = ref([]);
+// 保留完整数据（含 visible=false 的行），用于提交
+const fullTableData = ref<any[]>([]);
 
 // 表格配置
 const gridOptions: VxeGridProps = {
@@ -171,8 +173,11 @@ const handleSpeedFluctuationData = (data: any) => {
     const conclusionItem = data.speedFluctuationList.at(-1);
     const tableItems = data.speedFluctuationList.slice(0, -1);
 
-    // 更新表格数据
-    tableData.value = tableItems;
+    // 保留完整数据（含隐藏行），渲染时仅显示 visible !== false 的行
+    fullTableData.value = tableItems;
+    tableData.value = fullTableData.value.filter(
+      (row: any) => row?.visible !== false,
+    );
     setTimeout(() => {
       GridApi.grid?.loadData(tableData.value);
     }, 0);
@@ -198,15 +203,25 @@ const collector = {
   component: 'SpeedFluctuationTest',
   type: 'speedFluctuationList',
   collect: () => {
-    const gridData = GridApi.grid?.getTableData()?.fullData || [];
-    const speedFluctuationData = gridData
-      .map((item, index) => ({
-        ...item,
-      }))
-      .concat({
-        conclusion: conclusion.value || '',
-        speedFluctuationStandard: speedFluctuationStandard.value || '',
-      });
+    // 仅渲染的可见数据（用户可能对其做了编辑）
+    const visibleData = GridApi.grid?.getTableData()?.fullData || [];
+    // 以 serialNumber 或 id 作为合并键，回填编辑结果到完整数据
+    const editedMap = new Map<string | number, any>();
+    visibleData.forEach((row: any, idx: number) => {
+      const key = row?.serialNumber ?? row?.id ?? idx;
+      editedMap.set(key, row);
+    });
+    const mergedFull = fullTableData.value.map((row: any, idx: number) => {
+      const key = row?.serialNumber ?? row?.id ?? idx;
+      const edited = editedMap.get(key);
+      return edited ? { ...row, ...edited } : row;
+    });
+
+    // 结论与标准值作为最后一项提交
+    const speedFluctuationData = mergedFull.concat({
+      conclusion: conclusion.value || '',
+      speedFluctuationStandard: speedFluctuationStandard.value || '',
+    });
 
     return speedFluctuationData;
   },
