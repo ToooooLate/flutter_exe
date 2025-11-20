@@ -10,6 +10,11 @@ declare module '@vben/common-ui' {
   export const Page: any;
   export function useVbenForm(...args: any[]): any[];
   export type VbenFormSchema = any;
+  // 追加缺失的导出，满足当前适配器组件使用
+  export const ApiComponent: any;
+  export const IconPicker: any;
+  export const globalShareState: any;
+  export type BaseFormComponentType = any;
 }
 
 // 兜底声明，避免 @vben 子包类型缺失造成的报错
@@ -166,6 +171,17 @@ declare module 'vue' {
   // 补充常用类型与方法，避免 SFC 组件导入默认导出误报
   export type DefineComponent<Props = any, Events = any, Slots = any> = any;
   export function defineAsyncComponent(loader: any): any;
+  // 追加：缺失的导出，满足适配器组件类型与渲染
+  export type Component = any;
+  export function defineComponent(options: any): any;
+  export function h(type: any, props?: any, children?: any): any;
+  export function createVNode(type: any, props?: any, children?: any): any;
+  export type SetupContext = {
+    attrs: Record<string, any>;
+    emit?: (...args: any[]) => any;
+    expose: (exposed: Record<string, any>) => void;
+    slots: any;
+  };
 }
 
 // 追加补充声明：缺失的导出在此合并，避免 IDE 报错

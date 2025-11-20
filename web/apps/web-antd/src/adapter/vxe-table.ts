@@ -85,19 +85,24 @@ setupVbenVxeTable({
       },
     });
 
-    // 单元格渲染： Tag
+    // 单元格渲染： Tag（支持函数型 options 与 props）
     vxeUI.renderer.add('CellTag', {
-      renderTableDefault({ options, props }, { column, row }) {
+      renderTableDefault(renderOpts, { column, row }) {
+        const { options, props } = renderOpts as any;
         const value = get(row, column.field);
-        const tagOptions = options ?? [
-          { color: 'success', label: $t('common.enabled'), value: 1 },
-          { color: 'error', label: $t('common.disabled'), value: 0 },
-        ];
-        const tagItem = tagOptions.find((item) => item.value === value);
+        // 允许 options 与 props 为函数形式，便于按行/动态计算
+        const resolvedOptions = isFunction(options)
+          ? options({ row, column })
+          : options ?? [
+              { color: 'success', label: $t('common.enabled'), value: 1 },
+              { color: 'error', label: $t('common.disabled'), value: 0 },
+            ];
+        const resolvedProps = isFunction(props) ? props({ row, column }) : props;
+        const tagItem = resolvedOptions.find((item: any) => item.value === value);
         return h(
           Tag,
           {
-            ...props,
+            ...resolvedProps,
             ...objectOmit(tagItem ?? {}, ['label']),
           },
           { default: () => tagItem?.label ?? value },
