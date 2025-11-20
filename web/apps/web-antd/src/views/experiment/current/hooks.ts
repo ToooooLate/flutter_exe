@@ -221,7 +221,7 @@ export function useCurrentExperiment() {
         }
         try {
           if (!hasCredential.value) {
-            const res = await generateAccessCredentialApi({ experimentId: expId });
+            const res = await generateAccessCredentialApi({ username: experimentNo.value, end: 1 });
             accessCredential.value = {
               url: res?.url ?? '',
               account: experimentNo.value,
