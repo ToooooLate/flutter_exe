@@ -10,7 +10,7 @@
       <div class="mb-4">
         <button
           @click="measureData"
-          :disabled="isLoading"
+          :disabled="isLoading || !isEditable"
           class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <span v-if="isLoading">测定中...</span>
@@ -32,6 +32,7 @@
       <textarea
         v-model="conclusion"
         placeholder="请输入结论..."
+        :readonly="!isEditable"
         class="h-20 w-full resize-none rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
       />
     </div>
@@ -39,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { useDataCollector } from '#/composables/useDataCollector';
@@ -51,6 +52,7 @@ import {
 } from '#/store/websocket';
 import { checkStartupApi } from '#/api';
 import { message } from 'ant-design-vue';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 
 // Store 实例
 const experimentStore = useExperimentStore();
@@ -60,6 +62,7 @@ const { registerCollector, unregisterCollector } = useDataCollector();
 // 响应式数据
 const isLoading = ref(false);
 const conclusion = ref('');
+const isEditable = computed(() => canEditTable());
 
 // 表格数据
 const tableData = ref([]);
@@ -93,35 +96,35 @@ const gridOptions: VxeGridProps = {
       title: '电压 (V)\nVolt.',
       align: 'center',
       showOverflow: false,
-      editRender: { name: 'input' },
+      editRender: { name: 'input', props: { disabled: !isEditable.value } },
     },
     {
       field: 'frequency',
       title: '频率 (V)\nFrequency',
       align: 'center',
       showOverflow: false,
-      editRender: { name: 'input' },
+      editRender: { name: 'input', props: { disabled: !isEditable.value } },
     },
     {
       field: 'waterTemp',
       title: '水温 (℃)\nWater Temp.',
       align: 'center',
       showOverflow: false,
-      editRender: { name: 'input' },
+      editRender: { name: 'input', props: { disabled: !isEditable.value } },
     },
     {
       field: 'oilPressure',
       title: '油压 (Bar)\nOil Press.',
       align: 'center',
       showOverflow: false,
-      editRender: { name: 'input' },
+      editRender: { name: 'input', props: { disabled: !isEditable.value } },
     },
     {
       field: 'speed',
       title: '转速 (rpm)\nSpeed',
       align: 'center',
       showOverflow: false,
-      editRender: { name: 'input' },
+      editRender: { name: 'input', props: { disabled: !isEditable.value } },
     },
     {
       field: 'threeLeakage',
@@ -129,12 +132,13 @@ const gridOptions: VxeGridProps = {
       width: 100,
       align: 'center',
       showOverflow: false,
-      editRender: { name: 'input' },
+      editRender: { name: 'input', props: { disabled: !isEditable.value } },
     },
   ],
   editConfig: {
     trigger: 'click',
     mode: 'cell',
+    beforeEditMethod: () => isEditable.value,
   },
   pagerConfig: {
     enabled: false,

@@ -3,18 +3,19 @@
     <!-- 操作按钮区域 -->
     <div class="mb-2 gap-2">
       <p class="text-lg font-bold">第{{ experimentIndex }}次数据测定实验</p>
-      <Button type="primary" @click="handleEditProject"> 编辑项目 </Button>
+      <Button type="primary" :disabled="!isEditable" @click="handleEditProject"> 编辑项目 </Button>
     </div>
 
     <!-- 表格区域 -->
     <Grid>
       <template #action="{ row }">
-        <Button type="link" size="small" @click="handleMeasure(row)">
+        <Button type="link" size="small" :disabled="!isEditable" @click="handleMeasure(row)">
           测定
         </Button>
         <Button
           type="link"
           size="small"
+          :disabled="!isEditable"
           @click="handleMeasurehandleVoltageModulation(row)"
         >
           电压调制
@@ -60,7 +61,7 @@
 import { computed, ref, watch, nextTick } from 'vue';
 import { Button, CheckboxGroup, Checkbox, message } from 'ant-design-vue';
 import { initialTableData, createGridOptions } from './integratedCheckConfig';
-import type { IntegratedCheckItem } from '#/store/experiment';
+import type { IntegratedCheckItem } from '#/store';
 import { useVbenModal } from '@vben/common-ui';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
@@ -72,6 +73,7 @@ import {
 import { useExperimentStore } from '#/store/experiment';
 import { CountdownModal } from '../modal';
 import { useDataCollector } from '#/composables/useDataCollector';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 
 // 使用实验store
 const experimentStore = useExperimentStore();
@@ -86,6 +88,9 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   experimentIndex: 1,
 });
+
+// 统一编辑权限开关
+const isEditable = computed(() => canEditTable());
 
 // 本地数据 - 为每个实例创建独立的数据副本
 const localData = ref<IntegratedCheckItem[]>(

@@ -1,5 +1,6 @@
-import type { VxeGridProps } from '#/adapter/vxe-table';
+// ts-ignore
 import type { IntegratedCheckItem } from '#/store/experiment';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 
 // 初始表格数据
 export const initialTableData: IntegratedCheckItem[] = [
@@ -175,10 +176,11 @@ export function createGridOptions(data: IntegratedCheckItem[]) {
     columns: gridColumns,
     border: true,
     stripe: true,
-    editConfig: {
-      trigger: 'click',
-      mode: 'cell',
-    },
+  editConfig: {
+    trigger: 'click',
+    mode: 'cell',
+    beforeEditMethod: () => canEditTable(),
+  },
     columnConfig: {
       resizable: true,
     },

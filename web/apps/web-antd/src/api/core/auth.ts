@@ -14,7 +14,7 @@ export namespace AuthApi {
     firstName: string;
     name: string;
     username: string;
-    role?: 'admin' | 'normal' | 'guest';
+    roleCode: 'admin' | 'normal' | 'guest' | 'engineer';
     avatar?: string;
   }
 

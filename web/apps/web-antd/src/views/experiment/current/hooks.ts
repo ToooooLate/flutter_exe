@@ -10,10 +10,9 @@ import {
   getExperimentFromStorage,
   clearExperimentFromStorage,
   type ExperimentStorageData,
-} from '../../../composables/useExperimentStorage';
+} from '#/composables/useExperimentStorage';
 
 
-// localStorage 工具函数已抽取为公共 composable：useExperimentStorage
 
 export function useCurrentExperiment() {
   const experimentStore = useExperimentStore();

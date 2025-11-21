@@ -32,6 +32,7 @@
           step="1"
           class="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="请输入飞轮齿数"
+          :disabled="!isEditable"
         />
       </div>
 
@@ -46,6 +47,7 @@
             type="number"
             class="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="转速"
+            :disabled="!isEditable"
           />
           <span class="text-foreground text-sm">rpm 转即为</span>
           <input
@@ -53,6 +55,7 @@
             type="number"
             class="w-20 rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="频率"
+            :disabled="!isEditable"
           />
           <span class="text-foreground text-sm">Hz 视为启动成功</span>
         </div>
@@ -77,6 +80,7 @@
             type="text"
             class="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder=""
+            :disabled="!isEditable"
           />
         </div>
         <div class="flex items-center gap-2">
@@ -88,6 +92,7 @@
             type="text"
             class="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder=""
+            :disabled="!isEditable"
           />
         </div>
         <div class="flex items-center gap-2">
@@ -99,6 +104,7 @@
             type="text"
             class="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder=""
+            :disabled="!isEditable"
           />
         </div>
         <div class="flex items-center gap-2">
@@ -110,6 +116,7 @@
             type="text"
             class="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder=""
+            :disabled="!isEditable"
           />
         </div>
       </div>
@@ -125,6 +132,7 @@
         rows="4"
         class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
         placeholder="请输入结论"
+        :readonly="!isEditable"
       />
     </div>
   </div>
@@ -132,12 +140,13 @@
 
 <script setup lang="ts">
 // @ts-nocheck
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { useExperimentStore } from '#/store/experiment';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 
 // Store 实例
 const experimentStore = useExperimentStore();
@@ -286,6 +295,7 @@ const gridOptions = {
   editConfig: {
     trigger: 'click',
     mode: 'cell',
+    beforeEditMethod: () => isEditable.value,
   },
   pagerConfig: {
     enabled: false,
@@ -298,6 +308,7 @@ const gridOptions = {
 };
 
 const [Grid, GridApi] = useVbenVxeGrid({ gridOptions });
+const isEditable = computed(() => canEditTable());
 
 // 数据收集器
 const collector = {

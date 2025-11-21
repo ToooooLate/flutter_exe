@@ -45,6 +45,7 @@
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusion"
+          :disabled="!isEditable.value"
           class="h-full w-full resize-none border-0 outline-none"
           placeholder="请输入结论..."
         />
@@ -68,6 +69,7 @@ import {
 import type { TableConfig } from './steadySpeedConfig';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import type { VxeGridProps } from '#/adapter/vxe-table';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 
 // 本组件内定义数据类型，避免依赖不存在的 store 导出类型
 type SteadySpeedItem = Record<string, any>;
@@ -99,6 +101,8 @@ const requirement = ref(
   '要求/Standard: 稳态频率调节率 Steady frequency deviation ±5%',
 );
 const conclusion = ref('');
+
+const isEditable = computed(() => canEditTable());
 
 // 使用工厂模式创建表格配置
 const tableConfigs = computed(() =>
@@ -148,17 +152,26 @@ const handleSteadySpeedData = async (data: any) => {
     }
     if (Array.isArray(data?.steadySpeedSub1List)) {
       // 赋值完整数据
-      fullSteadySpeedSub1List.value = data.steadySpeedSub1List as SteadySpeedSubItem[];
+      fullSteadySpeedSub1List.value =
+        data.steadySpeedSub1List as SteadySpeedSubItem[];
       // 渲染时仅显示 visible!==false 的行（未设置 visible 视为可见）
-      steadySpeedSub1List.value = fullSteadySpeedSub1List.value.filter((row: any) => row?.visible !== false);
+      steadySpeedSub1List.value = fullSteadySpeedSub1List.value.filter(
+        (row: any) => row?.visible !== false,
+      );
     }
     if (Array.isArray(data?.steadySpeedSub2List)) {
-      fullSteadySpeedSub2List.value = data.steadySpeedSub2List as SteadySpeedSubItem[];
-      steadySpeedSub2List.value = fullSteadySpeedSub2List.value.filter((row: any) => row?.visible !== false);
+      fullSteadySpeedSub2List.value =
+        data.steadySpeedSub2List as SteadySpeedSubItem[];
+      steadySpeedSub2List.value = fullSteadySpeedSub2List.value.filter(
+        (row: any) => row?.visible !== false,
+      );
     }
     if (Array.isArray(data?.steadySpeedSub3List)) {
-      fullSteadySpeedSub3List.value = data.steadySpeedSub3List as SteadySpeedSubItem[];
-      steadySpeedSub3List.value = fullSteadySpeedSub3List.value.filter((row: any) => row?.visible !== false);
+      fullSteadySpeedSub3List.value =
+        data.steadySpeedSub3List as SteadySpeedSubItem[];
+      steadySpeedSub3List.value = fullSteadySpeedSub3List.value.filter(
+        (row: any) => row?.visible !== false,
+      );
     }
 
     setTimeout(() => {

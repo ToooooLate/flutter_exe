@@ -32,6 +32,7 @@ import { useExperimentStore } from '#/store/experiment';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
 import { getDcuDeviceListApi, enableDcuDeviceApi } from '#/api';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 
 // 定义 ExperimentData 类型的部分字段
 interface ExperimentData {
@@ -78,6 +79,8 @@ const { registerCollector, unregisterCollector } = useDataCollector();
 // 标志位，用于避免循环更新
 const isUpdatingFromStore = ref(false);
 const expanded = computed(() => props.expanded ?? false);
+// 是否可编辑：权限+实验状态
+const isEditable = computed(() => canEditTable());
 
 const toggleExpanded = () => {
   emit('update:expanded', !expanded.value);
@@ -417,9 +420,34 @@ const [VbenForm, formApi] = useVbenForm({
   commonConfig: {
     componentProps: {
       class: 'w-full',
+      disabled: !isEditable.value,
     },
   },
 });
+
+// 监听 isEditable 变化，动态更新所有字段的 disabled 属性（保证切换后实时生效）
+watch(
+  isEditable,
+  (val) => {
+    // 延后一帧，确保表单已初始化
+    nextTick(() => {
+      try {
+        const updates = (formSchema || [])
+          .filter((s) => !!s.fieldName && s.component !== 'Divider')
+          .map((s) => ({
+            fieldName: s.fieldName,
+            componentProps: {
+              ...(s.componentProps || {}),
+              disabled: !val,
+            },
+          }));
+        // 批量更新 schema，达到动态禁用/启用效果
+        formApi?.updateSchema?.(updates);
+      } catch {}
+    });
+  },
+  { immediate: true },
+);
 
 // DCU 选项（后端加载）
 const dcuOptions = ref<{ label: string; value: string; status?: number }[]>([]);

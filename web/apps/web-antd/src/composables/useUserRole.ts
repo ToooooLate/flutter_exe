@@ -23,6 +23,11 @@ export function useUserRole() {
     return role === 'normal';
   });
 
+  const isEngineer = computed(() => {
+    const role = userStore.userInfo?.roleCode;
+    return role === 'engineer';
+  });
+
   /**
    * 判断当前用户是否为访客
    */
@@ -59,6 +64,7 @@ export function useUserRole() {
     isNormal,
     isGuest,
     isNonAdmin,
+    isEngineer,
     userRole,
     hasRole,
   };

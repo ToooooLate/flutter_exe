@@ -15,6 +15,7 @@ import { defineStore } from 'pinia';
 
 import { loginApi, logoutApi } from '#/api/core/auth';
 import { $t } from '#/locales';
+import { clearExperimentFromStorage } from '#/composables/useExperimentStorage';
 
 export const useAuthStore = defineStore('auth', () => {
   const accessStore = useAccessStore();
@@ -26,13 +27,21 @@ export const useAuthStore = defineStore('auth', () => {
 
   /**
    * 根据角色获取权限代码
+   * AC_100100 实验查看权限
+   * AC_100110 实验操作权限
+   * AC_200120 历史查看权限
+   * AC_200130 历史操作权限
+   * AC_300100 系统DUC读写权限
+   * AC_400100 系统账号读写权限
    */
-  function getAccessCodesByRole(role: 'admin' | 'normal' | 'guest'): string[] {
+  function getAccessCodesByRole(role: 'admin' | 'normal' | 'guest' | 'engineer'): string[] {
     switch (role) {
       case 'admin':
-        return ['AC_100100', 'AC_100110', 'AC_100120', 'AC_200100', 'AC_300100'];
+        return ['AC_100100', 'AC_200120', 'AC_200130', 'AC_300100', 'AC_400100'];
+      case 'engineer':
+        return ['AC_100100', 'AC_100110', 'AC_200120', 'AC_200130', 'AC_300100'];
       case 'normal':
-        return ['AC_100100', 'AC_100110'];
+        return ['AC_100100', 'AC_200120'];
       case 'guest':
         return ['AC_100100'];
       default:
@@ -56,7 +65,7 @@ export const useAuthStore = defineStore('auth', () => {
       const loginResult = await loginApi(params);
 
       //正式加入角色后删除这行代码，当前后端为返回角色时，默认角色为admin
-      loginResult.role = loginResult.role || 'admin';
+      loginResult.roleCode = loginResult.roleCode;
       console.log('登录结果:', loginResult);
       // 如果成功获取到 token
       if (loginResult.token) {
@@ -68,7 +77,7 @@ export const useAuthStore = defineStore('auth', () => {
           realName: loginResult.name || loginResult.firstName || loginResult.username,
           avatar: loginResult.avatar || '',
           userId: loginResult.userId,
-          roleCode: loginResult.role || 'admin',
+          roleCode: loginResult.roleCode,
           desc: '',
           homePath: preferences.app.defaultHomePath,
           token: loginResult.token,
@@ -81,7 +90,7 @@ export const useAuthStore = defineStore('auth', () => {
         webSocketStore.connect();
         
         // 根据角色设置权限代码
-        const accessCodes = getAccessCodesByRole(loginResult.role);
+        const accessCodes = getAccessCodesByRole(loginResult.roleCode);
         accessStore.setAccessCodes(accessCodes);
 
         if (accessStore.loginExpired) {
@@ -117,6 +126,7 @@ export const useAuthStore = defineStore('auth', () => {
     } catch {
       // 不做任何处理
     }
+    clearExperimentFromStorage();
     
     // 登出时断开WebSocket连接
     webSocketStore.disconnect();

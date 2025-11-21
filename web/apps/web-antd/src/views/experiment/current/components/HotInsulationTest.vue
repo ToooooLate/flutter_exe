@@ -18,6 +18,7 @@
           type="text"
           class="max-w-md flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="请输入发电机序列号"
+          :disabled="!isEditable"
         />
       </div>
     </div>
@@ -36,6 +37,7 @@
           v-model="conclusion"
           class="h-full w-full resize-none border-0 outline-none"
           placeholder="请输入结论..."
+          :readonly="!isEditable"
         />
       </div>
     </div>
@@ -43,12 +45,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { useExperimentStore } from '#/store/experiment';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 
 interface RowType {
   id: string;
@@ -63,6 +66,7 @@ const webSocketStore = useWebSocketStore();
 
 const generatorSN = ref('');
 const conclusion = ref('');
+const isEditable = computed(() => canEditTable());
 
 // 初始化数据
 onMounted(() => {
@@ -211,6 +215,7 @@ const gridOptions: VxeGridProps<RowType> = {
   editConfig: {
     mode: 'cell',
     trigger: 'click',
+    beforeEditMethod: () => isEditable.value,
   },
   pagerConfig: {
     enabled: false,

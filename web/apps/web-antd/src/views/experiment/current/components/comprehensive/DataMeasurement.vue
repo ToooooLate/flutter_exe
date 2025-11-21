@@ -25,7 +25,7 @@ import { Tabs, TabPane, message } from 'ant-design-vue';
 import { useExperimentStore } from '#/store/experiment';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
-import type { IntegratedCheckItem } from '#/store/experiment';
+import type { IntegratedCheckItem } from '#/store';
 import IntegratedCheckForm from './IntegratedCheckForm.vue';
 
 const experimentStore = useExperimentStore();

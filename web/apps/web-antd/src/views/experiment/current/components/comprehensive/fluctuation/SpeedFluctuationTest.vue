@@ -13,20 +13,20 @@
         <label>转速波动率要求/Standard:</label>
         <input
           v-model="speedFluctuationStandard"
-          :readonly="!isAdmin"
+          :disabled="!isEditable"
           placeholder="请输入转速波动率要求..."
           class="w-full rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-          :class="{ 'bg-gray-100': !isAdmin }"
+          :class="{ 'bg-gray-100': !isEditable }"
         />
       </div>
       <div class="form-row">
         <label>结论 Conclusion:</label>
         <textarea
           v-model="conclusion"
-          :readonly="!isAdmin"
+          :readonly="!isEditable"
           placeholder="请输入结论..."
           class="h-20 w-full resize-none rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-          :class="{ 'bg-gray-100': !isAdmin }"
+          :class="{ 'bg-gray-100': !isEditable }"
         />
       </div>
     </div>
@@ -34,13 +34,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue';
+import { ref, onMounted, onUnmounted, watch, nextTick, computed } from 'vue';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { useExperimentStore } from '#/store/experiment';
 import { useUserRole } from '#/composables/useUserRole';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 
 // 响应式数据
 const conclusion = ref('');
@@ -50,6 +51,7 @@ const speedFluctuationStandard = ref('');
 const experimentStore = useExperimentStore();
 const webSocketStore = useWebSocketStore();
 const { isAdmin } = useUserRole();
+const isEditable = computed(() => canEditTable());
 const { registerCollector, unregisterCollector } = useDataCollector();
 
 // 标志位，用于避免循环更新
@@ -87,63 +89,63 @@ const gridOptions: VxeGridProps = {
       title: '负载 (%)\nLoad',
       width: 100,
       align: 'center',
-      editRender: isAdmin ? { name: 'VxeInput' } : undefined,
+      editRender: { name: 'VxeInput' },
     },
     {
       field: 'power',
       title: '功率 (kW)\nPower',
       width: 120,
       align: 'center',
-      editRender: isAdmin ? { name: 'VxeInput' } : undefined,
+      editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequency',
       title: '频率 (Hz)\nFrequency',
       width: 120,
       align: 'center',
-      editRender: isAdmin ? { name: 'VxeInput' } : undefined,
+      editRender: { name: 'VxeInput' },
     },
     {
       field: 'powerFactor',
       title: '功率因数 COS Φ\nPower Factor',
       width: 120,
       align: 'center',
-      editRender: isAdmin ? { name: 'VxeInput' } : undefined,
+      editRender: { name: 'VxeInput' },
     },
     {
       field: 'measuredFreqBeforeExperiment',
       title: '波动试验前频率\nMeasured frequency before motion testing',
       width: 160,
       align: 'center',
-      editRender: isAdmin ? { name: 'VxeInput' } : undefined,
+      editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequencyWaveMax',
       title: '频率 Max\nFrequency wave motion in 1 mins - Max',
       width: 160,
       align: 'center',
-      editRender: isAdmin ? { name: 'VxeInput' } : undefined,
+      editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequencyWaveMin',
       title: '频率 Min\nFrequency wave motion in 1 mins - Min',
       width: 160,
       align: 'center',
-      editRender: isAdmin ? { name: 'VxeInput' } : undefined,
+      editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequencyWaveAve',
       title: '频率 Ave\nFrequency wave motion in 1 mins Ave',
       width: 160,
       align: 'center',
-      editRender: isAdmin ? { name: 'VxeInput' } : undefined,
+      editRender: { name: 'VxeInput' },
     },
     {
       field: 'speedFluctuationRate',
       title: '转速波动值 %\nFrequency wave motion rate',
       width: 140,
       align: 'center',
-      editRender: isAdmin ? { name: 'VxeInput' } : undefined,
+      editRender: { name: 'VxeInput' },
     },
   ],
   pagerConfig: {
@@ -152,6 +154,7 @@ const gridOptions: VxeGridProps = {
   editConfig: {
     trigger: 'click',
     mode: 'cell',
+    beforeEditMethod: () => isEditable.value,
   },
   border: true,
   showOverflow: false,

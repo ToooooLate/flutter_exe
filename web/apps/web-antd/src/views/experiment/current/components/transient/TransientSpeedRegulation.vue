@@ -12,15 +12,21 @@
 
     <!-- 测试数据表格 -->
     <div class="mb-6">
-      <Button type="primary" class="mr-2" @click="handleEditProject"
-        >编辑项目</Button
+      <Button
+        type="primary"
+        class="mr-2"
+        :disabled="!isEditable"
+        @click="handleEditProject"
       >
+        编辑项目
+      </Button>
       <!-- <Button type="primary">打印曲线</Button> -->
       <Grid>
         <template #action="{ row }">
           <div class="flex gap-2">
             <Button
               type="button"
+              :disabled="!isEditable"
               class="rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600"
               @click="handleMeasure(row)"
             >
@@ -50,6 +56,7 @@
             :value="stabilizationTimeRange"
             @update:value="(val) => (stabilizationTimeRange.value = val)"
             type="text"
+            :disabled="!isEditable"
             class="w-20 rounded-md border border-gray-300 px-3 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <span class="text-sm text-gray-600">%</span>
@@ -63,6 +70,7 @@
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusion"
+          :readonly="!isEditable"
           class="h-full w-full resize-none border-0 outline-none"
           placeholder="请输入结论..."
         />
@@ -162,6 +170,7 @@ import {
 } from '#/api/core';
 import { LineChart } from '../charts';
 import type { ChartDataPoint, RangeArea } from '../charts/types';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 
 interface RowType {
   id: string;
@@ -327,6 +336,8 @@ const chartRefs: Record<string, any> = {};
 const setChartRef = (id: string) => (el: any) => {
   chartRefs[id] = el;
 };
+// 统一编辑权限开关
+const isEditable = computed(() => canEditTable());
 
 // 项目控制弹窗
 const selectedRows = ref<string[]>([]);
@@ -755,7 +766,7 @@ const gridOptions: VxeGridProps = {
       slots: { default: 'action' },
     },
   ],
-  editConfig: { trigger: 'click', mode: 'cell' },
+  editConfig: { trigger: 'click', mode: 'cell', beforeEditMethod: () => canEditTable() },
   checkboxConfig: {
     labelField: 'serialNumber',
     checkStrictly: true,

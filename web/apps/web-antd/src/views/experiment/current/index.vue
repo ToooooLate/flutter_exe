@@ -42,11 +42,6 @@ import OperationInspection from './components/OperationInspection.vue';
 // @ts-ignore
 import ProtectionDeviceTest from './components/ProtectionDeviceTest.vue';
 // @ts-ignore
-import LoadTest from './components/LoadTest.vue';
-// @ts-ignore
-import SteadyStateTest from './components/SteadyStateTest.vue';
-// @ts-ignore
-import FluctuationTest from './components/FluctuationTest.vue';
 // @ts-ignore
 import TransientTest from './components/transient/TransientTest.vue';
 // @ts-ignore
@@ -123,9 +118,6 @@ const componentMap = {
   operation: OperationInspection,
   protection: ProtectionDeviceTest,
   comprehensive: ComprehensiveExperiment,
-  load: LoadTest,
-  steady: SteadyStateTest,
-  fluctuation: FluctuationTest,
   transient: TransientTest,
   'hot-insulation': HotInsulationTest,
 };

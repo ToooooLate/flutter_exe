@@ -25,6 +25,7 @@
           v-model="conclusion"
           class="h-full w-full resize-none border-none outline-none"
           placeholder="请输入试验结论..."
+          :readonly="!isEditable"
         ></textarea>
       </div>
     </div>
@@ -35,10 +36,11 @@
 // @ts-nocheck
 import type { VxeTableGridOptions } from '@vben/plugins/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { useExperimentStore } from '#/store/experiment';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 
 interface RowType {
   id: string;
@@ -114,6 +116,7 @@ const gridOptions: VxeTableGridOptions<RowType> = {
   editConfig: {
     mode: 'cell',
     trigger: 'click',
+    beforeEditMethod: () => isEditable.value,
   },
   pagerConfig: {
     enabled: false,
@@ -127,6 +130,7 @@ const gridOptions: VxeTableGridOptions<RowType> = {
 };
 
 const [Grid, GridApi] = useVbenVxeGrid({ gridOptions });
+const isEditable = computed(() => canEditTable());
 
 // 数据收集器
 const collector = {

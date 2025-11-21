@@ -93,6 +93,7 @@ declare module '#/composables/useDataCollector' {
 // 本地实验存储工具的最小类型声明
 declare module '#/composables/useExperimentStorage' {
   export const EXPERIMENT_STORAGE_KEY: string;
+  export const EXPERIMENT_STATUS_EVENT: string;
   export interface ExperimentStorageData {
     experimentNo: string;
     id: string;
@@ -119,6 +120,11 @@ declare module '#/store/experiment' {
     // 补充缺失的动作，避免编辑器类型误报
     updateLoadTestReport: (data: any) => void;
     submitExperimentData: () => Promise<void>;
+    // 以下方法在 hooks 与各组件中被调用，补充最小类型声明
+    setCurrentExperiment: (experiment: any) => void;
+    updateExperimentNoAndId: (experimentNo: string, experimentId: string) => void;
+    updateExperimentData: (data: any) => void;
+    clearCurrentExperiment: () => void;
   };
 }
 

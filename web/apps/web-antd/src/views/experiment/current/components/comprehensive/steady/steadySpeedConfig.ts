@@ -1,7 +1,9 @@
-import { computed, type Ref } from 'vue';
+import { computed } from 'vue';
+import type { Ref } from 'vue';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import type { SteadySpeedSubItem, SteadySpeedItem } from '#/store/experiment';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 
 // 创建稳态调速特性表格配置
 export function createSteadySpeedGridOptions(data: SteadySpeedSubItem[]) {
@@ -145,6 +147,7 @@ export function createSteadySpeedGridOptions(data: SteadySpeedSubItem[]) {
     editConfig: {
       trigger: 'click',
       mode: 'cell',
+      beforeEditMethod: () => canEditTable(),
     },
     pagerConfig: {
       enabled: false,
@@ -274,7 +277,7 @@ export function createSteadySpeedMainGridOptions(data: SteadySpeedItem[]): VxeGr
         },
       }
     ],
-    editConfig: { trigger: 'click', mode: 'cell' },
+    editConfig: { trigger: 'click', mode: 'cell', beforeEditMethod: () => canEditTable() },
     border: true,
     stripe: true,
     pagerConfig: {

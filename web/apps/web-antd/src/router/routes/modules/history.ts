@@ -8,7 +8,7 @@ const routes: RouteRecordRaw[] = [
       icon: 'icon-park-twotone:history-query',
       order: 20,
       title: $t('page.history.title'),
-      authority: ['admin', 'normal'], // admin和normal角色可以访问
+      authority: ['admin', 'normal', 'engineer'], // admin和normal角色可以访问
     },
     name: 'History',
     path: '/history',

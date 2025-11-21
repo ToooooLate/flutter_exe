@@ -13,6 +13,7 @@
           v-model="conclusion"
           placeholder="请输入结论..."
           class="h-20 w-full resize-none rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+          :readonly="!isEditable"
         />
       </div>
     </div>
@@ -20,12 +21,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { useExperimentStore } from '#/store/experiment';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 
 // 响应式数据
 const conclusion = ref('');
@@ -355,6 +357,7 @@ const gridOptions: VxeGridProps = {
   editConfig: {
     trigger: 'click',
     mode: 'cell',
+    beforeEditMethod: () => isEditable.value,
   },
   border: true,
   showOverflow: false,
@@ -367,6 +370,7 @@ const gridOptions: VxeGridProps = {
 };
 
 const [Grid, GridApi] = useVbenVxeGrid({ gridOptions });
+const isEditable = computed(() => canEditTable());
 
 // WebSocket 监听器函数 - 处理负载测试数据更新
 const handleLoadTestData = (data: any) => {

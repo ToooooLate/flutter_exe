@@ -15,6 +15,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           icon: 'icon-park-twotone:user',
           title: '用户管理',
+          authority: ['admin'], // admin角色可以访问
         },
         name: 'UserManagement',
         path: 'user',
@@ -24,6 +25,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           icon: 'icon-park-twotone:plug-one',
           title: 'DCU连接',
+          authority: ['admin', 'engineer'], // admin和engineer角色可以访问
         },
         name: 'DCUConnection',
         path: 'dcu',

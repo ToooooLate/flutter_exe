@@ -21,7 +21,7 @@
               <Input
                 v-model:value="formData.ratedVoltage"
                 placeholder="请输入标准电压"
-                :disabled="!isAdmin"
+                :disabled="!isEditable"
                 class="w-full"
               />
             </div>
@@ -32,7 +32,7 @@
               <Input
                 v-model:value="formData.noLoadMaxVoltage"
                 placeholder="请输入+5%电压"
-                :disabled="!isAdmin"
+                :disabled="!isEditable"
                 class="w-full"
               />
             </div>
@@ -43,7 +43,7 @@
               <Input
                 v-model:value="formData.noLoadMinVoltage"
                 placeholder="请输入-5%电压"
-                :disabled="!isAdmin"
+                :disabled="!isEditable"
                 class="w-full"
               />
             </div>
@@ -60,7 +60,7 @@
               <Input
                 v-model:value="formData.maxSpeedRegulationNoLoadFreq"
                 placeholder="请输入频率"
-                :disabled="!isAdmin"
+                :disabled="!isEditable"
                 class="w-full"
               />
             </div>
@@ -71,7 +71,7 @@
               <Input
                 v-model:value="formData.maxSpeedRegulationFullLoadFreq"
                 placeholder="请输入频率"
-                :disabled="!isAdmin"
+                :disabled="!isEditable"
                 class="w-full"
               />
             </div>
@@ -82,7 +82,7 @@
               <Input
                 v-model:value="formData.maxSteadyStateSpeedRegulation"
                 placeholder="请输入调速率"
-                :disabled="!isAdmin"
+                :disabled="!isEditable"
                 class="w-full"
               />
             </div>
@@ -99,7 +99,7 @@
               <Input
                 v-model:value="formData.minSpeedRegulationNoLoadFreq"
                 placeholder="请输入频率"
-                :disabled="!isAdmin"
+                :disabled="!isEditable"
                 class="w-full"
               />
             </div>
@@ -110,7 +110,7 @@
               <Input
                 v-model:value="formData.minSpeedRegulationFullLoadFreq"
                 placeholder="请输入频率"
-                :disabled="!isAdmin"
+                :disabled="!isEditable"
                 class="w-full"
               />
             </div>
@@ -121,7 +121,7 @@
               <Input
                 v-model:value="formData.minSteadyStateSpeedRegulation"
                 placeholder="请输入调速率"
-                :disabled="!isAdmin"
+                :disabled="!isEditable"
                 class="w-full"
               />
             </div>
@@ -136,7 +136,7 @@
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="formData.conclusion"
-          :disabled="!isAdmin"
+          :readonly="!isEditable"
           class="h-full w-full resize-none border-0 outline-none"
           placeholder="请输入结论..."
         />
@@ -149,6 +149,7 @@
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import { useExperimentStore } from '#/store/experiment';
 import { useUserRole } from '#/composables/useUserRole';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
 import { Input, Descriptions, DescriptionsItem } from 'ant-design-vue';
@@ -156,6 +157,7 @@ import { Input, Descriptions, DescriptionsItem } from 'ant-design-vue';
 // 使用 stores
 const experimentStore = useExperimentStore();
 const { isAdmin } = useUserRole();
+const isEditable = computed(() => canEditTable());
 const webSocketStore = useWebSocketStore();
 
 // WebSocket 更新标志位，避免循环更新
@@ -179,7 +181,7 @@ const formData = ref({
 
 // 更新字段值
 const updateField = (field: string, value: any) => {
-  if (isAdmin.value) {
+  if (isEditable.value) {
     formData.value[field] = value;
   }
 };

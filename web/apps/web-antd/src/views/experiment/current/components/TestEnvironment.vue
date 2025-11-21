@@ -8,13 +8,14 @@
     <div class="vp-raw w-full">
       <Descriptions title="试验环境参数" bordered :column="2">
         <DescriptionsItem label="地点 / Test place">
-          <Input v-model:value="localData.testPlace" placeholder="请输入地点" />
+          <Input v-model:value="localData.testPlace" placeholder="请输入地点" :disabled="!isEditable" />
         </DescriptionsItem>
         <DescriptionsItem label="试验温度 / Temperature">
           <InputNumber
             v-model:value="localData.temperature"
             placeholder="请输入温度"
             addon-after="°C"
+            :disabled="!isEditable"
           />
         </DescriptionsItem>
         <DescriptionsItem label="空气湿度 / Relative humidity">
@@ -22,6 +23,7 @@
             v-model:value="localData.relativeHumidity"
             placeholder="请输入湿度"
             addon-after="%"
+            :disabled="!isEditable"
           />
         </DescriptionsItem>
         <DescriptionsItem label="大气压力 / Atmosphere">
@@ -29,6 +31,7 @@
             v-model:value="localData.atmosphericPressure"
             placeholder="请输入压力"
             addon-after="kPa"
+            :disabled="!isEditable"
           />
         </DescriptionsItem>
         <DescriptionsItem label="检验日期 / Date of test" :span="2">
@@ -38,6 +41,7 @@
             placeholder="请选择日期"
             valueFormat="YYYY-MM-DDTHH:mm:ss"
             class="w-full"
+            :disabled="!isEditable"
           />
         </DescriptionsItem>
       </Descriptions>
@@ -46,11 +50,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted, onUnmounted } from 'vue';
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue';
 import { useExperimentStore } from '#/store/experiment';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
 import dayjs from 'dayjs';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 import {
   Input,
   InputNumber,
@@ -83,6 +88,9 @@ const localData = ref<EnvironmentData>({
   atmosphericPressure: 0,
   testDate: null,
 });
+
+// 是否可编辑：权限+实验状态
+const isEditable = computed(() => canEditTable());
 
 // 初始化本地数据
 const initializeLocalData = () => {

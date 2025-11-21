@@ -12,15 +12,21 @@
 
     <!-- 测试数据表格 -->
     <div class="mb-6">
-      <Button type="primary" class="mr-2" @click="handleEditProject"
-        >编辑项目</Button
+      <Button
+        type="primary"
+        class="mr-2"
+        :disabled="!isEditable"
+        @click="handleEditProject"
       >
+        编辑项目
+      </Button>
 
       <Grid>
         <template #action="{ row }">
           <div class="flex gap-2">
             <Button
               type="button"
+              :disabled="!isEditable"
               class="rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600"
               @click="handleMeasure(row)"
             >
@@ -50,6 +56,7 @@
             :value="stableVoltageDeviationRange"
             @update:value="onStableRangeUpdate"
             type="text"
+            :disabled="!isEditable"
             class="w-20 rounded-md border border-gray-300 px-3 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <span class="text-sm text-gray-600">%</span>
@@ -63,6 +70,7 @@
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusion"
+          :readonly="!isEditable"
           class="h-full w-full resize-none border-0 outline-none"
           placeholder="请输入结论..."
         />
@@ -147,6 +155,7 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { useExperimentStore } from '#/store/experiment';
 import { useUserRole } from '#/composables/useUserRole';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
 import { CountdownModal } from '../modal';
 import {
@@ -301,6 +310,9 @@ const defaultRangeArea = computed<RangeArea>(() => {
     name: '稳定电压范围',
   };
 });
+
+// 统一编辑权限开关
+const isEditable = computed(() => canEditTable());
 
 // Store 实例
 const experimentStore = useExperimentStore();
@@ -716,7 +728,11 @@ const gridOptions: VxeGridProps = {
       slots: { default: 'action' },
     },
   ],
-  editConfig: { trigger: 'click', mode: 'cell' },
+  editConfig: {
+    trigger: 'click',
+    mode: 'cell',
+    beforeEditMethod: () => canEditTable(),
+  },
   checkboxConfig: {
     labelField: 'serialNumber',
     checkStrictly: true,

@@ -19,6 +19,7 @@
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusionValue"
+          :readonly="!isEditable"
           class="h-full w-full resize-none border-none outline-none"
           placeholder="请输入检查结论..."
         ></textarea>
@@ -36,6 +37,7 @@ import { useExperimentStore } from '#/store/experiment';
 import { useUserRole } from '#/composables/useUserRole';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 
 // 类型定义
 interface RowType {
@@ -51,8 +53,8 @@ interface RowType {
 const experimentStore = useExperimentStore();
 const webSocketStore = useWebSocketStore();
 
-// 用户角色判断
-const { isAdmin } = useUserRole();
+// 编辑权限（基于权限码与实验状态）
+const isEditable = computed(() => canEditTable());
 
 // 标志位，用于避免循环更新
 const isUpdatingFromStore = ref(false);
@@ -121,6 +123,7 @@ const gridOptions = () => {
     editConfig: {
       mode: 'cell',
       trigger: 'click',
+      beforeEditMethod: () => isEditable.value,
     },
     pagerConfig: {
       enabled: false,
