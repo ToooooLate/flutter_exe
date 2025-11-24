@@ -6,6 +6,7 @@ const routes: RouteRecordRaw[] = [
       icon: 'icon-park-twotone:setting',
       order: 40,
       title: '系统管理',
+      authority: ['admin', 'engineer'], // admin和engineer角色可以访问
     },
     name: 'System',
     path: '/system',

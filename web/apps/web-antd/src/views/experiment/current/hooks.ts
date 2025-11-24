@@ -1,9 +1,11 @@
 import { ref, onMounted } from 'vue';
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
+import { useClipboard } from '@vueuse/core';
 import { generateAccessCredentialApi, getAccessCredentialApi } from '#/api/core';
-import { generateExperimentNumApi, returnStaticCommand, getExperimentDetailByIdApi } from '#/api/core/experiment';
+import { generateExperimentNumApi, returnStaticCommand, getExperimentDetailByIdApi, getExperimentIdByNoApi } from '#/api/core/experiment';
 import { useExperimentStore } from '#/store/experiment';
+import { useUserStore } from '#/store/user';
 import { useDataCollector } from '#/composables/useDataCollector';
 import {
   saveExperimentToStorage,
@@ -18,7 +20,9 @@ export function useCurrentExperiment() {
   const experimentStore = useExperimentStore();
   const { executeSyncQueue } = useDataCollector();
   const router = useRouter();
+  const userStore = useUserStore();
   const experimentNo = ref('');
+  const { copy } = useClipboard({ legacy: true });
 
   const hasCredential = ref(false);
   const credentialModalOpen = ref(false);
@@ -55,7 +59,17 @@ export function useCurrentExperiment() {
 
   // 初始化实验数据，从 localStorage 恢复
   const initializeExperimentData = async () => {
-    const storedData = getExperimentFromStorage();
+    let storedData = getExperimentFromStorage();
+    // 如果从本地userStore中获取到的账户角色是guest，且没有storedData，则使用getExperimentIdByNoApi查询实验ID，存储实验信息到localStorage
+    if (!storedData) {
+      const role = (userStore.userInfo as any)?.roleCode;
+      if (role === 'guest') {
+        const experimentIdByNo: any = await getExperimentIdByNoApi({ experimentNo: userStore.userInfo?.username});
+        saveExperimentToStorage(userStore.userInfo?.username || '', experimentIdByNo || '', 0);
+        storedData = getExperimentFromStorage();
+      }
+    }
+
     if (storedData && storedData.experimentNo && storedData.id) {
       try {
         console.log('从本地存储发现实验数据:', storedData);
@@ -81,7 +95,7 @@ export function useCurrentExperiment() {
         clearExperimentFromStorage();
         message.error('恢复实验数据失败，请重新创建实验');
       }
-    }
+    } 
   };
 
   const handleButtonClick = async (buttonKey: string) => {
@@ -188,12 +202,6 @@ export function useCurrentExperiment() {
       case 'sync': {
         console.log('同步数据:', experimentNo.value);
         try {
-          // 获取所有收集器信息
-          // const collectorInfo = getCollectorInfo();
-          // console.log('当前注册的数据收集器:', collectorInfo)
-          
-        
-          
           // 执行数据同步队列
           const syncSuccess = await executeSyncQueue();
           
@@ -219,7 +227,27 @@ export function useCurrentExperiment() {
           break;
         }
         try {
-          if (!hasCredential.value) {
+          // 先查询是否已有临时账号
+          let fetched: any | null = null;
+          try {
+            fetched = await getAccessCredentialApi({ username: experimentNo.value });
+          } catch (err) {
+            fetched = null;
+          }
+
+          if (fetched && (fetched.url || fetched.password)) {
+            // 已存在临时账号，使用查询到的数据
+            accessCredential.value = {
+              url: fetched?.url ?? accessCredential.value.url ?? '',
+              account: experimentNo.value,
+              password: fetched?.password ?? accessCredential.value.password ?? '',
+            };
+            hasCredential.value = true;
+            setCredentialButtonLabel();
+            credentialModalOpen.value = true;
+            message.success('已获取访问凭证');
+          } else {
+            // 不存在则生成新的临时账号
             const res = await generateAccessCredentialApi({ username: experimentNo.value, end: 1 });
             accessCredential.value = {
               url: res?.url ?? '',
@@ -230,19 +258,10 @@ export function useCurrentExperiment() {
             setCredentialButtonLabel();
             credentialModalOpen.value = true;
             message.success('访问凭证已生成');
-          } else {
-            try {
-              const res = await getAccessCredentialApi({ experimentId: expId });
-              accessCredential.value = {
-                url: res?.url ?? accessCredential.value.url,
-                account: experimentNo.value,
-                password: res?.password ?? accessCredential.value.password,
-              };
-            } catch {}
-            credentialModalOpen.value = true;
           }
         } catch (e) {
-          message.error('访问凭证生成失败');
+          credentialModalOpen.value = false;
+          message.error('访问凭证处理失败');
         }
         break;
       }
@@ -252,7 +271,7 @@ export function useCurrentExperiment() {
   const copyCredentialAll = async () => {
     const text = `临时访问地址：${accessCredential.value.url}\n账号：${accessCredential.value.account}\n密码：${accessCredential.value.password}`;
     try {
-      await navigator.clipboard.writeText(text);
+      await copy(text);
       message.success('已复制到剪贴板');
     } catch {
       message.error('复制失败');
@@ -261,7 +280,7 @@ export function useCurrentExperiment() {
 
   const copyText = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      await copy(text);
       message.success('已复制');
     } catch {
       message.error('复制失败');

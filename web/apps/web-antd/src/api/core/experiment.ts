@@ -194,3 +194,10 @@ export async function stabilityCheckApi(data: any) {
 export async function transientVoltageCheckApi(data: any) {
   return requestClient.post(`/api/sg/command/transientSpeed`,  data );
 }
+
+/**
+ * 根据实验编号查询实验ID
+ */
+export async function getExperimentIdByNoApi(params: { experimentNo: string }) {
+  return requestClient.get(`/api/sg/experiment/getIdByNo`, { params } );
+}

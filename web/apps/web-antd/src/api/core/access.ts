@@ -2,7 +2,7 @@ import { requestClient } from '../request';
 
 export interface AccessCredentialPayload {
   username: string;
-  end: number;
+  end?: number;
 }
 
 export interface AccessCredentialResp {
@@ -20,5 +20,5 @@ export function generateAccessCredentialApi(
 export function getAccessCredentialApi(
   payload: AccessCredentialPayload,
 ): Promise<AccessCredentialResp> {
-  return requestClient.post('/access/credentials/get', payload);
+  return requestClient.post('/api/sg/user/getTemporary', payload);
 }

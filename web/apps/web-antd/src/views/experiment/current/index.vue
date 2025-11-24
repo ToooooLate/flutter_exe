@@ -49,6 +49,10 @@ import HotInsulationTest from './components/HotInsulationTest.vue';
 // @ts-ignore
 import ComprehensiveExperiment from './components/comprehensive/ComprehensiveExperiment.vue';
 
+import { useUserRole } from '#/composables/useUserRole';
+
+const { isEngineer } = useUserRole();
+
 const {
   experimentNo,
   hasCredential,
@@ -164,58 +168,69 @@ onBeforeRouteLeave((to, from, next) => {
     <template #title>
       <div class="flex w-full items-center justify-between">
         <span> 负载实验{{ safeExperimentNo }} </span>
-        <div class="flex gap-2" v-if="isPendingOrInit">
-          <span v-for="button in experimentButtons" :key="button.key">
-            <Popover
-              v-if="button.key === 'credential' && hasCredential"
-              placement="bottomRight"
-            >
-              <template #content>
-                <div class="space-y-2">
-                  <div>
-                    <span class="mr-2">临时访问地址：</span>
-                    <span class="break-all text-blue-600">{{
-                      accessCredential.url
-                    }}</span>
-                    <Button
-                      size="small"
-                      type="link"
-                      @click="copyText(accessCredential.url)"
-                      >复制</Button
-                    >
+        <template v-if="isEngineer">
+          <div class="flex gap-2" v-if="isPendingOrInit">
+            <span v-for="button in experimentButtons" :key="button.key">
+              <Popover
+                v-if="button.key === 'credential' && hasCredential"
+                placement="bottomRight"
+              >
+                <template #content>
+                  <div class="space-y-2">
+                    <div>
+                      <span class="mr-2">临时访问地址：</span>
+                      <span class="break-all text-blue-600">{{
+                        accessCredential.url
+                      }}</span>
+                      <Button
+                        size="small"
+                        type="link"
+                        @click="copyText(accessCredential.url)"
+                        >复制</Button
+                      >
+                    </div>
+                    <div>
+                      <span class="mr-2">账号：</span>
+                      <span class="text-gray-800">{{
+                        accessCredential.account
+                      }}</span>
+                      <Button
+                        size="small"
+                        type="link"
+                        @click="copyText(accessCredential.account)"
+                        >复制</Button
+                      >
+                    </div>
+                    <div>
+                      <span class="mr-2">密码：</span>
+                      <span class="text-gray-800">{{
+                        accessCredential.password
+                      }}</span>
+                      <Button
+                        size="small"
+                        type="link"
+                        @click="copyText(accessCredential.password)"
+                        >复制</Button
+                      >
+                    </div>
+                    <div class="pt-1">
+                      <Button size="small" @click="copyCredentialAll"
+                        >一键复制全部</Button
+                      >
+                    </div>
                   </div>
-                  <div>
-                    <span class="mr-2">账号：</span>
-                    <span class="text-gray-800">{{
-                      accessCredential.account
-                    }}</span>
-                    <Button
-                      size="small"
-                      type="link"
-                      @click="copyText(accessCredential.account)"
-                      >复制</Button
-                    >
-                  </div>
-                  <div>
-                    <span class="mr-2">密码：</span>
-                    <span class="text-gray-800">{{
-                      accessCredential.password
-                    }}</span>
-                    <Button
-                      size="small"
-                      type="link"
-                      @click="copyText(accessCredential.password)"
-                      >复制</Button
-                    >
-                  </div>
-                  <div class="pt-1">
-                    <Button size="small" @click="copyCredentialAll"
-                      >一键复制全部</Button
-                    >
-                  </div>
-                </div>
-              </template>
+                </template>
+                <Button
+                  :type="button.type"
+                  :disabled="button.disabled"
+                  :danger="button.danger"
+                  @click="handleButtonClick(button.key)"
+                >
+                  {{ button.label }}
+                </Button>
+              </Popover>
               <Button
+                v-else
                 :type="button.type"
                 :disabled="button.disabled"
                 :danger="button.danger"
@@ -223,21 +238,12 @@ onBeforeRouteLeave((to, from, next) => {
               >
                 {{ button.label }}
               </Button>
-            </Popover>
-            <Button
-              v-else
-              :type="button.type"
-              :disabled="button.disabled"
-              :danger="button.danger"
-              @click="handleButtonClick(button.key)"
-            >
-              {{ button.label }}
-            </Button>
-          </span>
-        </div>
-        <div class="flex gap-2" v-else>
-          <Button type="primary" @click="handleInitialize">初始化</Button>
-        </div>
+            </span>
+          </div>
+          <div class="flex gap-2" v-else>
+            <Button type="primary" @click="handleInitialize">初始化</Button>
+          </div>
+        </template>
       </div>
     </template>
 
