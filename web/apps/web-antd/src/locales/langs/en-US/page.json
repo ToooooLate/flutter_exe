@@ -8,7 +8,23 @@
   },
   "common": {
     "enabled": "Enabled",
-    "disabled": "Disabled"
+    "disabled": "Disabled",
+    "search": "Search",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "actions": "Actions",
+    "index": "Index",
+    "editSuccess": "Edit succeeded",
+    "addSuccess": "Added successfully",
+    "addFailed": "Add failed",
+    "deleteSuccessWithName": "Delete succeeded: {0}",
+    "deleteFailed": "Delete failed",
+    "resetSuccessWithName": "Reset succeeded: {0}",
+    "reset": "Reset",
+    "details": "Details",
+    "enableSuccessWithName": "Enable succeeded: {0}",
+    "enableFailedWithName": "Enable failed: {0}"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -21,6 +37,65 @@
   },
   "history": {
     "title": "History"
+  },
+  "system": {
+    "title": "System",
+    "userManagement": "User",
+    "dcuConnection": "DCU",
+    "user": {
+      "title": "Account Management",
+      "addAccount": "Add Account",
+      "editAccount": "Edit Account",
+      "resetPassword": "Reset",
+      "resetConfirm": "Confirm to reset this account password?",
+      "deleteConfirm": "Confirm to delete this account?",
+      "username": "Username",
+      "usernamePlaceholder": "Please enter username",
+      "role": "Role",
+      "statusTitle": "Status",
+      "createdAt": "Created At",
+      "expiredAt": "Expired At",
+      "status": {
+        "available": "Available",
+        "locked": "Locked"
+      }
+    },
+    "dcu": {
+      "title": "DCU Connection Management",
+      "addDevice": "Add DCU Device",
+      "deleteDeviceConfirm": "Confirm to delete this device?",
+      "enable": "Enable",
+      "statusTitle": "Enable Status",
+      "status": {
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      },
+      "name": "Name",
+      "namePlaceholder": "Please enter name",
+      "addParam": "Add Parameter",
+      "editParam": "Edit Parameter",
+      "editParamSuccess": "Edit parameter succeeded",
+      "editParamFailed": "Edit parameter failed",
+      "addParamSuccess": "Add parameter succeeded",
+      "addParamFailed": "Add parameter failed",
+      "selectParam": "Select Parameter",
+      "selectParamPlaceholder": "Please select DCU parameter",
+      "paramName": "Parameter Name",
+      "paramNameEn": "English Name",
+      "highAddress": "High Address",
+      "lowAddress": "Low Address",
+      "factor": "Factor",
+      "paramNameZhPlaceholder": "Please enter Chinese name",
+      "paramNameEnPlaceholder": "Please enter English name",
+      "highAddressPlaceholder": "Please enter high address",
+      "lowAddressPlaceholder": "Please enter low address",
+      "factorPlaceholder": "Please enter factor",
+      "deleteParamConfirm": "Confirm to delete this parameter?",
+      "connectionSettings": {
+        "edit": "Edit {0} connection settings",
+        "view": "View {0} connection settings"
+      }
+    }
   },
   "report": {
     "title": "Report",

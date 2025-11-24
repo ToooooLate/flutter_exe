@@ -2,7 +2,7 @@
   <Page class="h-full">
     <template #title>
       <div class="flex items-center justify-between">
-        <span class="text-lg font-bold">账号管理</span>
+        <span class="text-lg font-bold">{{ $t('page.system.user.title') }}</span>
       </div>
     </template>
 
@@ -10,24 +10,34 @@
       <!-- 工具栏：新增账号按钮 -->
       <template #toolbar-tools>
         <Button type="primary" size="small" class="w-32" @click="onAddAccount"
-          >新增账号</Button
+          >{{ $t('page.system.user.addAccount') }}</Button
         >
       </template>
       <template #action="{ row }">
+        <Popconfirm
+          :title="$t('page.system.user.resetConfirm')"
+          :okText="$t('page.common.reset')"
+          :cancelText="$t('page.common.cancel')"
+          @confirm="onResetPassword(row)"
+        >
+          <Button type="link" size="small" :disabled="row.roleCode === 'guest'"
+            >{{ $t('page.system.user.resetPassword') }}</Button
+          >
+        </Popconfirm>
         <Button
           type="link"
           size="small"
           :disabled="row.roleCode === 'guest'"
           @click="onEditAccount(row)"
-          >编辑</Button
+          >{{ $t('page.common.edit') }}</Button
         >
         <Popconfirm
-          title="确认删除该账号？"
-          okText="删除"
-          cancelText="取消"
+          :title="$t('page.system.user.deleteConfirm')"
+          :okText="$t('page.common.delete')"
+          :cancelText="$t('page.common.cancel')"
           @confirm="onDeleteAccount(row)"
         >
-          <Button type="link" size="small" danger>删除</Button>
+          <Button type="link" size="small" danger>{{ $t('page.common.delete') }}</Button>
         </Popconfirm>
       </template>
     </Grid>
@@ -43,6 +53,7 @@
 import { onMounted, ref } from 'vue';
 import { Page, useVbenModal } from '@vben/common-ui';
 import { Button, Popconfirm, message } from 'ant-design-vue';
+import { $t } from '@vben/locales';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { useVbenForm, type VbenFormProps } from '#/adapter/form';
@@ -52,6 +63,7 @@ import {
   addUserAccountApi,
   updateUserAccountApi,
   deleteUserAccountApi,
+  resetUserPasswordApi,
 } from '#/api';
 
 interface AccountItem {
@@ -120,13 +132,16 @@ async function loadRoles() {
 const formOptions: VbenFormProps = {
   collapsed: false,
   showCollapseButton: true,
-  submitButtonOptions: { content: '查询' },
+  submitButtonOptions: { content: $t('page.common.search') },
   schema: [
     {
       component: 'Input',
       fieldName: 'username',
-      label: '账号名称',
-      componentProps: { placeholder: '请输入账号名称', allowClear: true },
+      label: $t('page.system.user.username'),
+      componentProps: {
+        placeholder: $t('page.system.user.usernamePlaceholder'),
+        allowClear: true,
+      },
     },
   ],
   showCollapseButton: false,
@@ -138,11 +153,11 @@ const gridOptions: VxeGridProps = {
   stripe: true,
   columnConfig: { resizable: true },
   columns: [
-    { type: 'seq', title: 'Index', width: 80, align: 'center' },
-    { field: 'username', title: '账号名称', minWidth: 200 },
+    { type: 'seq', title: $t('page.common.index'), width: 80, align: 'center' },
+    { field: 'username', title: $t('page.system.user.username'), minWidth: 200 },
     {
       field: 'roleCode',
-      title: '角色',
+      title: $t('page.system.user.role'),
       width: 140,
       align: 'center',
       cellRender: {
@@ -158,32 +173,32 @@ const gridOptions: VxeGridProps = {
     },
     {
       field: 'status',
-      title: '状态',
+      title: $t('page.system.user.statusTitle'),
       width: 140,
       align: 'center',
       cellRender: {
         name: 'CellTag',
         options: [
-          { value: 1, label: 'Locked', color: 'error' },
-          { value: 0, label: 'Available', color: 'success' },
+          { value: 1, label: $t('page.system.user.status.locked'), color: 'error' },
+          { value: 0, label: $t('page.system.user.status.available'), color: 'success' },
         ],
       },
     },
     {
       field: 'begin',
-      title: '创建时间',
+      title: $t('page.system.user.createdAt'),
       minWidth: 180,
       formatter: ({ cellValue }: any) => formatYmdHms(cellValue),
     },
     {
       field: 'end',
-      title: '到期时间',
+      title: $t('page.system.user.expiredAt'),
       minWidth: 180,
       formatter: ({ cellValue }: any) => formatYmdHms(cellValue),
     },
     {
-      title: '操作',
-      width: 160,
+      title: $t('page.common.actions'),
+      width: 220,
       align: 'center',
       fixed: 'right',
       slots: { default: 'action' },
@@ -223,10 +238,10 @@ const [AccountForm, accountFormApi] = useVbenForm({
         ...params,
         id: modalApi.getData()?.id,
       });
-      message.success('编辑成功');
+      message.success($t('page.common.editSuccess'));
     } else {
       const res = await addUserAccountApi(params);
-      res ? message.success('新增成功') : message.error('新增失败');
+      res ? message.success($t('page.common.addSuccess')) : message.error($t('page.common.addFailed'));
     }
     await GridApi.query();
     modalApi.close();
@@ -235,27 +250,27 @@ const [AccountForm, accountFormApi] = useVbenForm({
     {
       component: 'Input',
       fieldName: 'username',
-      label: '账号名称',
+      label: $t('page.system.user.username'),
       rules: 'required',
-      componentProps: { placeholder: '请输入账号名称' },
+      componentProps: { placeholder: $t('page.system.user.usernamePlaceholder') },
     },
     {
       component: 'Select',
       fieldName: 'roleId',
-      label: '角色',
+      label: $t('page.system.user.role'),
       rules: 'required',
       componentProps: {},
     },
     {
       component: 'Select',
       fieldName: 'status',
-      label: '状态',
+      label: $t('page.system.user.statusTitle'),
       rules: 'required',
       componentProps: {
         style: { width: '100%' },
         options: [
-          { label: 'Available', value: 0 },
-          { label: 'Locked', value: 1 },
+          { label: $t('page.system.user.status.available'), value: 0 },
+          { label: $t('page.system.user.status.locked'), value: 1 },
         ],
       },
     },
@@ -265,7 +280,7 @@ const [AccountForm, accountFormApi] = useVbenForm({
 
 // 弹窗
 const [AccountModal, modalApi] = useVbenModal({
-  title: '添加账号',
+  title: $t('page.system.user.addAccount'),
   closeOnClickModal: false,
   closeOnPressEscape: false,
   onCancel() {
@@ -313,7 +328,7 @@ const [AccountModal, modalApi] = useVbenModal({
       // @ts-ignore 更新标题（若支持）
       try {
         modalApi?.setState?.({
-          title: mode === 'edit' ? '编辑账号' : '添加账号',
+          title: mode === 'edit' ? $t('page.system.user.editAccount') : $t('page.system.user.addAccount'),
         });
       } catch {}
     }
@@ -342,10 +357,17 @@ async function onDeleteAccount(row: AccountItem) {
   // 通过代理查询刷新当前过滤后的数据
   try {
     await deleteUserAccountApi({ ids: [row.id] });
-    message.success(`删除成功：${username}`);
+    message.success($t('page.common.deleteSuccessWithName', [username]));
   } catch {
-    message.error('删除失败');
+    message.error($t('page.common.deleteFailed'));
   }
+  GridApi.query();
+}
+
+async function onResetPassword(row: AccountItem) {
+  const username = row.username;
+  await resetUserPasswordApi({ username });
+  message.success($t('page.common.resetSuccessWithName', [username]));
   GridApi.query();
 }
 

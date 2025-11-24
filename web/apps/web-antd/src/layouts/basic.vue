@@ -4,9 +4,8 @@ import type { NotificationItem } from '@vben/layouts';
 import { computed, ref, watch } from 'vue';
 
 import { AuthenticationLoginExpiredModal } from '@vben/common-ui';
-import { VBEN_DOC_URL, VBEN_GITHUB_URL } from '@vben/constants';
 import { useWatermark } from '@vben/hooks';
-import { BookOpenText, CircleHelp, MdiGithub } from '@vben/icons';
+import { BookOpenText, CircleHelp, MdiGithub, LockKeyhole } from '@vben/icons';
 import {
   BasicLayout,
   LockScreen,
@@ -22,6 +21,7 @@ import { openWindow } from '@vben/utils';
 import { $t } from '#/locales';
 import { useAuthStore } from '#/store';
 import LoginForm from '#/views/_core/authentication/login.vue';
+import ChangePasswordModal from '#/views/_core/authentication/change-password-modal.vue';
 
 const notifications = ref<NotificationItem[]>([]);
 
@@ -33,7 +33,14 @@ const showDot = computed(() =>
   notifications.value.some((item) => !item.isRead),
 );
 
-const menus = computed(() => []);
+const changePasswordModalRef = ref<any>(null);
+const menus = computed(() => [
+  {
+    text: $t('authentication.changePassword'),
+    icon: LockKeyhole,
+    handler: () => changePasswordModalRef.value?.open?.(),
+  },
+]);
 
 const avatar = computed(() => {
   return userStore.userInfo?.avatar ?? preferences.app.defaultAvatar;
@@ -75,7 +82,7 @@ watch(
         :menus
         :text="userStore.userInfo?.realName"
         description=""
-        tag-text="Pro"
+        :tag-text="userStore.userInfo?.roleCode"
         @logout="handleLogout"
       />
     </template>
@@ -94,6 +101,9 @@ watch(
       >
         <LoginForm />
       </AuthenticationLoginExpiredModal>
+
+      <!-- 修改密码弹窗（抽离组件） -->
+      <ChangePasswordModal ref="changePasswordModalRef" />
     </template>
     <template #lock-screen>
       <LockScreen :avatar @to-login="handleLogout" />

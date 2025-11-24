@@ -22,6 +22,20 @@ export namespace AuthApi {
     data: string;
     status: number;
   }
+
+  /** 修改密码参数 */
+  export interface ChangePasswordParams {
+    username: string;
+    oldPassword: string;
+    newPassword: string;
+    checkPassword: string;
+  }
+
+  /** 修改密码返回值（最小声明） */
+  export interface ChangePasswordResult {
+    status?: number;
+    message?: string;
+  }
 }
 
 /**
@@ -54,4 +68,22 @@ export async function logoutApi() {
  */
 export async function getAccessCodesApi() {
   return requestClient.get<string[]>('/auth/codes');
+}
+
+/**
+ * 修改密码
+ */
+export async function changePasswordApi(data: AuthApi.ChangePasswordParams) {
+  // 与后端约定：使用 /api/sg/change-password
+  // 若开发环境未提供该路径，可按需在代理层映射
+  return requestClient.post<AuthApi.ChangePasswordResult>('/api/sg/user/modify/password', data);
+}
+
+/**
+ * 重置密码
+ */
+export async function resetUserPasswordApi(data: {
+  username: string;
+}) {
+  return requestClient.post<AuthApi.ChangePasswordResult>('/api/sg/user/reset/password', data);
 }

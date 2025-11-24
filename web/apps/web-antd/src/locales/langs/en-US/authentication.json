@@ -1,0 +1,14 @@
+{
+  "changePassword": "Change Password",
+  "oldPassword": "Old Password",
+  "newPassword": "New Password",
+  "confirmNewPassword": "Confirm New Password",
+  "oldPasswordPlaceholder": "Enter old password",
+  "newPasswordPlaceholder": "Enter new password",
+  "confirmNewPasswordPlaceholder": "Re-enter new password",
+  "passwordChangeSuccess": "Password changed successfully",
+  "passwordRequired": "Please enter old and new password",
+  "passwordTooShort": "New password must be at least 6 characters",
+  "passwordMismatch": "New passwords do not match",
+  "passwordSameAsOld": "New password cannot be the same as old"
+}

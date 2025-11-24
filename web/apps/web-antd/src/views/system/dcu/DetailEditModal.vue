@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, defineAsyncComponent } from 'vue';
 import { Button, message, Popconfirm } from 'ant-design-vue';
+import { $t } from '@vben/locales';
 import { useVbenModal } from '@vben/common-ui';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
@@ -20,14 +21,14 @@ const gridOptions: VxeGridProps = {
   stripe: true,
   columnConfig: { resizable: true },
   columns: [
-    { type: 'seq', title: 'Index', width: 70, align: 'center' },
-    { field: 'nameCh', title: '参数名称', minWidth: 180 },
-    { field: 'nameEn', title: '英文名称', minWidth: 180 },
-    { field: 'highAddress', title: '高位地址', width: 140, align: 'center' },
-    { field: 'lowAddress', title: '低位地址', width: 140, align: 'center' },
-    { field: 'factor', title: '系数', width: 140, align: 'center' },
+    { type: 'seq', title: $t('page.common.index'), width: 70, align: 'center' },
+    { field: 'nameCh', title: $t('page.system.dcu.paramName'), minWidth: 180 },
+    { field: 'nameEn', title: $t('page.system.dcu.paramNameEn'), minWidth: 180 },
+    { field: 'highAddress', title: $t('page.system.dcu.highAddress'), width: 140, align: 'center' },
+    { field: 'lowAddress', title: $t('page.system.dcu.lowAddress'), width: 140, align: 'center' },
+    { field: 'factor', title: $t('page.system.dcu.factor'), width: 140, align: 'center' },
     {
-      title: '操作',
+      title: $t('page.common.actions'),
       width: 160,
       align: 'center',
       fixed: 'right',
@@ -60,7 +61,7 @@ const [Grid, GridApi] = useVbenVxeGrid({ gridOptions });
 
 // 新增参数弹窗（抽离为单独组件并通过 connectedComponent 连接）
 const [AddParamModal, addParamModalApi] = useVbenModal({
-  title: '新增参数',
+  title: $t('page.system.dcu.addParam'),
   connectedComponent: AddParamModalContent,
   closeOnClickModal: false,
   closeOnPressEscape: false,
@@ -84,7 +85,10 @@ const [Modal, modalApi] = useVbenModal({
     if (isOpen) {
       const data = modalApi.getData();
       mode.value = data.mode;
-      title.value = `${mode.value === 'edit' ? '编辑' : '查看'} ${data?.record?.name}连接设置`;
+      title.value =
+        mode.value === 'edit'
+          ? $t('page.system.dcu.connectionSettings.edit', [data?.record?.name])
+          : $t('page.system.dcu.connectionSettings.view', [data?.record?.name]);
       currentSettingsId.value = data?.record?.id ?? data?.id ?? '';
       rowData.value = data?.record ?? {};
     }
@@ -108,13 +112,15 @@ async function onDeleteRow(row: any) {
   try {
     const ok = await deleteDcuDeviceDetailApi({ id: row.id });
     if (ok) {
-      message.success(`已删除：${row.nameCh ?? row.nameEn ?? row.id}`);
+      message.success(
+        $t('page.common.deleteSuccessWithName', [row.nameCh ?? row.nameEn ?? row.id]),
+      );
       await GridApi.query();
     } else {
-      message.error('删除失败');
+      message.error($t('page.common.deleteFailed'));
     }
   } catch (err) {
-    message.error('删除失败');
+    message.error($t('page.common.deleteFailed'));
   }
 }
 
@@ -148,7 +154,7 @@ function onEditRow(row: any) {
         size="small"
         class="w-28"
         @click="onAddParam"
-        >新增参数</Button
+        >{{ $t('page.system.dcu.addParam') }}</Button
       >
     </div>
     <Grid>
@@ -158,16 +164,16 @@ function onEditRow(row: any) {
           type="link"
           size="small"
           @click="onEditRow(row)"
-          >编辑</Button
+          >{{ $t('page.common.edit') }}</Button
         >
         <Popconfirm
           v-if="mode === 'edit'"
-          title="确认删除该参数？"
-          okText="删除"
-          cancelText="取消"
+          :title="$t('page.system.dcu.deleteParamConfirm')"
+          :okText="$t('page.common.delete')"
+          :cancelText="$t('page.common.cancel')"
           @confirm="onDeleteRow(row)"
         >
-          <Button type="link" size="small" danger>删除</Button>
+          <Button type="link" size="small" danger>{{ $t('page.common.delete') }}</Button>
         </Popconfirm>
       </template>
     </Grid>

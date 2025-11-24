@@ -2,12 +2,12 @@
   <Page class="h-full">
     <template #title>
       <div class="flex items-center justify-between">
-        <span class="text-lg font-bold">DCU连接设备管理</span>
+        <span class="text-lg font-bold">{{ $t('page.system.dcu.title') }}</span>
       </div>
     </template>
     <div class="flex h-full flex-col rounded-md bg-white p-4 shadow-md">
       <Button type="primary" size="small" @click="onAdd" class="w-40"
-        >新增DCU连接设备
+        >{{ $t('page.system.dcu.addDevice') }}
       </Button>
       <AddModal>
         <NameForm />
@@ -15,15 +15,21 @@
       <Grid class="flex-1">
         <!-- 操作列：使用 slot 提供按钮事件 -->
         <template #action="{ row }">
-          <Button type="link" size="small" @click="onDetail(row)">详情</Button>
-          <Button type="link" size="small" @click="onEdit(row)">编辑</Button>
+          <Button type="link" size="small" @click="onDetail(row)">{{
+            $t('page.common.details')
+          }}</Button>
+          <Button type="link" size="small" @click="onEdit(row)">{{
+            $t('page.common.edit')
+          }}</Button>
           <Popconfirm
-            title="确认删除该设备？"
-            okText="删除"
-            cancelText="取消"
+            :title="$t('page.system.dcu.deleteDeviceConfirm')"
+            :okText="$t('page.common.delete')"
+            :cancelText="$t('page.common.cancel')"
             @confirm="onDelete(row)"
           >
-            <Button type="link" size="small" danger>删除</Button>
+            <Button type="link" size="small" danger>{{
+              $t('page.common.delete')
+            }}</Button>
           </Popconfirm>
         </template>
         <!-- 启用列：使用 slot 触发启用操作 -->
@@ -33,7 +39,7 @@
             type="link"
             size="small"
             @click="onEnable(row)"
-            >启用</Button
+            >{{ $t('page.system.dcu.enable') }}</Button
           >
         </template>
       </Grid>
@@ -45,6 +51,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { $t } from '@vben/locales';
 import { Page, useVbenModal } from '@vben/common-ui';
 import { Button, message, Popconfirm } from 'ant-design-vue';
 import { useExperimentStore } from '#/store/experiment';
@@ -71,24 +78,32 @@ const gridOptions: VxeGridProps = {
   stripe: true,
   columnConfig: { resizable: true },
   columns: [
-    { type: 'seq', title: 'Index', width: 80, align: 'center' },
-    { field: 'name', title: '名称', minWidth: 200 },
+    { type: 'seq', title: $t('page.common.index'), width: 80, align: 'center' },
+    { field: 'name', title: $t('page.system.dcu.name'), minWidth: 200 },
     {
       field: 'status',
-      title: '启用状态',
+      title: $t('page.system.dcu.statusTitle'),
       width: 120,
       align: 'center',
       cellRender: {
         name: 'CellTag',
         options: [
-          { value: 1, label: '启用中', color: 'success' },
-          { value: 0, label: '未启用', color: 'error' },
+          {
+            value: 1,
+            label: $t('page.system.dcu.status.enabled'),
+            color: 'success',
+          },
+          {
+            value: 0,
+            label: $t('page.system.dcu.status.disabled'),
+            color: 'error',
+          },
         ],
       },
     },
     {
-      title: '操作',
-      width: 160,
+      title: $t('page.common.actions'),
+      width: 220,
       align: 'center',
       fixed: 'right',
       slots: { default: 'action' },
@@ -123,9 +138,9 @@ const [NameForm, nameFormApi] = useVbenForm({
   schema: [
     {
       component: 'Input',
-      componentProps: { placeholder: '请输入名称' },
+      componentProps: { placeholder: $t('page.system.dcu.namePlaceholder') },
       fieldName: 'name',
-      label: '名称',
+      label: $t('page.system.dcu.name'),
       rules: 'required',
     },
   ],
@@ -134,7 +149,7 @@ const [NameForm, nameFormApi] = useVbenForm({
 
 // 弹窗：引用示例用法
 const [AddModal, addModalApi] = useVbenModal({
-  title: '新增DCU连接设备',
+  title: $t('page.system.dcu.addDevice'),
   onCancel() {
     addModalApi.close();
   },
@@ -163,8 +178,14 @@ async function handleCreate(name: string) {
   const res = await createDcuDeviceApi({ name });
   await GridApi.query();
   res
-    ? message.success({ content: '创建成功', key: 'create_dcu' })
-    : message.error({ content: '创建失败', key: 'create_dcu' });
+    ? message.success({
+        content: $t('page.common.addSuccess'),
+        key: 'create_dcu',
+      })
+    : message.error({
+        content: $t('page.common.addFailed'),
+        key: 'create_dcu',
+      });
   addModalApi.close();
 }
 
@@ -179,17 +200,17 @@ async function onDelete(row: DcuDeviceItem) {
     const res = await deleteDcuDeviceApi({ id: row.id });
     res
       ? message.success({
-          content: `已删除：${row.name}`,
+          content: $t('page.common.deleteSuccessWithName', [row.name]),
           key: `delete_dcu_${row.id}`,
         })
       : message.error({
-          content: `删除失败：${row.name}`,
+          content: $t('page.common.deleteFailed'),
           key: `delete_dcu_${row.id}`,
         });
     await GridApi.query();
   } catch (error) {
     message.error({
-      content: `删除失败：${row.name}`,
+      content: $t('page.common.deleteFailed'),
       key: `delete_dcu_${row.id}`,
     });
   }
@@ -201,11 +222,11 @@ async function onEnable(row: DcuDeviceItem) {
   });
   res
     ? message.success({
-        content: `已启用：${row.name}`,
+        content: $t('page.common.enableSuccessWithName', [row.name]),
         key: `enable_dcu_${row.id}`,
       })
     : message.error({
-        content: `启用失败：${row.name}`,
+        content: $t('page.common.enableFailedWithName', [row.name]),
         key: `enable_dcu_${row.id}`,
       });
   await GridApi.query();

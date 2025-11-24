@@ -1,11 +1,12 @@
 import type { RouteRecordRaw } from 'vue-router';
+import { $t } from '@vben/locales';
 
 const routes: RouteRecordRaw[] = [
   {
     meta: {
       icon: 'icon-park-twotone:setting',
       order: 40,
-      title: '系统管理',
+      title: $t('page.system.title'),
       authority: ['admin', 'engineer'], // admin和engineer角色可以访问
     },
     name: 'System',
@@ -15,7 +16,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           icon: 'icon-park-twotone:user',
-          title: '用户管理',
+          title: $t('page.system.userManagement'),
           authority: ['admin'], // admin角色可以访问
         },
         name: 'UserManagement',
@@ -25,7 +26,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           icon: 'icon-park-twotone:plug-one',
-          title: 'DCU连接',
+          title: $t('page.system.dcuConnection'),
           authority: ['admin', 'engineer'], // admin和engineer角色可以访问
         },
         name: 'DCUConnection',

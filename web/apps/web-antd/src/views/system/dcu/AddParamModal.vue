@@ -2,6 +2,7 @@
 import { ref, nextTick, onMounted } from 'vue';
 import { message } from 'ant-design-vue';
 import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 //
 // @ts-ignore
 import { useVbenForm } from '#/adapter/form';
@@ -47,20 +48,20 @@ const [AddForm, addFormApi] = useVbenForm({
       };
       const ok = await updateDcuDeviceDetailApi(updatePayload as any);
       if (ok) {
-        message.success('编辑参数成功');
+        message.success($t('page.system.dcu.editParamSuccess'));
         await modalData.value?.onSuccess?.();
         modalApi.close();
       } else {
-        message.error('编辑参数失败');
+        message.error($t('page.system.dcu.editParamFailed'));
       }
     } else {
       const ok = await addDcuDeviceApi(basePayload as any);
       if (ok) {
-        message.success('新增参数成功');
+        message.success($t('page.system.dcu.addParamSuccess'));
         await modalData.value?.onSuccess?.();
         modalApi.close();
       } else {
-        message.error('新增参数失败');
+        message.error($t('page.system.dcu.addParamFailed'));
       }
     }
   },
@@ -68,64 +69,64 @@ const [AddForm, addFormApi] = useVbenForm({
     {
       component: 'Select',
       componentProps: {
-        placeholder: '请选择DCU参数',
+        placeholder: $t('page.system.dcu.selectParamPlaceholder'),
         getPopupContainer: () => document.body,
         popupClassName: 'select-popup-high',
         dropdownMatchSelectWidth: true,
         style: { width: '100%' },
         options: [
           {
-            label: '选择参数',
+            label: $t('page.system.dcu.selectParam'),
             value: '1111',
           },
         ],
       },
       fieldName: 'fieldSelect',
-      label: '选择参数',
+      label: $t('page.system.dcu.selectParam'),
       rules: 'required',
     },
     {
       component: 'Input',
       fieldName: 'nameCh',
-      label: '参数名称',
+      label: $t('page.system.dcu.paramName'),
       rules: 'required',
       componentProps: {
         disabled: true,
-        placeholder: '请输入参数中文名称',
+        placeholder: $t('page.system.dcu.paramNameZhPlaceholder'),
       },
     },
     {
       component: 'Input',
       fieldName: 'nameEn',
-      label: '英文名称',
+      label: $t('page.system.dcu.paramNameEn'),
       rules: 'required',
       componentProps: {
         disabled: true,
-        placeholder: '请输入英文名称',
+        placeholder: $t('page.system.dcu.paramNameEnPlaceholder'),
       },
     },
     {
       component: 'Input',
       fieldName: 'highAddress',
-      label: '高位地址',
+      label: $t('page.system.dcu.highAddress'),
       rules: 'required',
-      componentProps: { placeholder: '请输入高位地址' },
+      componentProps: { placeholder: $t('page.system.dcu.highAddressPlaceholder') },
     },
     {
       component: 'Input',
       fieldName: 'lowAddress',
-      label: '低位地址',
+      label: $t('page.system.dcu.lowAddress'),
       rules: 'required',
-      componentProps: { placeholder: '请输入低位地址' },
+      componentProps: { placeholder: $t('page.system.dcu.lowAddressPlaceholder') },
     },
     {
       component: 'InputNumber',
       fieldName: 'factor',
-      label: '系数',
+      label: $t('page.system.dcu.factor'),
       rules: 'required',
       componentProps: {
         style: { width: '100%' },
-        placeholder: '请输入系数',
+        placeholder: $t('page.system.dcu.factorPlaceholder'),
         min: 0,
         step: 1,
       },
@@ -136,7 +137,7 @@ const [AddForm, addFormApi] = useVbenForm({
 const fieldSelectList = ref([]);
 
 const [Modal, modalApi] = useVbenModal({
-  title: '新增参数',
+  title: $t('page.system.dcu.addParam'),
   closeOnClickModal: false,
   closeOnPressEscape: false,
   onCancel() {
@@ -163,10 +164,10 @@ const [Modal, modalApi] = useVbenModal({
         if (modalData.value?.mode === 'edit') {
           // 某些实现可能使用 setState/setProps，这里尝试 setState
           // @ts-ignore
-          modalApi?.setState?.({ title: '编辑参数' });
+          modalApi?.setState?.({ title: $t('page.system.dcu.editParam') });
         } else {
           // @ts-ignore
-          modalApi?.setState?.({ title: '新增参数' });
+          modalApi?.setState?.({ title: $t('page.system.dcu.addParam') });
         }
       } catch {}
     }
