@@ -1,5 +1,7 @@
 import type { VbenFormSchema } from '#/adapter/form';
-import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+import type { VxeTableGridOptions } from '@vben/plugins/vxe-table';
+import dayjs from 'dayjs';
+import { $t } from '#/locales';
 
 // 操作点击回调函数类型
 export type OnActionClickFn<T = any> = (params: {
@@ -29,84 +31,95 @@ export function useGridFormSchema(): VbenFormSchema[] {
     {
       component: 'Input',
       fieldName: 'experimentNo',
-      label: '实验编号',
+      label: $t('page.history.form.experimentNo'),
       componentProps: {
-        placeholder: '请输入实验编号',
+        placeholder: $t('page.history.form.experimentNoPlaceholder'),
       },
     },
     {
       component: 'Input',
       fieldName: 'projectName',
-      label: '项目名',
+      label: $t('page.history.form.projectName'),
       componentProps: {
-        placeholder: '请输入项目名',
+        placeholder: $t('page.history.form.projectNamePlaceholder'),
       },
     },
     {
       component: 'Input',
       fieldName: 'shipNumber',
-      label: '船号',
+      label: $t('page.history.form.shipNumber'),
       componentProps: {
-        placeholder: '请输入船号',
+        placeholder: $t('page.history.form.shipNumberPlaceholder'),
       },
     },
     {
       component: 'Input',
       fieldName: 'testPerson',
-      label: '测试人员',
+      label: $t('page.history.form.testPerson'),
       componentProps: {
-        placeholder: '请输入测试人员',
+        placeholder: $t('page.history.form.testPersonPlaceholder'),
       },
     },
     {
       component: 'Input',
       fieldName: 'unitModel',
-      label: '机组型号',
+      label: $t('page.history.form.unitModel'),
       componentProps: {
-        placeholder: '请输入机组型号',
+        placeholder: $t('page.history.form.unitModelPlaceholder'),
       },
     },
     {
       component: 'Input',
       fieldName: 'unitSerial',
-      label: '机组编号',
+      label: $t('page.history.form.unitSerial'),
       componentProps: {
-        placeholder: '请输入机组编号',
+        placeholder: $t('page.history.form.unitSerialPlaceholder'),
       },
     },
     {
       component: 'Select',
       fieldName: 'isTemplate',
-      label: '是否为模板',
+      label: $t('page.history.form.isTemplate'),
       componentProps: {
         allowClear: true,
-        placeholder: '请选择是否为模板',
+        placeholder: $t('page.history.form.isTemplatePlaceholder'),
         options: [
-          { label: '否', value: 0 },
-          { label: '是', value: 1 },
+          { label: $t('page.history.template.no'), value: 0 },
+          { label: $t('page.history.template.yes'), value: 1 },
         ],
       },
     },
     {
       component: 'Select',
       fieldName: 'status',
-      label: '实验状态',
+      label: $t('page.history.form.status'),
       componentProps: {
         allowClear: true,
-        placeholder: '请选择实验状态',
+        placeholder: $t('page.history.form.statusPlaceholder'),
         options: [
-          { label: '进行中', value: 0 },
-          { label: '已结束', value: 1 },
-          { label: '已废弃', value: 2 },
+          { label: $t('page.history.status.processing'), value: 0 },
+          { label: $t('page.history.status.finished'), value: 1 },
+          { label: $t('page.history.status.discarded'), value: 2 },
         ],
       },
     },
     {
       component: 'RangePicker',
       fieldName: 'createTime',
-      label: '创建时间',
+      label: $t('page.history.form.createTime'),
       componentProps: {
-        placeholder: ['开始时间', '结束时间'],
+        placeholder: [
+          $t('page.history.form.createTimeStartPlaceholder'),
+          $t('page.history.form.createTimeEndPlaceholder'),
+        ],
+        // 选择日期时，默认时间分别设置为 00:00:00 和 23:59:59
+        showTime: {
+          defaultValue: [
+            dayjs('00:00:00', 'HH:mm:ss'),
+            dayjs('23:59:59', 'HH:mm:ss'),
+          ],
+        },
+        format: 'YYYY-MM-DDTHH:mm:ssZ',
       },
     },
   ];
@@ -119,62 +132,74 @@ export function useColumns<T = HistoryRecord>(
   return [
     {
       field: 'experimentNo',
-      title: '实验编号',
+      title: $t('page.history.table.experimentNo'),
       width: 150,
       showOverflow: 'tooltip',
     },
     {
-      field: 'engineModel',
-      title: '机组型号',
+      field: 'projectName',
+      title: $t('page.history.table.projectName'),
       width: 130,
       showOverflow: 'tooltip',
     },
     {
-      field: 'engineSerial',
-      title: '机组编号',
+      field: 'shipNumber',
+      title: $t('page.history.table.shipNumber'),
+      width: 130,
+      showOverflow: 'tooltip',
+    },
+    {
+      field: 'unitModel',
+      title: $t('page.history.table.unitModel'),
+      width: 130,
+      showOverflow: 'tooltip',
+    },
+    {
+      field: 'unitSerial',
+      title: $t('page.history.table.unitSerial'),
       width: 130,
       showOverflow: 'tooltip',
     },
     {
       field: 'testPerson',
-      title: '测试人员',
+      title: $t('page.history.table.testPerson'),
       width: 120,
       showOverflow: 'tooltip',
     },
     {
       field: 'isTemplate',
-      title: '是否为模板',
+      title: $t('page.history.table.isTemplate'),
       width: 100,
       cellRender: {
         name: 'CellTag',
         options: [
-          { color: 'default', label: '否', value: 0 },
-          { color: 'blue', label: '是', value: 1 },
+          { color: 'default', label: $t('page.history.template.no'), value: 0 },
+          { color: 'blue', label: $t('page.history.template.yes'), value: 1 },
         ],
       },
     },
     {
       field: 'status',
-      title: '实验状态',
+      title: $t('page.history.table.status'),
       width: 100,
       cellRender: {
         name: 'CellTag',
         options: [
-          { color: 'processing', label: '进行中', value: 0 },
-          { color: 'success', label: '已结束', value: 1 },
-          { color: 'error', label: '已废弃', value: 2 },
+          { color: 'processing', label: $t('page.history.status.processing'), value: 0 },
+          { color: 'success', label: $t('page.history.status.finished'), value: 1 },
+          { color: 'error', label: $t('page.history.status.discarded'), value: 2 },
         ],
       },
     },
     {
       field: 'createTime',
-      title: '创建时间',
+      title: $t('page.history.table.createTime'),
       width: 150,
       showOverflow: 'tooltip',
     },
     {
       field: 'updateTime',
-      title: '上次编辑时间',
+      title: $t('page.history.table.updateTime'),
       width: 150,
       showOverflow: 'tooltip',
     },
@@ -183,27 +208,38 @@ export function useColumns<T = HistoryRecord>(
       cellRender: {
         attrs: {
           nameField: 'experimentNo',
-          nameTitle: '实验编号',
+          nameTitle: $t('page.history.operation.nameTitle'),
           onClick: onActionClick, 
         },
         options: [
           {
             code: 'view',
-            text: '详情',
+            text: $t('page.history.operation.view'),
           },{
             code: 'viewReport',
-            text: '查看报告',
+            text: $t('page.history.operation.viewReport'),
           },
           {
-            code: 'keepAsTemplate',
-            text: '保存为模版',
+            code: 'saveAsTemplate',
+            text: $t('page.history.operation.saveAsTemplate'),
+            show: (row: any) => row.status === 1 && row.isTemplate === 0,
+          },
+          {
+            code: 'deleteTemplate',
+            text: $t('page.history.operation.deleteTemplate'),
+            show: (row: any) => row.status === 1 && row.isTemplate === 1,
+          },
+          {
+            code: 'startByTemplate',
+            text: $t('page.history.operation.startByTemplate'),
+            show: (row: any) => row.status === 1 && row.isTemplate === 1,
           },
         ],
         name: 'CellOperation',
       },
       field: 'operation',
       fixed: 'right',
-      title: '操作',
+      title: $t('page.history.operation.title'),
     },
   ];
 }

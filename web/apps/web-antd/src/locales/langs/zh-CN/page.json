@@ -36,7 +36,70 @@
     "current": "当前实验"
   },
   "history": {
-    "title": "历史"
+    "title": "历史",
+    "list": {
+      "title": "历史记录",
+      "description": "历史记录管理页面，支持查看、编辑和删除历史记录"
+    },
+    "form": {
+      "experimentNo": "实验编号",
+      "experimentNoPlaceholder": "请输入实验编号",
+      "projectName": "项目名",
+      "projectNamePlaceholder": "请输入项目名",
+      "shipNumber": "船号",
+      "shipNumberPlaceholder": "请输入船号",
+      "testPerson": "测试人员",
+      "testPersonPlaceholder": "请输入测试人员",
+      "unitModel": "机组型号",
+      "unitModelPlaceholder": "请输入机组型号",
+      "unitSerial": "机组编号",
+      "unitSerialPlaceholder": "请输入机组编号",
+      "isTemplate": "是否为模板",
+      "isTemplatePlaceholder": "请选择是否为模板",
+      "status": "实验状态",
+      "statusPlaceholder": "请选择实验状态",
+      "createTime": "创建时间",
+      "createTimeStartPlaceholder": "开始时间",
+      "createTimeEndPlaceholder": "结束时间"
+    },
+    "table": {
+      "experimentNo": "实验编号",
+      "projectName": "项目名",
+      "shipNumber": "船号",
+      "unitModel": "机组型号",
+      "unitSerial": "机组编号",
+      "testPerson": "测试人员",
+      "isTemplate": "是否为模板",
+      "status": "实验状态",
+      "createTime": "创建时间",
+      "updateTime": "上次编辑时间"
+    },
+    "status": {
+      "processing": "进行中",
+      "finished": "已结束",
+      "discarded": "已废弃"
+    },
+    "template": {
+      "no": "否",
+      "yes": "是"
+    },
+    "operation": {
+      "title": "操作",
+      "view": "详情",
+      "viewReport": "查看报告",
+      "saveAsTemplate": "保存为模版",
+      "deleteTemplate": "取消模版",
+      "startByTemplate": "以模版开启实验",
+      "nameTitle": "实验编号"
+    },
+    "message": {
+      "loadedExperiment": "已加载实验：{0}",
+      "loadExperimentFailed": "加载实验失败",
+      "missingExperimentIdOrNo": "缺少实验ID或编号，无法查看报告",
+      "operationSuccess": "操作成功",
+      "startExperimentSuccess": "已开启实验：{0}",
+      "startExperimentFailed": "开启实验失败"
+    }
   },
   "system": {
     "title": "系统管理",
@@ -101,6 +164,7 @@
     "title": "实验报告",
     "detail": "报告详情",
     "description": "生成和管理实验相关的各类报告",
+    "experimentNoLabel": "实验编号：",
     "experimentReport": "实验报告",
     "experimentReportDesc": "生成完整的实验过程报告，包含实验数据、分析结果和结论",
     "dataAnalysis": "数据分析报告",
@@ -109,6 +173,17 @@
     "performanceReportDesc": "生成设备性能评估报告，包含各项性能指标分析",
     "generate": "生成报告",
     "generating": "正在生成报告...",
+    "version": {
+      "label": "报告版本",
+      "1990": "1990版",
+      "2009": "2009版"
+    },
+    "exportExcel": "导出Excel报告",
+    "message": {
+      "missingExperimentId": "缺少实验ID，请从带有 id 的路由进入或先选择/创建实验",
+      "downloadFailed": "报告下载失败，请稍后重试",
+      "downloadStarted": "Excel报告已开始下载"
+    },
     "generatorPerformance": {
       "reportTitle": "发电机组性能测试报告",
       "generatorSetType": "发电机组型号：",

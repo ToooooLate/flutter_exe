@@ -8,7 +8,7 @@
             {{ $t('page.report.title') }}
           </div>
           <div class="text-sm text-gray-600">
-            实验编号: {{ experimentNo || 'N/A' }}
+            {{ $t('page.report.experimentNoLabel') }} {{ experimentNo || 'N/A' }}
           </div>
         </div>
       </div>
@@ -28,7 +28,7 @@
               <span
                 class="flex h-10 w-40 items-center text-wrap text-center text-xs leading-tight"
               >
-                Test report of generator set's performance
+                {{ $t('page.report.generatorPerformance.reportTitle') }}
               </span>
             </template>
             <GeneratorPerformanceReport />

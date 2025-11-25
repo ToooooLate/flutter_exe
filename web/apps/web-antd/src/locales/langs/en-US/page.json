@@ -36,7 +36,70 @@
     "current": "Current Experiment"
   },
   "history": {
-    "title": "History"
+    "title": "History",
+    "list": {
+      "title": "History Records",
+      "description": "Manage history records: view, edit, and delete"
+    },
+    "form": {
+      "experimentNo": "Experiment No",
+      "experimentNoPlaceholder": "Enter experiment number",
+      "projectName": "Project Name",
+      "projectNamePlaceholder": "Enter project name",
+      "shipNumber": "Ship Number",
+      "shipNumberPlaceholder": "Enter ship number",
+      "testPerson": "Tester",
+      "testPersonPlaceholder": "Enter tester name",
+      "unitModel": "Unit Model",
+      "unitModelPlaceholder": "Enter unit model",
+      "unitSerial": "Unit Serial",
+      "unitSerialPlaceholder": "Enter unit serial",
+      "isTemplate": "Is Template",
+      "isTemplatePlaceholder": "Select template status",
+      "status": "Status",
+      "statusPlaceholder": "Select status",
+      "createTime": "Create Time",
+      "createTimeStartPlaceholder": "Start time",
+      "createTimeEndPlaceholder": "End time"
+    },
+    "table": {
+      "experimentNo": "Experiment No",
+      "projectName": "Project Name",
+      "shipNumber": "Ship Number",
+      "unitModel": "Unit Model",
+      "unitSerial": "Unit Serial",
+      "testPerson": "Tester",
+      "isTemplate": "Is Template",
+      "status": "Status",
+      "createTime": "Create Time",
+      "updateTime": "Last Edited"
+    },
+    "status": {
+      "processing": "Processing",
+      "finished": "Finished",
+      "discarded": "Discarded"
+    },
+    "template": {
+      "no": "No",
+      "yes": "Yes"
+    },
+    "operation": {
+      "title": "Operations",
+      "view": "View",
+      "viewReport": "View Report",
+      "saveAsTemplate": "Save as Template",
+      "deleteTemplate": "Remove Template",
+      "startByTemplate": "Start by Template",
+      "nameTitle": "Experiment No"
+    },
+    "message": {
+      "loadedExperiment": "Experiment loaded: {0}",
+      "loadExperimentFailed": "Failed to load experiment",
+      "missingExperimentIdOrNo": "Missing experiment ID or number, cannot view report",
+      "operationSuccess": "Operation succeeded",
+      "startExperimentSuccess": "Experiment started: {0}",
+      "startExperimentFailed": "Failed to start experiment"
+    }
   },
   "system": {
     "title": "System",
@@ -101,6 +164,7 @@
     "title": "Report",
     "detail": "Report Detail",
     "description": "Generate and manage various experiment-related reports",
+    "experimentNoLabel": "Experiment No:",
     "experimentReport": "Experiment Report",
     "experimentReportDesc": "Generate comprehensive experiment process reports including data, analysis results and conclusions",
     "dataAnalysis": "Data Analysis Report",
@@ -109,6 +173,17 @@
     "performanceReportDesc": "Generate device performance evaluation reports including various performance metrics analysis",
     "generate": "Generate Report",
     "generating": "Generating report...",
+    "version": {
+      "label": "Report Version",
+      "1990": "1990 Version",
+      "2009": "2009 Version"
+    },
+    "exportExcel": "Export Excel Report",
+    "message": {
+      "missingExperimentId": "Missing experiment ID. Enter via a route with id or select/create an experiment first.",
+      "downloadFailed": "Report download failed. Please try again later.",
+      "downloadStarted": "Excel report download started."
+    },
     "generatorPerformance": {
       "reportTitle": "Test report of generator set's performance",
       "generatorSetType": "generator set type:",

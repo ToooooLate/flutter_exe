@@ -135,3 +135,14 @@ export async function cleanExpiredHistoryApi(days: number = 30) {
     params: { days },
   });
 }
+
+/**
+ * 保存为模版
+ */
+export async function saveAsTemplateApi(data: {
+  id: string;
+  isTemplate: 0 | 1;
+}) {
+  return requestClient.post(`/api/sg/experiment/saveAsTemplate`, data);
+}
+

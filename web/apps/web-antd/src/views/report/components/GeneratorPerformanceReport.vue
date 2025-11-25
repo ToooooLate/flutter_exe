@@ -1,7 +1,7 @@
 <template>
   <div class="bg-background text-foreground h-full w-full p-4">
     <div class="flex items-center gap-3">
-      <span class="text-sm">报告版本</span>
+      <span class="text-sm">{{ $t('page.report.version.label') }}</span>
       <Select
         class="w-40"
         :value="selectedVersion"
@@ -10,7 +10,7 @@
       />
       <div class="flex gap-2">
         <Button type="primary" size="small" :loading="exporting" @click="onExportClick">
-          导出Excel报告
+          {{ $t('page.report.exportExcel') }}
         </Button>
       </div>
     </div>
@@ -66,11 +66,14 @@ import { useRoute } from 'vue-router';
 const experimentStore = useExperimentStore();
 const route = useRoute();
 
-// 版本选项
-const versionOptions = [
-  { label: '1990版', value: '1990' },
-  { label: '2009版', value: '2009' },
-];
+// i18n
+const { t, locale } = useI18n();
+
+// 版本选项（随语言变化）
+const versionOptions = computed(() => [
+  { label: t('page.report.version.1990'), value: '1990' },
+  { label: t('page.report.version.2009'), value: '2009' },
+]);
 const selectedVersion = ref<'1990' | '2009'>('1990');
 // Excel 结构化数据：支持合并单元格（colspan/rowspan）
 type TableCell = {
@@ -92,7 +95,6 @@ const bodyRowsVisible = computed<TableCell[][]>(() =>
 );
 
 // 根据当前激活语言映射到模板状态：0=中文，1=英文（使用 i18n）
-const { locale } = useI18n();
 function getLanguageStatus(): 0 | 1 {
   const current = String(locale?.value ?? 'zh-CN').toLowerCase();
   return current.startsWith('zh') ? 0 : 1;
@@ -148,7 +150,7 @@ async function fetchExcelBlob(version: '1990' | '2009'): Promise<{ blob: Blob; f
   const routeId = (route.params?.id ?? route.query?.id ?? '') as string;
   const id = String(routeId || experimentStore.state.currentExperiment?.id || '');
   if (!id) {
-    message.warning('缺少实验ID，请从带有 id 的路由进入或先选择/创建实验');
+    message.warning(t('page.report.message.missingExperimentId'));
     return null;
   }
 
@@ -175,7 +177,7 @@ async function fetchExcelBlob(version: '1990' | '2009'): Promise<{ blob: Blob; f
     return { blob: res.data as Blob, fileName };
   } catch (error) {
     console.error('下载失败:', error);
-    message.error('报告下载失败，请稍后重试');
+    message.error(t('page.report.message.downloadFailed'));
     return null;
   }
 }
@@ -348,7 +350,7 @@ async function onExportClick() {
     const result = await fetchExcelBlob(selectedVersion.value);
     if (!result) return;
     saveBlob(result.blob, result.fileName);
-    message.success('Excel报告已开始下载');
+    message.success(t('page.report.message.downloadStarted'));
   } finally {
     exporting.value = false;
   }
