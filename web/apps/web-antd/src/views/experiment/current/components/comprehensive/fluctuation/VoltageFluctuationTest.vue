@@ -1,7 +1,7 @@
 <template>
   <div class="voltage-fluctuation-test">
     <h3 class="text-foreground mb-2 text-lg font-semibold">
-      {{ t('experiment.comprehensive.fluctuation.voltage.title') }}
+      {{ t('experiment.current.comprehensive.fluctuation.voltage.title') }}
     </h3>
 
     <div class="table-container">
@@ -10,21 +10,33 @@
 
     <div class="form-section">
       <div class="form-row">
-        <label>{{ t('experiment.comprehensive.fluctuation.voltage.labels.standard') }}</label>
+        <label>{{
+          t(
+            'experiment.current.comprehensive.fluctuation.voltage.labels.standard',
+          )
+        }}</label>
         <input
           v-model="voltageFluctuationStandard"
           type="text"
-          :placeholder="t('experiment.comprehensive.fluctuation.voltage.placeholders.standard')"
+          :placeholder="
+            t(
+              'experiment.current.comprehensive.fluctuation.voltage.placeholders.standard',
+            )
+          "
           class="w-full rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           :disabled="!isEditable"
         />
       </div>
       <div class="form-row">
-        <label>{{ t('experiment.common.conclusionLabel') }}</label>
+        <label>{{ t('experiment.current.common.conclusionLabel') }}</label>
         <textarea
           v-model="conclusion"
           :readonly="!isEditable"
-          :placeholder="t('experiment.comprehensive.fluctuation.voltage.placeholders.conclusion')"
+          :placeholder="
+            t(
+              'experiment.current.comprehensive.fluctuation.voltage.placeholders.conclusion',
+            )
+          "
           class="h-20 w-full resize-none rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           :class="{ 'bg-gray-100': !isEditable }"
         />
@@ -67,87 +79,118 @@ const conclusion = ref('');
 const gridOptions: VxeGridProps = {
   data: tableData.value,
   columns: [
-    { field: 'serialNumber', title: t('experiment.comprehensive.fluctuation.voltage.columns.serialNumber'), width: 60, align: 'center' },
+    {
+      field: 'serialNumber',
+      title: t(
+        'experiment.current.comprehensive.fluctuation.voltage.columns.serialNumber',
+      ),
+      width: 60,
+      align: 'center',
+    },
     {
       field: 'load',
-      title: t('experiment.comprehensive.fluctuation.voltage.columns.load'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.voltage.columns.load',
+      ),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'power',
-      title: t('experiment.comprehensive.fluctuation.voltage.columns.power'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.voltage.columns.power',
+      ),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequency',
-      title: t('experiment.comprehensive.fluctuation.voltage.columns.frequency'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.voltage.columns.frequency',
+      ),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'powerFactor',
-      title: t('experiment.comprehensive.fluctuation.voltage.columns.powerFactor'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.voltage.columns.powerFactor',
+      ),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ua',
-      title: t('experiment.comprehensive.fluctuation.voltage.columns.ua'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.voltage.columns.ua',
+      ),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ub',
-      title: t('experiment.comprehensive.fluctuation.voltage.columns.ub'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.voltage.columns.ub',
+      ),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'uc',
-      title: t('experiment.comprehensive.fluctuation.voltage.columns.uc'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.voltage.columns.uc',
+      ),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'measuredVoltageBeforeExperiment',
-      title: t('experiment.comprehensive.fluctuation.voltage.columns.measuredVoltageBeforeExperiment'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.voltage.columns.measuredVoltageBeforeExperiment',
+      ),
       width: 140,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'voltageWaveMax',
-      title: t('experiment.comprehensive.fluctuation.voltage.columns.voltageWaveMax'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.voltage.columns.voltageWaveMax',
+      ),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'voltageWaveMin',
-      title: t('experiment.comprehensive.fluctuation.voltage.columns.voltageWaveMin'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.voltage.columns.voltageWaveMin',
+      ),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'voltageWaveAve',
-      title: t('experiment.comprehensive.fluctuation.voltage.columns.voltageWaveAve'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.voltage.columns.voltageWaveAve',
+      ),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'voltageFluctuationRate',
-      title: t('experiment.comprehensive.fluctuation.voltage.columns.voltageFluctuationRate'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.voltage.columns.voltageFluctuationRate',
+      ),
       width: 140,
       align: 'center',
       editRender: { name: 'VxeInput' },

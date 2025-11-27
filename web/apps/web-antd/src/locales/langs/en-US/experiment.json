@@ -82,6 +82,51 @@
     "monitoring": {
       "contentPlaceholder": "Device monitoring content area"
     },
+    "startup": {
+      "title": "Check start performance at ambient temperature (Start Batteries)",
+      "measurementDevice": "Measurement device: Oscilloscope",
+      "calcMethod": "Calculation: Sensor output frequency = Flywheel teeth × Rated speed / Period",
+      "labels": {
+        "flywheelTeeth": "Flywheel teeth:",
+        "targetIdleSpeed": "Rated idle speed:",
+        "autoStartTest": "Auto start test",
+        "autoStopTest": "Auto shutdown test",
+        "threeFailures": "Three start failures",
+        "emergencyStop": "Emergency stop"
+      },
+      "placeholders": {
+        "flywheelTeeth": "Enter flywheel teeth",
+        "speed": "Enter speed",
+        "frequency": "Enter frequency"
+      },
+      "inline": {
+        "rpmEquals": "rpm equals",
+        "hzSuccess": "Hz considered as successful startup"
+      },
+      "autoStartSectionTitle": "Auto start test",
+      "columns": {
+        "startNumber": "Number of starts",
+        "ambientTemperature": "Ambient Temp. (℃)",
+        "startupTime": "Start-up time (s)",
+        "startupStatus": "Starting status"
+      }
+    },
+    "operation": {
+      "title": "Engine operation parameters - At startup",
+      "measure": "Measure",
+      "measuring": "Measuring...",
+      "measureSuccess": "Measurement command sent successfully",
+      "measureFailed": "Failed to send measurement command",
+      "columns": {
+        "item": "Item",
+        "voltage": "Voltage (V)",
+        "frequency": "Frequency (Hz)",
+        "waterTemp": "Water Temp. (℃)",
+        "oilPressure": "Oil Press. (Bar)",
+        "speed": "Speed (rpm)",
+        "threeLeakage": "Three leakages"
+      }
+    },
     "realtime": {
       "title": "Realtime Data",
       "pushButton": "Push Data",
@@ -310,6 +355,41 @@
             "phaseAVoltage": "Phase A Voltage (V)",
             "steadyVoltageDeviation": "Steady Voltage Deviation (Δu%)"
           }
+        },
+        "speedCharacteristic": {
+          "requirement": "Standard: Steady frequency deviation ±5%",
+          "subTable1Title": "Steady speed regulation test - Table 1",
+          "subTable2Title": "Steady speed regulation test - Table 2",
+          "subTable3Title": "Steady speed regulation test - Table 3",
+          "items": {
+            "first": "First",
+            "second": "Second",
+            "third": "Third",
+            "average": "Average"
+          },
+          "main": {
+            "columns": {
+              "item": "Item",
+              "steadyFrequencyDeviationStPercent": "Steady frequency deviation δst (%)",
+              "speedSystemInsensitivityPercent": "Speed system insensitivity (%)",
+              "nonlinearityPercent": "Nonlinearity (%)"
+            }
+          },
+          "columns": {
+            "serialNumber": "No.",
+            "loadPercent": "Load (%)",
+            "power": "Power (kW)",
+            "frequency": "Frequency (Hz)",
+            "powerFactor": "Power Factor (cosΦ)",
+            "ua": "UA (V)",
+            "ub": "UB (V)",
+            "uc": "UC (V)",
+            "ia": "IA (A)",
+            "ib": "IB (A)",
+            "ic": "IC (A)",
+            "phaseAVoltage": "Phase A Voltage (V)",
+            "steadyFrequencyDeviation": "Steady frequency deviation δst (%)"
+          }
         }
       },
       "fluctuation": {
@@ -365,7 +445,33 @@
         "third": "Third Experiment",
         "save": "Save data for experiment {index}"
       },
-      "loadTitle": "Load Experiment"
+      "loadTitle": "Load Experiment",
+      "load": {
+        "columns": {
+          "powerStandard": "Power Standard (kW)",
+          "powerMeasured": "Power Measured (kW)",
+          "oilTemperature": "Oil Temp (°C)",
+          "oilPressure": "Oil Pressure (Bar)",
+          "coolantTemp": "Coolant Temp (°C)",
+          "crankcasePress": "Crankcase Pressure (mbar)",
+          "fuelRate": "Fuel Rate (L/h)",
+          "percentPower": "Percent Power (%)",
+          "fuelAccumulatorPress": "Fuel Accumulator Pressure (MPa)",
+          "fuelSupplyPress": "Fuel Supply Pressure (Bar)",
+          "exhaustTempLb": "Exhaust Temp. LB (°C)",
+          "exhaustTempRb": "Exhaust Temp. RB (°C)",
+          "coolantPress": "Coolant Pressure (Bar)",
+          "seaWaterPress": "Sea Water Pressure (Bar)",
+          "fuelTemp": "Fuel Temp (°C)",
+          "boostPressL": "Boost Pressure L (Bar)",
+          "boostPressR": "Boost Pressure R (Bar)",
+          "exhaustTemp": "Exhaust Temp (°C)",
+          "intakeManifoldTempLbf": "Intake Manifold Temp LBF (°C)",
+          "intakeManifoldTempLbb": "Intake Manifold Temp LBB (°C)",
+          "intakeManifoldTempRbf": "Intake Manifold Temp RBF (°C)",
+          "intakeManifoldTempRbb": "Intake Manifold Temp RBB (°C)"
+        }
+      }
     },
     "integrated": {
       "measurementTitle": "Experiment {index} Data Measurement",
@@ -401,6 +507,37 @@
         "dateOfTest": "Select test date"
       }
     },
+    "insulation": {
+      "cold": {
+        "title": "Generator insulation resistance measured at cold state"
+      },
+      "hot": {
+        "title": "Generator insulation resistance measured at hot state"
+      },
+      "labels": {
+        "generatorSn": "Generator SN"
+      },
+      "placeholders": {
+        "generatorSn": "Please enter generator serial number",
+        "mohm": "MΩ"
+      },
+      "units": {
+        "mohm": "Unit: MΩ (Megaohm)"
+      },
+      "columns": {
+        "status": "Insulation resistance status",
+        "measured": "Measured",
+        "standard": "Standard"
+      },
+      "rows": {
+        "coldStatus": "Cold-state insulation resistance",
+        "hotStatus": "Hot-state insulation resistance"
+      },
+      "thresholds": {
+        "cold": "≥2MΩ",
+        "hot": "≥5MΩ"
+      }
+    },
     "transient": {
       "title": "Transient Speed Regulation and Stabilization Time",
       "subtitle": "Transient speed regulation and stabilization time measurement",
@@ -424,12 +561,49 @@
       "countdownTitle": "Measuring",
       "countdownMessage": "Transient measurement in progress, please wait..."
     },
+    "message": {
+      "realtimeCommandSuccess": "Real-time data command sent successfully",
+      "realtimeCommandFailed": "Failed to send real-time data command",
+      "curveDataEmpty": "Curve data is empty; no chart generated",
+      "curveDataParseFailed": "Curve data parse failed or empty; no chart generated"
+    },
+    "transientVoltage": {
+      "title": "Transient voltage change rate and stabilization time",
+      "editProject": "Edit Items",
+      "subtitle": "Transient voltage change rate and stabilization time measurement",
+      "labels": {
+        "stableRange": "Stable voltage deviation range"
+      },
+      "charts": {
+        "titleSuffix": "Transient voltage change curve",
+        "rangeAreaName": "Stable voltage range",
+        "yAxisVoltage": "Voltage (V)"
+      },
+      "columns": {
+        "serialNumber": "No.",
+        "loadChangeState": "Load change state",
+        "beforeChangeVoltage": "Voltage before change (V)",
+        "beforeChangeCurrent": "Current before change (A)",
+        "beforeChangePowerFactor": "Power factor before change COSΦ",
+        "instantaneousVoltageMaxMin": "Instantaneous voltage max or min (V)",
+        "afterChangeVoltage": "Voltage after change (V)",
+        "afterChangeCurrent": "Current after change (A)",
+        "afterChangePowerFactor": "Power factor after change COSΦ",
+        "stabilityTime": "Stabilization time t (s)",
+        "transientVoltageChangeRate": "Transient voltage change rate Δu (%)",
+        "action": "Action"
+      }
+    },
     "columns": {
       "serialNumber": "No.",
       "load": "Load",
       "timeMin": "Time (min)",
       "ua": "UA (V)",
+      "ub": "UB (V)",
+      "uc": "UC (V)",
       "ia": "IA (A)",
+      "ib": "IB (A)",
+      "ic": "IC (A)",
       "powerFactor": "Power Factor",
       "frequency": "Frequency (Hz)",
       "umax": "Umax",

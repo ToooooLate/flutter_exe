@@ -3,10 +3,10 @@
     <!-- 标题部分 -->
     <div class="mb-6">
       <h4 class="text-base font-semibold text-gray-800">
-        瞬态电压变化率和稳定时间测定
+        {{ $t('experiment.current.transientVoltage.title') }}
       </h4>
       <p class="mt-1 text-sm text-gray-600">
-        Transient voltage change rate and stabilization time measurement
+        {{ $t('experiment.current.transientVoltage.subtitle') }}
       </p>
     </div>
 
@@ -18,7 +18,7 @@
         :disabled="!isEditable"
         @click="handleEditProject"
       >
-        编辑项目
+        {{ $t('experiment.current.transientVoltage.editProject') }}
       </Button>
 
       <Grid>
@@ -30,14 +30,14 @@
               class="rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600"
               @click="handleMeasure(row)"
             >
-              测定
+              {{ $t('experiment.current.transient.measure') }}
             </Button>
             <Button
               type="button"
               class="rounded bg-purple-500 px-3 py-1 text-sm text-white hover:bg-purple-600"
               @click="handleCurve(row)"
             >
-              曲线
+              {{ $t('experiment.current.transient.curve') }}
             </Button>
           </div>
         </template>
@@ -48,7 +48,7 @@
     <div class="mb-6">
       <div class="flex items-center gap-4">
         <label class="whitespace-nowrap text-sm font-medium text-gray-700">
-          稳定电压偏差范围设置
+          {{ $t('experiment.current.transientVoltage.labels.stableRange') }}
         </label>
         <div class="flex items-center gap-2">
           <span class="text-sm text-gray-600"> ± </span>
@@ -66,22 +66,31 @@
 
     <!-- 结论部分 -->
     <div class="mb-4">
-      <label class="mb-2 block text-sm font-medium">结论/Conclusion:</label>
+      <label class="mb-2 block text-sm font-medium">{{
+        $t('experiment.current.transient.conclusionLabel')
+      }}</label>
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusion"
           :readonly="!isEditable"
           class="h-full w-full resize-none border-0 outline-none"
-          placeholder="请输入结论..."
+          :placeholder="
+            $t('experiment.current.transient.placeholderConclusion')
+          "
         />
       </div>
     </div>
 
     <!-- 项目控制弹窗 -->
-    <ProjectControlModal class="w-[600px]" title="项目控制">
+    <ProjectControlModal
+      class="w-[600px]"
+      :title="$t('experiment.current.transient.projectControl')"
+    >
       <div class="p-4">
         <div class="mb-4">
-          <span class="text-sm text-gray-600">选择需要显示的测试项目：</span>
+          <span class="text-sm text-gray-600">{{
+            $t('experiment.current.transient.selectItemsLabel')
+          }}</span>
         </div>
         <CheckboxGroup
           :value="selectedRows"
@@ -95,12 +104,14 @@
     <!-- 曲线展示（与表格行对应） -->
     <div class="mt-6">
       <div class="mb-2 flex items-center justify-between">
-        <h5 class="text-sm font-medium text-gray-700">曲线展示</h5>
+        <h5 class="text-sm font-medium text-gray-700">
+          {{ $t('experiment.current.transient.chartSectionTitle') }}
+        </h5>
         <Button
           type="primary"
           :disabled="renderedCount === 0"
           @click="handleDownloadAllCharts"
-          >下载所有PNG</Button
+          >{{ $t('experiment.current.transient.downloadAllPng') }}</Button
         >
       </div>
 
@@ -117,13 +128,13 @@
             :data="chartsData[String(row.serialNumber)] || []"
             :title="
               chartsTitles[String(row.serialNumber)] ||
-              `${row.loadChangeState} - 瞬态电压变化曲线`
+              `${row.loadChangeState} - ${$t('experiment.current.transientVoltage.charts.titleSuffix')}`
             "
             :range-area="
               chartsRangeAreas[String(row.serialNumber)] || defaultRangeArea
             "
-            x-axis-name="时间 (s)"
-            y-axis-name="电压 (V)"
+            x-axis-name="$t('experiment.current.transient.xAxisTime')"
+            y-axis-name="$t('experiment.current.transientVoltage.charts.yAxisVoltage')"
             height="468px"
             line-color="#1890ff"
             :auto-resize="true"
@@ -136,8 +147,8 @@
     <CountdownModal
       ref="countdownModalRef"
       :countdown-seconds="15"
-      title="测定进行中"
-      message="瞬态电压变化测定正在进行中，请耐心等待..."
+      :title="$t('experiment.current.transient.countdownTitle')"
+      :message="$t('experiment.current.transient.countdownMessage')"
       :show-return-button="true"
       @countdown-end="handleCountdownEnd"
       @return-static="handleReturnStatic"
@@ -149,6 +160,7 @@
 // @ts-ignore vite/vue typing workaround for lifecycle hooks in current env
 import { computed, ref, onMounted, onUnmounted, nextTick } from 'vue';
 import { Button, message, CheckboxGroup, Input } from 'ant-design-vue';
+import { useI18n } from '@vben/locales';
 import { useVbenModal } from '@vben/common-ui';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
@@ -295,6 +307,8 @@ const setChartRef = (id: string) => (el: any) => {
   chartRefs[id] = el;
 };
 
+const { t } = useI18n();
+
 const defaultRangeArea = computed<RangeArea>(() => {
   const baseVoltage = Number(
     experimentStore.state.currentExperiment?.ratedVoltage ?? 220,
@@ -307,7 +321,7 @@ const defaultRangeArea = computed<RangeArea>(() => {
     min,
     max,
     color: '#ff4d4f',
-    name: '稳定电压范围',
+    name: t('experiment.current.transientVoltage.charts.rangeAreaName'),
   };
 });
 
@@ -331,7 +345,7 @@ let commandParams: any = {};
 const handleMeasure = async (row: RowType) => {
   await updateAllData();
   if (!experimentStore.state.currentExperiment?.benchPosition) {
-    message.error('实验台位为空');
+    message.error(t('experiment.current.message.benchPositionEmpty'));
     return;
   }
   // 调用瞬态电压变化检测 API
@@ -346,48 +360,56 @@ const handleMeasure = async (row: RowType) => {
     ...commandParams,
     experimentStatus: true,
   });
-  res ? message.success('测定指令已发送') : message.error('测定指令发送失败');
+  res
+    ? message.success(t('experiment.current.message.measureCommandSent'))
+    : message.error(t('experiment.current.message.measureCommandFailed'));
 };
 
 // 倒计时结束处理函数
 const handleCountdownEnd = async () => {
-  message.info('倒计时结束，测定完成');
+  message.info(t('experiment.current.message.countdownEndMeasureDone'));
   // 恢复实时数据推送
   await sendDcuDeviceMonitoringCommand(1);
   const res = await transientVoltageCheckApi({
     ...commandParams,
     experimentStatus: false,
   });
-  res ? message.success('召测指令已发送') : message.error('召测指令发送失败');
+  res
+    ? message.success(t('experiment.current.message.callCommandSent'))
+    : message.error(t('experiment.current.message.callCommandFailed'));
 };
 
 // 返回静态处理函数
 const handleReturnStatic = async () => {
   // 这里可以添加返回静态的API调用
-  message.info('正在返回静态状态...');
+  message.info(t('experiment.current.message.returningStatic'));
 };
 
 const handleCurve = (row: RowType) => {
   // 仅使用后端返回的曲线数据，移除示例数据后备逻辑
   if (!row.curveInfo) {
-    message.error('曲线数据为空，未生成图表');
+    message.error(t('experiment.current.message.curveDataEmpty'));
     return;
   }
   const points = parseCurveInfoToPoints(row.curveInfo);
   if (points.length === 0) {
-    message.error('曲线数据解析失败或为空，未生成图表');
+    message.error(t('experiment.current.message.curveDataParseFailed'));
     return;
   }
 
   const key = String(row.serialNumber);
   chartsData.value[key] = points;
-  chartsTitles.value[key] = `${row.loadChangeState} - 瞬态电压变化曲线`;
+  chartsTitles.value[key] =
+    `${row.loadChangeState} - ${t('experiment.current.transientVoltage.charts.titleSuffix')}`;
   chartsRangeAreas.value[key] = defaultRangeArea.value;
   if (!renderedIds.value.includes(key)) {
     renderedIds.value.push(key);
   }
   message.success(
-    `已生成 ${row.loadChangeState} 的瞬态电压变化曲线，共${points.length}个数据点`,
+    t('experiment.current.message.generatedCurve', {
+      state: row.loadChangeState,
+      count: points.length,
+    }),
   );
 };
 
@@ -421,7 +443,7 @@ function sanitizeFileName(name: string) {
 const sendDcuDeviceMonitoringCommand = async (state: 0 | 1) => {
   const experimentId = experimentStore.state.currentExperiment?.id || '';
   if (!experimentId) {
-    message.error('实验ID为空');
+    message.error(t('experiment.current.message.experimentIdEmpty'));
     return;
   }
   const res = await sendDcuDeviceMonitoringCommandApi({
@@ -429,9 +451,9 @@ const sendDcuDeviceMonitoringCommand = async (state: 0 | 1) => {
     state,
   });
   if (res) {
-    message.success('实时数据指令发送成功');
+    message.success(t('experiment.current.message.realtimeCommandSuccess'));
   } else {
-    message.error('实时数据指令发送失败');
+    message.error(t('experiment.current.message.realtimeCommandFailed'));
   }
 };
 
@@ -440,13 +462,13 @@ function handleDownloadAllCharts() {
     (r) => r.visible && renderedIds.value.includes(String(r.serialNumber)),
   );
   if (rowsToDownload.length === 0) {
-    message.warning('暂无已渲染的图表可下载');
+    message.warning(t('experiment.current.message.noChartsToDownload'));
     return;
   }
   rowsToDownload.forEach((row) => {
     const ref = chartRefs[String(row.serialNumber)];
     if (ref && typeof ref.downloadChart === 'function') {
-      const filename = `瞬态电压_${sanitizeFileName(`${row.serialNumber}_${row.loadChangeState}`)}`;
+      const filename = `${t('experiment.current.transient.tabs.voltage')}_${sanitizeFileName(`${row.serialNumber}_${row.loadChangeState}`)}`;
       ref.downloadChart(filename);
     }
   });
@@ -656,10 +678,14 @@ onUnmounted(() => {
 const gridOptions: VxeGridProps = {
   data: tableData.value,
   columns: [
-    { field: 'serialNumber', title: '序号', width: 80 },
+    {
+      field: 'serialNumber',
+      title: t('experiment.current.transientVoltage.columns.serialNumber'),
+      width: 80,
+    },
     {
       field: 'loadChangeState',
-      title: '负载变化状态',
+      title: t('experiment.current.transientVoltage.columns.loadChangeState'),
       width: 200,
       editRender: {
         name: 'VxeInput',
@@ -668,61 +694,77 @@ const gridOptions: VxeGridProps = {
     },
     {
       field: 'beforeChangeVoltage',
-      title: '突变前电压(V)',
+      title: t(
+        'experiment.current.transientVoltage.columns.beforeChangeVoltage',
+      ),
       width: 130,
       editRender: { name: 'VxeInput', props: { type: 'text' } },
     },
     {
       field: 'beforeChangeCurrent',
-      title: '突变前电流(A)',
+      title: t(
+        'experiment.current.transientVoltage.columns.beforeChangeCurrent',
+      ),
       width: 130,
       editRender: { name: 'VxeInput', props: { type: 'text' } },
     },
     {
       field: 'beforeChangePowerFactor',
-      title: '突变前功率因数COSΦ',
+      title: t(
+        'experiment.current.transientVoltage.columns.beforeChangePowerFactor',
+      ),
       width: 180,
       editRender: { name: 'VxeInput', props: { type: 'text' } },
     },
     {
       field: 'instantaneousVoltageMaxMin',
-      title: '瞬时电压最大或最小(V)',
+      title: t(
+        'experiment.current.transientVoltage.columns.instantaneousVoltageMaxMin',
+      ),
       width: 180,
       editRender: { name: 'VxeInput', props: { type: 'text' } },
     },
     {
       field: 'afterChangeVoltage',
-      title: '突变后电压(V)',
+      title: t(
+        'experiment.current.transientVoltage.columns.afterChangeVoltage',
+      ),
       width: 130,
       editRender: { name: 'VxeInput', props: { type: 'text' } },
     },
     {
       field: 'afterChangeCurrent',
-      title: '突变后电流(A)',
+      title: t(
+        'experiment.current.transientVoltage.columns.afterChangeCurrent',
+      ),
       width: 130,
       editRender: { name: 'VxeInput', props: { type: 'text' } },
     },
     {
       field: 'afterChangePowerFactor',
-      title: '突变后功率因数COSΦ',
+      title: t(
+        'experiment.current.transientVoltage.columns.afterChangePowerFactor',
+      ),
       width: 180,
       editRender: { name: 'VxeInput', props: { type: 'text' } },
     },
     {
       field: 'stabilityTime',
-      title: '稳定时间t(s)',
+      title: t('experiment.current.transientVoltage.columns.stabilityTime'),
       width: 120,
       editRender: { name: 'VxeInput', props: { type: 'text' } },
     },
     {
       field: 'transientVoltageChangeRate',
-      title: '瞬态电压变化率Δu(%)',
+      title: t(
+        'experiment.current.transientVoltage.columns.transientVoltageChangeRate',
+      ),
       width: 180,
       editRender: { name: 'VxeInput', props: { type: 'text' } },
     },
     {
       field: 'action',
-      title: '操作',
+      title: t('experiment.current.transientVoltage.columns.action'),
       width: 200,
       fixed: 'right',
       slots: { default: 'action' },

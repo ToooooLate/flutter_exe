@@ -1,7 +1,7 @@
 <template>
   <div class="steady-voltage-adjustment">
     <h3 class="text-foreground mb-2 text-lg font-semibold">
-      {{ t('experiment.comprehensive.steady.voltageAdjustment.title') }}
+      {{ t('experiment.current.comprehensive.steady.voltageAdjustment.title') }}
     </h3>
 
     <div class="table-container">
@@ -9,13 +9,27 @@
     </div>
 
     <div class="form-section">
-      <p class="mb-1">{{ t('experiment.comprehensive.steady.voltageAdjustment.labels.standard') }}</p>
+      <p class="mb-1">
+        {{
+          t(
+            'experiment.current.comprehensive.steady.voltageAdjustment.labels.standard',
+          )
+        }}
+      </p>
       <div class="form-row">
-        <label>{{ t('experiment.comprehensive.steady.voltageAdjustment.labels.conclusion') }}</label>
+        <label>{{
+          t(
+            'experiment.current.comprehensive.steady.voltageAdjustment.labels.conclusion',
+          )
+        }}</label>
         <textarea
           v-model="conclusion"
           :readonly="!isEditable"
-          :placeholder="t('experiment.comprehensive.steady.voltageAdjustment.placeholders.conclusion')"
+          :placeholder="
+            t(
+              'experiment.current.comprehensive.steady.voltageAdjustment.placeholders.conclusion',
+            )
+          "
           class="h-20 w-full resize-none rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           :class="{ 'bg-gray-100': !isEditable }"
         />
@@ -80,90 +94,116 @@ const gridOptions: VxeGridProps = {
   columns: [
     {
       field: 'serialNumber',
-      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.serialNumber'),
+      title: t(
+        'experiment.current.comprehensive.steady.voltageAdjustment.columns.serialNumber',
+      ),
       width: 60,
       align: 'center',
     },
     {
       field: 'loadPercent',
-      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.loadPercent'),
+      title: t(
+        'experiment.current.comprehensive.steady.voltageAdjustment.columns.loadPercent',
+      ),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'power',
-      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.power'),
+      title: t(
+        'experiment.current.comprehensive.steady.voltageAdjustment.columns.power',
+      ),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequency',
-      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.frequency'),
+      title: t(
+        'experiment.current.comprehensive.steady.voltageAdjustment.columns.frequency',
+      ),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'powerFactor',
-      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.powerFactor'),
+      title: t(
+        'experiment.current.comprehensive.steady.voltageAdjustment.columns.powerFactor',
+      ),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ua',
-      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.ua'),
+      title: t(
+        'experiment.current.comprehensive.steady.voltageAdjustment.columns.ua',
+      ),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ub',
-      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.ub'),
+      title: t(
+        'experiment.current.comprehensive.steady.voltageAdjustment.columns.ub',
+      ),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'uc',
-      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.uc'),
+      title: t(
+        'experiment.current.comprehensive.steady.voltageAdjustment.columns.uc',
+      ),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ia',
-      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.ia'),
+      title: t(
+        'experiment.current.comprehensive.steady.voltageAdjustment.columns.ia',
+      ),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ib',
-      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.ib'),
+      title: t(
+        'experiment.current.comprehensive.steady.voltageAdjustment.columns.ib',
+      ),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ic',
-      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.ic'),
+      title: t(
+        'experiment.current.comprehensive.steady.voltageAdjustment.columns.ic',
+      ),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'phaseAVoltage',
-      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.phaseAVoltage'),
+      title: t(
+        'experiment.current.comprehensive.steady.voltageAdjustment.columns.phaseAVoltage',
+      ),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'steadyVoltageDeviation',
-      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.steadyVoltageDeviation'),
+      title: t(
+        'experiment.current.comprehensive.steady.voltageAdjustment.columns.steadyVoltageDeviation',
+      ),
       width: 160,
       align: 'center',
       editRender: { name: 'VxeInput' },

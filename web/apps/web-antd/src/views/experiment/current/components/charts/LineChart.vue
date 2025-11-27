@@ -66,7 +66,9 @@ const chartRef = ref<EchartsUIType>();
 const { renderEcharts, getChartInstance } = useEcharts(chartRef);
 
 // 显示标题（优先使用外部传入，否则使用 i18n 默认）
-const displayTitle = computed(() => props.title || t('experiment.current.chart.defaultTitle'));
+const displayTitle = computed(
+  () => props.title || t('experiment.current.chart.defaultTitle'),
+);
 
 // 计算图表配置选项
 const chartOptions = computed(() => {
@@ -192,7 +194,7 @@ const chartOptions = computed(() => {
     legend: {
       data: [
         t('experiment.current.chart.seriesData'),
-        ...(props.rangeArea ? [t('experiment.current.chart.legendRange')] : [])
+        ...(props.rangeArea ? [t('experiment.current.chart.legendRange')] : []),
       ],
       top: 30,
     },
@@ -224,12 +226,6 @@ const chartOptions = computed(() => {
       axisLabel: {
         color: '#666',
         formatter: '{value}',
-        // rotate: xData.length > 50 ? 45 : 0,
-        // // 每 1s 显示一个刻度标签（数据为 0.1s 间隔）
-        // interval: (index: number, value: string | number) => {
-        //   const v = typeof value === 'string' ? parseFloat(value) : Number(value);
-        //   return Number.isFinite(v) ? v % 1 === 0 : false;
-        // },
       },
       axisTick: {
         show: true,

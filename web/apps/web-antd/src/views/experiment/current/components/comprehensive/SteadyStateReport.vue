@@ -7,19 +7,31 @@
       class="steady-tabs"
       @change="handleTabChange"
     >
-      <TabPane key="speed" :tab="t('experiment.comprehensive.steady.tabs.speed')" :force-render="true">
+      <TabPane
+        key="speed"
+        :tab="t('experiment.current.comprehensive.steady.tabs.speed')"
+        :force-render="true"
+      >
         <keep-alive>
           <SteadySpeedCharacteristic v-show="activeTab === 'speed'" />
         </keep-alive>
       </TabPane>
 
-      <TabPane key="voltage" :tab="t('experiment.comprehensive.steady.tabs.voltage')" :force-render="true">
+      <TabPane
+        key="voltage"
+        :tab="t('experiment.current.comprehensive.steady.tabs.voltage')"
+        :force-render="true"
+      >
         <keep-alive>
           <SteadyVoltageAdjustment v-show="activeTab === 'voltage'" />
         </keep-alive>
       </TabPane>
 
-      <TabPane key="range" :tab="t('experiment.comprehensive.steady.tabs.range')" :force-render="true">
+      <TabPane
+        key="range"
+        :tab="t('experiment.current.comprehensive.steady.tabs.range')"
+        :force-render="true"
+      >
         <keep-alive>
           <SteadyRangeCheck v-show="activeTab === 'range'" />
         </keep-alive>

@@ -82,6 +82,51 @@
     "monitoring": {
       "contentPlaceholder": "设备监控内容区域"
     },
+    "startup": {
+      "title": "常温起动性能检查（起动蓄电池）",
+      "measurementDevice": "测量设备：示波器",
+      "calcMethod": "计算方法：传感器输出频率 = 飞轮齿数 × 额定转速 / 周期",
+      "labels": {
+        "flywheelTeeth": "机组飞轮齿数：",
+        "targetIdleSpeed": "机组达到怠速转速：",
+        "autoStartTest": "自起动试验",
+        "autoStopTest": "自动停机试验",
+        "threeFailures": "3次启动失败",
+        "emergencyStop": "紧急停机"
+      },
+      "placeholders": {
+        "flywheelTeeth": "请输入飞轮齿数",
+        "speed": "请输入转速",
+        "frequency": "请输入频率"
+      },
+      "inline": {
+        "rpmEquals": "rpm 转即为",
+        "hzSuccess": "Hz 视为启动成功"
+      },
+      "autoStartSectionTitle": "自起动试验",
+      "columns": {
+        "startNumber": "启动次数",
+        "ambientTemperature": "环境温度 (℃)",
+        "startupTime": "启动时间 (s)",
+        "startupStatus": "启动状态"
+      }
+    },
+    "operation": {
+      "title": "机组运转参数 - 启动阶段",
+      "measure": "测定",
+      "measuring": "测定中...",
+      "measureSuccess": "测定命令发送成功",
+      "measureFailed": "测定命令发送失败",
+      "columns": {
+        "item": "项目",
+        "voltage": "电压 (V)",
+        "frequency": "频率 (Hz)",
+        "waterTemp": "水温 (℃)",
+        "oilPressure": "油压 (Bar)",
+        "speed": "转速 (rpm)",
+        "threeLeakage": "三漏"
+      }
+    },
     "realtime": {
       "title": "实时数据",
       "pushButton": "数据推送",
@@ -310,6 +355,41 @@
             "phaseAVoltage": "A相电压 (V)\nPhase A Voltage",
             "steadyVoltageDeviation": "稳态电压调整率 △u%\nSteady Voltage Deviation"
           }
+        },
+        "speedCharacteristic": {
+          "requirement": "要求/Standard：稳态频率偏差 δst ±5%",
+          "subTable1Title": "稳态调速特性测定 - 表格1",
+          "subTable2Title": "稳态调速特性测定 - 表格2",
+          "subTable3Title": "稳态调速特性测定 - 表格3",
+          "items": {
+            "first": "第一次",
+            "second": "第二次",
+            "third": "第三次",
+            "average": "平均值"
+          },
+          "main": {
+            "columns": {
+              "item": "项目",
+              "steadyFrequencyDeviationStPercent": "稳态频率偏差 δst (%)",
+              "speedSystemInsensitivityPercent": "调速系统不灵敏度 (%)",
+              "nonlinearityPercent": "非线性度 (%)"
+            }
+          },
+          "columns": {
+            "serialNumber": "序号",
+            "loadPercent": "负载 (%)\nLoad",
+            "power": "功率 (kW)\nPower",
+            "frequency": "频率 (Hz)\nFrequency",
+            "powerFactor": "功率因数 COS Φ\nPower Factor",
+            "ua": "UA (V)",
+            "ub": "UB (V)",
+            "uc": "UC (V)",
+            "ia": "IA (A)",
+            "ib": "IB (A)",
+            "ic": "IC (A)",
+            "phaseAVoltage": "A相电压 (V)\nPhase A Voltage",
+            "steadyFrequencyDeviation": "稳态频率偏差 δst (%)"
+          }
         }
       },
       "fluctuation": {
@@ -365,7 +445,33 @@
         "third": "第三次实验",
         "save": "保存第{index}次实验数据"
       },
-      "loadTitle": "负载实验"
+      "loadTitle": "负载实验",
+      "load": {
+        "columns": {
+          "powerStandard": "功率要求(kW)",
+          "powerMeasured": "功率测定(kW)",
+          "oilTemperature": "油温 (℃)",
+          "oilPressure": "油压 (Bar)",
+          "coolantTemp": "冷却液温度 (℃)",
+          "crankcasePress": "曲轴箱压力 (mbar)",
+          "fuelRate": "燃油流量 (L/h)",
+          "percentPower": "百分功率 (%)",
+          "fuelAccumulatorPress": "燃油蓄压器压力 (MPa)",
+          "fuelSupplyPress": "供油压力 (Bar)",
+          "exhaustTempLb": "排气温度 LB (°C)",
+          "exhaustTempRb": "排气温度 RB (°C)",
+          "coolantPress": "冷却液压力 (Bar)",
+          "seaWaterPress": "海水压力 (Bar)",
+          "fuelTemp": "燃油温度 (°C)",
+          "boostPressL": "增压压力 L (Bar)",
+          "boostPressR": "增压压力 R (Bar)",
+          "exhaustTemp": "排气温度 (°C)",
+          "intakeManifoldTempLbf": "进气歧管温度 LBF (°C)",
+          "intakeManifoldTempLbb": "进气歧管温度 LBB (°C)",
+          "intakeManifoldTempRbf": "进气歧管温度 RBF (°C)",
+          "intakeManifoldTempRbb": "进气歧管温度 RBB (°C)"
+        }
+      }
     },
     "integrated": {
       "measurementTitle": "第{index}次数据测定实验",
@@ -401,6 +507,37 @@
         "dateOfTest": "请选择试验日期"
       }
     },
+    "insulation": {
+      "cold": {
+        "title": "发电机冷态绝缘电阻测定"
+      },
+      "hot": {
+        "title": "发电机热态绝缘电阻测定"
+      },
+      "labels": {
+        "generatorSn": "发电机SN"
+      },
+      "placeholders": {
+        "generatorSn": "请输入发电机序列号",
+        "mohm": "MΩ"
+      },
+      "units": {
+        "mohm": "单位：MΩ (兆欧)"
+      },
+      "columns": {
+        "status": "绝缘电阻状态",
+        "measured": "测量结果",
+        "standard": "要求"
+      },
+      "rows": {
+        "coldStatus": "冷态绝缘电阻",
+        "hotStatus": "热态绝缘电阻"
+      },
+      "thresholds": {
+        "cold": "≥2MΩ",
+        "hot": "≥5MΩ"
+      }
+    },
     "transient": {
       "title": "瞬态调速率和稳定时间测定",
       "subtitle": "Transient speed regulation and stabilization time measurement",
@@ -424,12 +561,49 @@
       "countdownTitle": "测定进行中",
       "countdownMessage": "瞬态调速率测定正在进行中，请耐心等待..."
     },
+    "message": {
+      "realtimeCommandSuccess": "实时数据指令发送成功",
+      "realtimeCommandFailed": "实时数据指令发送失败",
+      "curveDataEmpty": "曲线数据为空，未生成图表",
+      "curveDataParseFailed": "曲线数据解析失败或为空，未生成图表"
+    },
+    "transientVoltage": {
+      "title": "瞬态电压变化率和稳定时间测定",
+      "editProject": "编辑项目",
+      "subtitle": "Transient voltage change rate and stabilization time measurement",
+      "labels": {
+        "stableRange": "稳定电压偏差范围设置"
+      },
+      "charts": {
+        "titleSuffix": "瞬态电压变化曲线",
+        "rangeAreaName": "稳定电压范围",
+        "yAxisVoltage": "电压 (V)"
+      },
+      "columns": {
+        "serialNumber": "序号",
+        "loadChangeState": "负载变化状态",
+        "beforeChangeVoltage": "突变前电压(V)",
+        "beforeChangeCurrent": "突变前电流(A)",
+        "beforeChangePowerFactor": "突变前功率因数COSΦ",
+        "instantaneousVoltageMaxMin": "瞬时电压最大或最小(V)",
+        "afterChangeVoltage": "突变后电压(V)",
+        "afterChangeCurrent": "突变后电流(A)",
+        "afterChangePowerFactor": "突变后功率因数COSΦ",
+        "stabilityTime": "稳定时间t(s)",
+        "transientVoltageChangeRate": "瞬态电压变化率Δu(%)",
+        "action": "操作"
+      }
+    },
     "columns": {
       "serialNumber": "序号",
       "load": "负载",
       "timeMin": "时间 (min)",
       "ua": "UA (V)",
+      "ub": "UB (V)",
+      "uc": "UC (V)",
       "ia": "IA (A)",
+      "ib": "IB (A)",
+      "ic": "IC (A)",
       "powerFactor": "功率因数",
       "frequency": "频率 (Hz)",
       "umax": "Umax",

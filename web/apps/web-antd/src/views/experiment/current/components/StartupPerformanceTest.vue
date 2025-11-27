@@ -3,19 +3,21 @@
     <!-- 标题 -->
     <div class="mb-6">
       <h2 class="text-foreground mb-2 text-xl font-bold">
-        Check start performance at ambient temperature (Start Batteries)
+        {{ t('experiment.current.startup.title') }}
       </h2>
     </div>
 
     <!-- 测量设备 -->
     <div class="mb-4">
-      <span class="text-foreground text-sm font-medium">测量设备：示波器</span>
+      <span class="text-foreground text-sm font-medium">
+        {{ t('experiment.current.startup.measurementDevice') }}
+      </span>
     </div>
 
     <!-- 计算方法 -->
     <div class="mb-6">
       <span class="text-foreground text-sm font-medium">
-        计算方法：传感器输出频率 = 飞轮齿数 × 额定转速 / 周期
+        {{ t('experiment.current.startup.calcMethod') }}
       </span>
     </div>
 
@@ -24,14 +26,16 @@
       <!-- 机组飞轮齿数 -->
       <div class="flex items-center gap-4">
         <label class="text-foreground whitespace-nowrap text-sm font-medium">
-          机组飞轮齿数：
+          {{ t('experiment.current.startup.labels.flywheelTeeth') }}
         </label>
         <input
           v-model.number="flywheelTeeth"
           type="number"
           step="1"
           class="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="请输入飞轮齿数"
+          :placeholder="
+            t('experiment.current.startup.placeholders.flywheelTeeth')
+          "
           :disabled="!isEditable"
         />
       </div>
@@ -39,25 +43,31 @@
       <!-- 机组达到怠速转速 -->
       <div class="flex items-center gap-4">
         <label class="text-foreground whitespace-nowrap text-sm font-medium">
-          机组达到怠速转速：
+          {{ t('experiment.current.startup.labels.targetIdleSpeed') }}
         </label>
         <div class="flex flex-1 items-center gap-2">
           <input
             v-model="targetSpeed"
             type="number"
             class="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="转速"
+            :placeholder="t('experiment.current.startup.placeholders.speed')"
             :disabled="!isEditable"
           />
-          <span class="text-foreground text-sm">rpm 转即为</span>
+          <span class="text-foreground text-sm">{{
+            t('experiment.current.startup.inline.rpmEquals')
+          }}</span>
           <input
             v-model="frequency"
             type="number"
             class="w-20 rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="频率"
+            :placeholder="
+              t('experiment.current.startup.placeholders.frequency')
+            "
             :disabled="!isEditable"
           />
-          <span class="text-foreground text-sm">Hz 视为启动成功</span>
+          <span class="text-foreground text-sm">{{
+            t('experiment.current.startup.inline.hzSuccess')
+          }}</span>
         </div>
       </div>
     </div>
@@ -69,11 +79,13 @@
 
     <!-- 自起动试验 -->
     <div class="mb-6">
-      <h3 class="text-foreground mb-4 text-lg font-semibold">自起动试验</h3>
+      <h3 class="text-foreground mb-4 text-lg font-semibold">
+        {{ t('experiment.current.startup.autoStartSectionTitle') }}
+      </h3>
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div class="flex items-center gap-2">
           <label class="text-foreground whitespace-nowrap text-sm font-medium">
-            自起动试验
+            {{ t('experiment.current.startup.labels.autoStartTest') }}
           </label>
           <input
             v-model="autoStartTest"
@@ -85,7 +97,7 @@
         </div>
         <div class="flex items-center gap-2">
           <label class="text-foreground whitespace-nowrap text-sm font-medium">
-            自动停机试验
+            {{ t('experiment.current.startup.labels.autoStopTest') }}
           </label>
           <input
             v-model="autoStopTest"
@@ -97,7 +109,7 @@
         </div>
         <div class="flex items-center gap-2">
           <label class="text-foreground whitespace-nowrap text-sm font-medium">
-            3次启动失败
+            {{ t('experiment.current.startup.labels.threeFailures') }}
           </label>
           <input
             v-model="threeFailures"
@@ -109,7 +121,7 @@
         </div>
         <div class="flex items-center gap-2">
           <label class="text-foreground whitespace-nowrap text-sm font-medium">
-            紧急停机
+            {{ t('experiment.current.startup.labels.emergencyStop') }}
           </label>
           <input
             v-model="emergencyStop"
@@ -124,14 +136,14 @@
 
     <!-- 结论 -->
     <div class="mb-6">
-      <label class="text-foreground mb-2 block text-sm font-medium"
-        >结论：</label
-      >
+      <label class="text-foreground mb-2 block text-sm font-medium">
+        {{ t('experiment.current.common.conclusionLabel') }}
+      </label>
       <textarea
         v-model="conclusion"
         rows="4"
         class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        placeholder="请输入结论"
+        :placeholder="t('experiment.current.placeholders.inputConclusion')"
         :readonly="!isEditable"
       />
     </div>
@@ -141,6 +153,7 @@
 <script setup lang="ts">
 // @ts-nocheck
 import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { useI18n } from '@vben/locales';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { useDataCollector } from '#/composables/useDataCollector';
@@ -153,6 +166,7 @@ const experimentStore = useExperimentStore();
 const { registerCollector, unregisterCollector } = useDataCollector();
 const webSocketStore = useWebSocketStore();
 const isUpdatingFromStore = ref(false);
+const { t } = useI18n();
 
 // 响应式数据
 const flywheelTeeth = ref('');
@@ -217,7 +231,7 @@ const gridOptions = {
   columns: [
     {
       field: 'startNumber',
-      title: '启动次数\nNumber of starts',
+      title: t('experiment.current.startup.columns.startNumber'),
       align: 'center',
       width: 200,
       showOverflow: false,
@@ -233,7 +247,7 @@ const gridOptions = {
     },
     {
       field: 'ambientTemperature',
-      title: '环境温度(℃)\nAmbient Temp. (℃)',
+      title: t('experiment.current.startup.columns.ambientTemperature'),
       align: 'center',
       showOverflow: false,
       editRender: {
@@ -255,7 +269,7 @@ const gridOptions = {
     },
     {
       field: 'startupTime',
-      title: '启动时间(s)\nStart-up time(s)',
+      title: t('experiment.current.startup.columns.startupTime'),
       align: 'center',
       showOverflow: false,
       editRender: {
@@ -277,7 +291,7 @@ const gridOptions = {
     },
     {
       field: 'startupStatus',
-      title: '启动状态\nStarting status',
+      title: t('experiment.current.startup.columns.startupStatus'),
       align: 'center',
       showOverflow: false,
       editRender: { name: 'input' },

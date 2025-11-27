@@ -3,7 +3,7 @@
     <!-- 标题区域 -->
     <div class="mb-6">
       <h3 class="text-foreground mb-2 text-lg font-semibold">
-        Engine operation parameters - At startup
+        {{ t('experiment.current.operation.title') }}
       </h3>
 
       <!-- 测定按钮 -->
@@ -13,8 +13,10 @@
           :disabled="isLoading || !isEditable"
           class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <span v-if="isLoading">测定中...</span>
-          <span v-else>测定</span>
+          <span v-if="isLoading">{{
+            t('experiment.current.operation.measuring')
+          }}</span>
+          <span v-else>{{ t('experiment.current.operation.measure') }}</span>
         </button>
       </div>
     </div>
@@ -27,11 +29,11 @@
     <!-- 结论区域 -->
     <div class="mt-6">
       <label class="text-foreground mb-2 block text-sm font-medium">
-        结论/Conclusion:
+        {{ t('experiment.current.common.conclusionLabel') }}
       </label>
       <textarea
         v-model="conclusion"
-        placeholder="请输入结论..."
+        :placeholder="t('experiment.current.placeholders.inputConclusion')"
         :readonly="!isEditable"
         class="h-20 w-full resize-none rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
       />
@@ -41,6 +43,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useI18n } from '@vben/locales';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { useDataCollector } from '#/composables/useDataCollector';
@@ -63,6 +66,7 @@ const { registerCollector, unregisterCollector } = useDataCollector();
 const isLoading = ref(false);
 const conclusion = ref('');
 const isEditable = computed(() => canEditTable());
+const { t } = useI18n();
 
 // 表格数据
 const tableData = ref([]);
@@ -75,8 +79,8 @@ const measureData = async () => {
     serialNumber: 2,
   });
   result
-    ? message.success('测定命令发送成功')
-    : message.error('测定命令发送失败');
+    ? message.success(t('experiment.current.operation.measureSuccess'))
+    : message.error(t('experiment.current.operation.measureFailed'));
   isLoading.value = false;
 };
 
@@ -86,49 +90,49 @@ const gridOptions: VxeGridProps = {
   columns: [
     {
       field: 'item',
-      title: '项目\nItem',
+      title: t('experiment.current.operation.columns.item'),
       width: 120,
       align: 'center',
       showOverflow: false,
     },
     {
       field: 'voltage',
-      title: '电压 (V)\nVolt.',
+      title: t('experiment.current.operation.columns.voltage'),
       align: 'center',
       showOverflow: false,
       editRender: { name: 'input', props: { disabled: !isEditable.value } },
     },
     {
       field: 'frequency',
-      title: '频率 (V)\nFrequency',
+      title: t('experiment.current.operation.columns.frequency'),
       align: 'center',
       showOverflow: false,
       editRender: { name: 'input', props: { disabled: !isEditable.value } },
     },
     {
       field: 'waterTemp',
-      title: '水温 (℃)\nWater Temp.',
+      title: t('experiment.current.operation.columns.waterTemp'),
       align: 'center',
       showOverflow: false,
       editRender: { name: 'input', props: { disabled: !isEditable.value } },
     },
     {
       field: 'oilPressure',
-      title: '油压 (Bar)\nOil Press.',
+      title: t('experiment.current.operation.columns.oilPressure'),
       align: 'center',
       showOverflow: false,
       editRender: { name: 'input', props: { disabled: !isEditable.value } },
     },
     {
       field: 'speed',
-      title: '转速 (rpm)\nSpeed',
+      title: t('experiment.current.operation.columns.speed'),
       align: 'center',
       showOverflow: false,
       editRender: { name: 'input', props: { disabled: !isEditable.value } },
     },
     {
       field: 'threeLeakage',
-      title: '三漏',
+      title: t('experiment.current.operation.columns.threeLeakage'),
       width: 100,
       align: 'center',
       showOverflow: false,

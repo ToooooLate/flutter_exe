@@ -27,6 +27,7 @@ import { useDataCollector } from '#/composables/useDataCollector';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
 import type { IntegratedCheckItem } from '#/store';
 import IntegratedCheckForm from './IntegratedCheckForm.vue';
+import { $t } from '#/locales';
 
 const experimentStore = useExperimentStore();
 const webSocketStore = useWebSocketStore(); // 数据收集器
@@ -64,7 +65,7 @@ const handleExperimentData = (data: any) => {
 
 const handleIntegratedExperimentData = (data: any) => {
   if (!data) {
-    message.error('综合试验数据推送失败');
+    message.error($t('experiment.current.message.integratedPushFailed'));
     return;
   }
   if (data.experimentStatus === false) {
@@ -96,9 +97,9 @@ const activeTab = ref('1');
 
 // 实验配置
 const experimentConfigs = [
-  { key: '1', tab: '第一次实验', index: 1, storeKey: 'integratedList' },
-  { key: '2', tab: '第二次实验', index: 2, storeKey: 'integrated2List' },
-  { key: '3', tab: '第三次实验', index: 3, storeKey: 'integrated3List' },
+  { key: '1', tab: $t('experiment.current.comprehensive.experiments.first'), index: 1, storeKey: 'integratedList' },
+  { key: '2', tab: $t('experiment.current.comprehensive.experiments.second'), index: 2, storeKey: 'integrated2List' },
+  { key: '3', tab: $t('experiment.current.comprehensive.experiments.third'), index: 3, storeKey: 'integrated3List' },
 ] as const;
 
 // 函数工厂：创建更新函数

@@ -1,6 +1,8 @@
 <template>
   <div class="load-test">
-    <h3 class="text-foreground mb-2 text-lg font-semibold">Load Test</h3>
+    <h3 class="text-foreground mb-2 text-lg font-semibold">
+      {{ $t('experiment.current.comprehensive.loadTitle') }}
+    </h3>
 
     <div class="table-container">
       <Grid />
@@ -8,10 +10,10 @@
 
     <div class="form-section">
       <div class="form-row">
-        <label>结论 Conclusion:</label>
+        <label>{{ $t('experiment.current.common.conclusionLabel') }}</label>
         <textarea
           v-model="conclusion"
-          placeholder="请输入结论..."
+          :placeholder="$t('experiment.current.placeholders.inputConclusion')"
           class="h-20 w-full resize-none rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           :readonly="!isEditable"
         />
@@ -28,6 +30,7 @@ import { useDataCollector } from '#/composables/useDataCollector';
 import { useExperimentStore } from '#/store/experiment';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
 import { canEditTable } from '#/composables/useExperimentPermissions';
+import { $t } from '#/locales';
 
 // 响应式数据
 const conclusion = ref('');
@@ -111,14 +114,14 @@ const gridOptions: VxeGridProps = {
   columns: [
     {
       field: 'serialNumber',
-      title: '序号\nSerial Number',
+      title: $t('experiment.current.columns.serialNumber'),
       width: 80,
       align: 'center',
       fixed: 'left',
     },
     {
       field: 'timeMin',
-      title: '时间 (min)\nTime',
+      title: $t('experiment.current.columns.timeMin'),
       width: 100,
       align: 'center',
       fixed: 'left',
@@ -126,7 +129,9 @@ const gridOptions: VxeGridProps = {
     },
     {
       field: 'loadPercent',
-      title: '负载 (%)\nLoad',
+      title: $t(
+        'experiment.current.comprehensive.fluctuation.speed.columns.load',
+      ),
       width: 100,
       align: 'center',
       fixed: 'left',
@@ -134,126 +139,126 @@ const gridOptions: VxeGridProps = {
     },
     {
       field: 'powerStandard',
-      title: '功率要求(kW)\nPower Standard',
+      title: $t('experiment.current.comprehensive.load.columns.powerStandard'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'powerMeasured',
-      title: '功率测定(kW)\nPower Measured',
+      title: $t('experiment.current.comprehensive.load.columns.powerMeasured'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequency',
-      title: '频率 (Hz)\nFrequency',
+      title: $t('experiment.current.columns.frequency'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'powerFactor',
-      title: '功率因数\nPower Factor',
+      title: $t('experiment.current.columns.powerFactor'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ua',
-      title: 'UA (V)',
+      title: $t('experiment.current.columns.ua'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ub',
-      title: 'UB (V)',
+      title: $t('experiment.current.columns.ub'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'uc',
-      title: 'UC (V)',
+      title: $t('experiment.current.columns.uc'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ia',
-      title: 'IA (A)',
+      title: $t('experiment.current.columns.ia'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ib',
-      title: 'IB (A)',
+      title: $t('experiment.current.columns.ib'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ic',
-      title: 'IC (A)',
+      title: $t('experiment.current.columns.ic'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'speed',
-      title: '转速 (rpm)\nSpeed',
+      title: $t('experiment.current.columns.speedRpm'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'oilTemperature',
-      title: '油温 (℃)\nOil Temp',
+      title: $t('experiment.current.comprehensive.load.columns.oilTemperature'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'oilPressure',
-      title: '油压 (Bar)\nOil Pressure',
+      title: $t('experiment.current.comprehensive.load.columns.oilPressure'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'coolantTemp',
-      title: '冷却液温度 (℃)\nCoolant Temp',
+      title: $t('experiment.current.comprehensive.load.columns.coolantTemp'),
       width: 140,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'crankcasePress',
-      title: '曲轴箱压力 (mbar)\nCrankcase Press',
+      title: $t('experiment.current.comprehensive.load.columns.crankcasePress'),
       width: 140,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'fuelRate',
-      title: '燃油流量 (L/h)\nFuel Rate',
+      title: $t('experiment.current.comprehensive.load.columns.fuelRate'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'exhaustTemp',
-      title: '排气温度 (℃)\nExhaust Temp',
+      title: $t('experiment.current.comprehensive.load.columns.exhaustTemp'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'percentPower',
-      title: 'Percent Power\n(%)',
+      title: $t('experiment.current.comprehensive.load.columns.percentPower'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
@@ -261,91 +266,103 @@ const gridOptions: VxeGridProps = {
 
     {
       field: 'fuelAccumulatorPress',
-      title: 'Fuel Accumulator\nPress(Mpa)',
+      title: $t(
+        'experiment.current.comprehensive.load.columns.fuelAccumulatorPress',
+      ),
       width: 140,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'fuelSupplyPress',
-      title: 'Fuel Supply Press\n(Bar)',
+      title: $t(
+        'experiment.current.comprehensive.load.columns.fuelSupplyPress',
+      ),
       width: 130,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'exhaustTempLb',
-      title: 'Exhaust Temp. LB\n(°C)',
+      title: $t('experiment.current.comprehensive.load.columns.exhaustTempLb'),
       width: 130,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'exhaustTempRb',
-      title: 'Exhaust Temp. RB\n(°C)',
+      title: $t('experiment.current.comprehensive.load.columns.exhaustTempRb'),
       width: 130,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'coolantPress',
-      title: 'Coolant Press\n(Bar)',
+      title: $t('experiment.current.comprehensive.load.columns.coolantPress'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'seaWaterPress',
-      title: 'Sea Water Press\n(Bar)',
+      title: $t('experiment.current.comprehensive.load.columns.seaWaterPress'),
       width: 130,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'fuelTemp',
-      title: 'Fuel Temp\n(°C)',
+      title: $t('experiment.current.comprehensive.load.columns.fuelTemp'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'boostPressL',
-      title: 'Boost Press L\n(Bar)',
+      title: $t('experiment.current.comprehensive.load.columns.boostPressL'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'boostPressR',
-      title: 'Boost Press R\n(Bar)',
+      title: $t('experiment.current.comprehensive.load.columns.boostPressR'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'intakeManifoldTempLbf',
-      title: 'Intake Manif Temp\nLBF (°C)',
+      title: $t(
+        'experiment.current.comprehensive.load.columns.intakeManifoldTempLbf',
+      ),
       width: 140,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'intakeManifoldTempLbb',
-      title: 'Intake Manif Temp\nLBB (°C)',
+      title: $t(
+        'experiment.current.comprehensive.load.columns.intakeManifoldTempLbb',
+      ),
       width: 140,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'intakeManifoldTempRbf',
-      title: 'Intake Manif Temp\nRBF (°C)',
+      title: $t(
+        'experiment.current.comprehensive.load.columns.intakeManifoldTempRbf',
+      ),
       width: 140,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'intakeManifoldTempRbb',
-      title: 'Intake Manif Temp\nRBB (°C)',
+      title: $t(
+        'experiment.current.comprehensive.load.columns.intakeManifoldTempRbb',
+      ),
       width: 140,
       align: 'center',
       editRender: { name: 'VxeInput' },

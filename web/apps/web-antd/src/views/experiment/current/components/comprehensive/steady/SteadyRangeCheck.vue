@@ -10,39 +10,78 @@
     </div>
 
     <div class="vp-raw w-full">
-      <Descriptions :title="t('experiment.current.comprehensive.steady.rangeCheck.descriptionsTitle')" bordered :column="3">
+      <Descriptions
+        :title="
+          t(
+            'experiment.current.comprehensive.steady.rangeCheck.descriptionsTitle',
+          )
+        "
+        bordered
+        :column="3"
+      >
         <!-- 空载电压部分 -->
-        <DescriptionsItem :label="t('experiment.current.comprehensive.steady.rangeCheck.noloadVoltage.title')" :span="3">
+        <DescriptionsItem
+          :label="
+            t(
+              'experiment.current.comprehensive.steady.rangeCheck.noloadVoltage.title',
+            )
+          "
+          :span="3"
+        >
           <div class="grid grid-cols-3 gap-4">
             <div>
               <label class="mb-1 block text-sm font-medium">
-                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.ratedVoltage') }}
+                {{
+                  t(
+                    'experiment.current.comprehensive.steady.rangeCheck.labels.ratedVoltage',
+                  )
+                }}
               </label>
               <Input
                 v-model:value="formData.ratedVoltage"
-                :placeholder="t('experiment.current.comprehensive.steady.rangeCheck.placeholders.ratedVoltage')"
+                :placeholder="
+                  t(
+                    'experiment.current.comprehensive.steady.rangeCheck.placeholders.ratedVoltage',
+                  )
+                "
                 :disabled="!isEditable"
                 class="w-full"
               />
             </div>
             <div>
               <label class="mb-1 block text-sm font-medium">
-                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.noLoadMaxPlus5') }}
+                {{
+                  t(
+                    'experiment.current.comprehensive.steady.rangeCheck.labels.noLoadMaxPlus5',
+                  )
+                }}
               </label>
               <Input
                 v-model:value="formData.noLoadMaxVoltage"
-                :placeholder="t('experiment.current.comprehensive.steady.rangeCheck.placeholders.noLoadMaxPlus5')"
+                :placeholder="
+                  t(
+                    'experiment.current.comprehensive.steady.rangeCheck.placeholders.noLoadMaxPlus5',
+                  )
+                "
                 :disabled="!isEditable"
                 class="w-full"
               />
             </div>
             <div>
               <label class="mb-1 block text-sm font-medium">
-                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.noLoadMinMinus5') }}
+                {{
+                  t(
+                    'experiment.current.comprehensive.steady.rangeCheck.labels.noLoadMinMinus5',
+                  )
+                }}
               </label>
               <Input
                 v-model:value="formData.noLoadMinVoltage"
-                :placeholder="t('experiment.current.comprehensive.steady.rangeCheck.placeholders.noLoadMinMinus5')"
+                :placeholder="
+                  t(
+                    'experiment.current.comprehensive.steady.rangeCheck.placeholders.noLoadMinMinus5',
+                  )
+                "
                 :disabled="!isEditable"
                 class="w-full"
               />
@@ -51,37 +90,64 @@
         </DescriptionsItem>
 
         <!-- 最大调速率部分 -->
-        <DescriptionsItem :label="t('experiment.current.comprehensive.steady.rangeCheck.maxSpeedRegulation.title')" :span="3">
+        <DescriptionsItem
+          :label="
+            t(
+              'experiment.current.comprehensive.steady.rangeCheck.maxSpeedRegulation.title',
+            )
+          "
+          :span="3"
+        >
           <div class="grid grid-cols-3 gap-4">
             <div>
               <label class="mb-1 block text-sm font-medium">
-                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.noLoadFreqZero') }}
+                {{
+                  t(
+                    'experiment.current.comprehensive.steady.rangeCheck.labels.noLoadFreqZero',
+                  )
+                }}
               </label>
               <Input
                 v-model:value="formData.maxSpeedRegulationNoLoadFreq"
-                :placeholder="t('experiment.current.placeholders.inputFrequency')"
+                :placeholder="
+                  t('experiment.current.placeholders.inputFrequency')
+                "
                 :disabled="!isEditable"
                 class="w-full"
               />
             </div>
             <div>
               <label class="mb-1 block text-sm font-medium">
-                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.fullLoadFreqHundred') }}
+                {{
+                  t(
+                    'experiment.current.comprehensive.steady.rangeCheck.labels.fullLoadFreqHundred',
+                  )
+                }}
               </label>
               <Input
                 v-model:value="formData.maxSpeedRegulationFullLoadFreq"
-                :placeholder="t('experiment.current.placeholders.inputFrequency')"
+                :placeholder="
+                  t('experiment.current.placeholders.inputFrequency')
+                "
                 :disabled="!isEditable"
                 class="w-full"
               />
             </div>
             <div>
               <label class="mb-1 block text-sm font-medium">
-                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.steadyRegulationDelta') }}
+                {{
+                  t(
+                    'experiment.current.comprehensive.steady.rangeCheck.labels.steadyRegulationDelta',
+                  )
+                }}
               </label>
               <Input
                 v-model:value="formData.maxSteadyStateSpeedRegulation"
-                :placeholder="t('experiment.current.comprehensive.steady.rangeCheck.placeholders.speedRegulation')"
+                :placeholder="
+                  t(
+                    'experiment.current.comprehensive.steady.rangeCheck.placeholders.speedRegulation',
+                  )
+                "
                 :disabled="!isEditable"
                 class="w-full"
               />
@@ -90,37 +156,64 @@
         </DescriptionsItem>
 
         <!-- 最小调速率部分 -->
-        <DescriptionsItem :label="t('experiment.current.comprehensive.steady.rangeCheck.minSpeedRegulation.title')" :span="3">
+        <DescriptionsItem
+          :label="
+            t(
+              'experiment.current.comprehensive.steady.rangeCheck.minSpeedRegulation.title',
+            )
+          "
+          :span="3"
+        >
           <div class="grid grid-cols-3 gap-4">
             <div>
               <label class="mb-1 block text-sm font-medium">
-                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.noLoadFreqZero') }}
+                {{
+                  t(
+                    'experiment.current.comprehensive.steady.rangeCheck.labels.noLoadFreqZero',
+                  )
+                }}
               </label>
               <Input
                 v-model:value="formData.minSpeedRegulationNoLoadFreq"
-                :placeholder="t('experiment.current.placeholders.inputFrequency')"
+                :placeholder="
+                  t('experiment.current.placeholders.inputFrequency')
+                "
                 :disabled="!isEditable"
                 class="w-full"
               />
             </div>
             <div>
               <label class="mb-1 block text-sm font-medium">
-                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.fullLoadFreqHundred') }}
+                {{
+                  t(
+                    'experiment.current.comprehensive.steady.rangeCheck.labels.fullLoadFreqHundred',
+                  )
+                }}
               </label>
               <Input
                 v-model:value="formData.minSpeedRegulationFullLoadFreq"
-                :placeholder="t('experiment.current.placeholders.inputFrequency')"
+                :placeholder="
+                  t('experiment.current.placeholders.inputFrequency')
+                "
                 :disabled="!isEditable"
                 class="w-full"
               />
             </div>
             <div>
               <label class="mb-1 block text-sm font-medium">
-                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.steadyRegulationDelta') }}
+                {{
+                  t(
+                    'experiment.current.comprehensive.steady.rangeCheck.labels.steadyRegulationDelta',
+                  )
+                }}
               </label>
               <Input
                 v-model:value="formData.minSteadyStateSpeedRegulation"
-                :placeholder="t('experiment.current.comprehensive.steady.rangeCheck.placeholders.speedRegulation')"
+                :placeholder="
+                  t(
+                    'experiment.current.comprehensive.steady.rangeCheck.placeholders.speedRegulation',
+                  )
+                "
                 :disabled="!isEditable"
                 class="w-full"
               />
@@ -343,42 +436,6 @@ function registerDataCollector() {
 
   registerCollector(collector);
   console.log('SteadyRangeCheck数据收集器已注册');
-}
-
-// 监听WebSocket消息更新（仅非admin用户）
-if (!isAdmin.value) {
-  watch(
-    () => experimentStore.state.currentExperiment?.steadyAdjustment,
-    (newData) => {
-      if (newData) {
-        console.log(
-          'SteadyAdjustment data updated from WebSocket for non-admin user:',
-          newData,
-        );
-        // 更新本地显示数据（来自WebSocket推送）
-        formData.value = {
-          id: newData.id || '',
-          ratedVoltage: newData.ratedVoltage || '',
-          noLoadMaxVoltage: newData.noLoadMaxVoltage || '',
-          noLoadMinVoltage: newData.noLoadMinVoltage || '',
-          maxSpeedRegulationNoLoadFreq:
-            newData.maxSpeedRegulationNoLoadFreq || '',
-          maxSpeedRegulationFullLoadFreq:
-            newData.maxSpeedRegulationFullLoadFreq || '',
-          maxSteadyStateSpeedRegulation:
-            newData.maxSteadyStateSpeedRegulation || '',
-          minSpeedRegulationNoLoadFreq:
-            newData.minSpeedRegulationNoLoadFreq || '',
-          minSpeedRegulationFullLoadFreq:
-            newData.minSpeedRegulationFullLoadFreq || '',
-          minSteadyStateSpeedRegulation:
-            newData.minSteadyStateSpeedRegulation || '',
-          conclusion: newData.conclusion || '',
-        };
-      }
-    },
-    { deep: true },
-  );
 }
 </script>
 

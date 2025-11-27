@@ -41,13 +41,15 @@
 
     <!-- 结论部分 -->
     <div class="mb-4">
-      <label class="mb-2 block text-sm font-medium">结论/Conclusion:</label>
+      <label class="mb-2 block text-sm font-medium">
+        {{ t('experiment.current.common.conclusionLabel') }}
+      </label>
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusion"
           :disabled="!isEditable.value"
           class="h-full w-full resize-none border-0 outline-none"
-          placeholder="请输入结论..."
+          :placeholder="t('experiment.current.placeholders.inputConclusion')"
         />
       </div>
     </div>
@@ -56,6 +58,7 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, nextTick } from 'vue';
+import { useI18n } from '@vben/locales';
 import { useExperimentStore } from '#/store/experiment';
 import { useUserRole } from '#/composables/useUserRole';
 import { useDataCollector } from '#/composables/useDataCollector';
@@ -70,6 +73,7 @@ import type { TableConfig } from './steadySpeedConfig';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { canEditTable } from '#/composables/useExperimentPermissions';
+const { t } = useI18n();
 
 // 本组件内定义数据类型，避免依赖不存在的 store 导出类型
 type SteadySpeedItem = Record<string, any>;
@@ -88,9 +92,10 @@ const fullSteadySpeedSub2List = ref<SteadySpeedSubItem[]>([]);
 const fullSteadySpeedSub3List = ref<SteadySpeedSubItem[]>([]);
 
 // 稳态调速特性表格数据和配置
-const steadySpeedList = ref<SteadySpeedItem[]>(createSteadySpeedListData());
+const steadySpeedList = ref<SteadySpeedItem[]>(createSteadySpeedListData(t));
 const steadySpeedGridOptions = createSteadySpeedMainGridOptions(
   steadySpeedList.value,
+  t,
 );
 const [SteadySpeedGrid, SteadySpeedGridApi] = useVbenVxeGrid({
   gridOptions: steadySpeedGridOptions,
@@ -98,7 +103,7 @@ const [SteadySpeedGrid, SteadySpeedGridApi] = useVbenVxeGrid({
 
 // 要求和结论
 const requirement = ref(
-  '要求/Standard: 稳态频率调节率 Steady frequency deviation ±5%',
+  t('experiment.current.comprehensive.steady.speedCharacteristic.requirement'),
 );
 const conclusion = ref('');
 
@@ -109,19 +114,28 @@ const tableConfigs = computed(() =>
   createTableConfigs([
     {
       key: 'sub1',
-      title: '稳态调速特性测定 - 表格1',
+      title: t(
+        'experiment.current.comprehensive.steady.speedCharacteristic.subTable1Title',
+      ),
       dataRef: steadySpeedSub1List,
+      t,
       alwaysShow: true, // 第一个表格始终显示
     },
     {
       key: 'sub2',
-      title: '稳态调速特性测定 - 表格2',
+      title: t(
+        'experiment.current.comprehensive.steady.speedCharacteristic.subTable2Title',
+      ),
       dataRef: steadySpeedSub2List,
+      t,
     },
     {
       key: 'sub3',
-      title: '稳态调速特性测定 - 表格3',
+      title: t(
+        'experiment.current.comprehensive.steady.speedCharacteristic.subTable3Title',
+      ),
       dataRef: steadySpeedSub3List,
+      t,
     },
   ]),
 );

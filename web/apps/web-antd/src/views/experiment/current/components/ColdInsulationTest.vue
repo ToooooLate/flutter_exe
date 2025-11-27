@@ -3,7 +3,7 @@
     <!-- 标题部分 -->
     <div class="mb-6">
       <h3 class="mb-2 text-lg font-semibold">
-        Generator insulation resistance measured at cold state
+        {{ $t('experiment.current.insulation.cold.title') }}
       </h3>
     </div>
 
@@ -11,13 +11,13 @@
     <div class="mb-6">
       <div class="flex items-center gap-4">
         <label class="text-foreground whitespace-nowrap text-sm font-medium">
-          Generator SN
+          {{ $t('experiment.current.insulation.labels.generatorSn') }}
         </label>
         <input
           v-model="generatorSN"
           type="text"
           class="max-w-md flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="请输入发电机序列号"
+          :placeholder="$t('experiment.current.insulation.placeholders.generatorSn')"
           :disabled="!isEditable"
         />
       </div>
@@ -26,17 +26,17 @@
     <!-- 测量结果表格 -->
     <div class="mb-6">
       <Grid />
-      <div class="mt-2 text-sm text-gray-500">单位：MΩ (兆欧)</div>
+      <div class="mt-2 text-sm text-gray-500">{{ $t('experiment.current.insulation.units.mohm') }}</div>
     </div>
 
     <!-- 结论部分 -->
     <div class="mb-4">
-      <label class="mb-2 block text-sm font-medium"> 结论/Conclusion: </label>
+      <label class="mb-2 block text-sm font-medium">{{ $t('experiment.current.common.conclusionLabel') }}</label>
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusion"
           class="h-full w-full resize-none border-0 outline-none"
-          placeholder="请输入结论..."
+          :placeholder="$t('experiment.current.placeholders.inputConclusion')"
           :readonly="!isEditable"
         />
       </div>
@@ -46,6 +46,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
+import { useI18n } from '@vben/locales';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { useExperimentStore } from '#/store/experiment';
@@ -68,6 +69,7 @@ const webSocketStore = useWebSocketStore();
 const generatorSN = ref('');
 const conclusion = ref('');
 const isEditable = computed(() => canEditTable());
+const { t } = useI18n();
 
 // 初始化数据
 onMounted(() => {
@@ -146,7 +148,7 @@ function handleExperimentColdInsulationUpdate(data: any) {
   const rows: RowType[] = [
     {
       id: data.id || '1',
-      status: '冷态绝缘电阻\nInsulation resistance',
+      status: t('experiment.current.insulation.rows.coldStatus'),
       measured: Number(cold.measured) || 0,
       standard: 2,
     },
@@ -164,7 +166,7 @@ const gridOptions: VxeGridProps<RowType> = {
   columns: [
     {
       field: 'status',
-      title: '绝缘电阻状态',
+      title: t('experiment.current.insulation.columns.status'),
       minWidth: 200,
       showOverflow: false,
       cellRender: {
@@ -186,14 +188,14 @@ const gridOptions: VxeGridProps<RowType> = {
         },
       },
       field: 'measured',
-      title: '测量结果\nMeasured',
+      title: t('experiment.current.insulation.columns.measured'),
       minWidth: 150,
       showOverflow: false,
       align: 'center',
     },
     {
       field: 'standard',
-      title: '要求\nStandard',
+      title: t('experiment.current.insulation.columns.standard'),
       minWidth: 150,
       showOverflow: false,
       cellRender: {
@@ -205,13 +207,13 @@ const gridOptions: VxeGridProps<RowType> = {
           },
         },
       },
-      formatter: () => '≥2MΩ',
+      formatter: () => t('experiment.current.insulation.thresholds.cold'),
     },
   ],
   data: [
     {
       id: '1',
-      status: '冷态绝缘电阻\nInsulation resistance',
+      status: t('experiment.current.insulation.rows.coldStatus'),
       measured: 0,
       standard: 2,
     },

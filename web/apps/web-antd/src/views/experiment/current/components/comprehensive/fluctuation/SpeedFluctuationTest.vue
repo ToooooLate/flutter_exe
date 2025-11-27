@@ -1,7 +1,7 @@
 <template>
   <div class="speed-fluctuation-test">
     <h3 class="text-foreground mb-2 text-lg font-semibold">
-      {{ t('experiment.comprehensive.fluctuation.speed.title') }}
+      {{ t('experiment.current.comprehensive.fluctuation.speed.title') }}
     </h3>
 
     <div class="table-container">
@@ -10,21 +10,29 @@
 
     <div class="form-section">
       <div class="form-row">
-        <label>{{ t('experiment.comprehensive.fluctuation.speed.labels.standard') }}</label>
+        <label>{{
+          t(
+            'experiment.current.comprehensive.fluctuation.speed.labels.standard',
+          )
+        }}</label>
         <input
           v-model="speedFluctuationStandard"
           :disabled="!isEditable"
-          :placeholder="t('experiment.comprehensive.fluctuation.speed.placeholders.standard')"
+          :placeholder="
+            t(
+              'experiment.current.comprehensive.fluctuation.speed.placeholders.standard',
+            )
+          "
           class="w-full rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           :class="{ 'bg-gray-100': !isEditable }"
         />
       </div>
       <div class="form-row">
-        <label>{{ t('experiment.common.conclusionLabel') }}</label>
+        <label>{{ t('experiment.current.common.conclusionLabel') }}</label>
         <textarea
           v-model="conclusion"
           :readonly="!isEditable"
-          :placeholder="t('experiment.placeholders.inputConclusion')"
+          :placeholder="t('experiment.current.placeholders.inputConclusion')"
           class="h-20 w-full resize-none rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           :class="{ 'bg-gray-100': !isEditable }"
         />
@@ -85,66 +93,89 @@ const fullTableData = ref<any[]>([]);
 const gridOptions: VxeGridProps = {
   data: tableData.value,
   columns: [
-    { field: 'serialNumber', title: t('experiment.columns.serialNumber'), width: 60, align: 'center' },
+    {
+      field: 'serialNumber',
+      title: t('experiment.current.columns.serialNumber'),
+      width: 60,
+      align: 'center',
+    },
     {
       field: 'load',
-      title: t('experiment.comprehensive.fluctuation.speed.columns.load'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.speed.columns.load',
+      ),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'power',
-      title: t('experiment.comprehensive.fluctuation.speed.columns.power'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.speed.columns.power',
+      ),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequency',
-      title: t('experiment.comprehensive.fluctuation.speed.columns.frequency'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.speed.columns.frequency',
+      ),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'powerFactor',
-      title: t('experiment.comprehensive.fluctuation.speed.columns.powerFactor'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.speed.columns.powerFactor',
+      ),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'measuredFreqBeforeExperiment',
-      title: t('experiment.comprehensive.fluctuation.speed.columns.measuredFreqBeforeExperiment'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.speed.columns.measuredFreqBeforeExperiment',
+      ),
       width: 160,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequencyWaveMax',
-      title: t('experiment.comprehensive.fluctuation.speed.columns.frequencyWaveMax'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.speed.columns.frequencyWaveMax',
+      ),
       width: 160,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequencyWaveMin',
-      title: t('experiment.comprehensive.fluctuation.speed.columns.frequencyWaveMin'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.speed.columns.frequencyWaveMin',
+      ),
       width: 160,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequencyWaveAve',
-      title: t('experiment.comprehensive.fluctuation.speed.columns.frequencyWaveAve'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.speed.columns.frequencyWaveAve',
+      ),
       width: 160,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'speedFluctuationRate',
-      title: t('experiment.comprehensive.fluctuation.speed.columns.speedFluctuationRate'),
+      title: t(
+        'experiment.current.comprehensive.fluctuation.speed.columns.speedFluctuationRate',
+      ),
       width: 140,
       align: 'center',
       editRender: { name: 'VxeInput' },
