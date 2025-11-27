@@ -558,14 +558,8 @@
       "chartTitleSuffix": "瞬态调速曲线",
       "xAxisTime": "时间 (s)",
       "yAxisFrequency": "频率 (Hz)",
-      "countdownTitle": "测定进行中",
-      "countdownMessage": "瞬态调速率测定正在进行中，请耐心等待..."
-    },
-    "message": {
-      "realtimeCommandSuccess": "实时数据指令发送成功",
-      "realtimeCommandFailed": "实时数据指令发送失败",
-      "curveDataEmpty": "曲线数据为空，未生成图表",
-      "curveDataParseFailed": "曲线数据解析失败或为空，未生成图表"
+    "countdownTitle": "测定进行中",
+    "countdownMessage": "瞬态调速率测定正在进行中，请耐心等待..."
     },
     "transientVoltage": {
       "title": "瞬态电压变化率和稳定时间测定",

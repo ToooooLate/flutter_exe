@@ -558,14 +558,8 @@
       "chartTitleSuffix": "Transient regulation curve",
       "xAxisTime": "Time (s)",
       "yAxisFrequency": "Frequency (Hz)",
-      "countdownTitle": "Measuring",
-      "countdownMessage": "Transient measurement in progress, please wait..."
-    },
-    "message": {
-      "realtimeCommandSuccess": "Real-time data command sent successfully",
-      "realtimeCommandFailed": "Failed to send real-time data command",
-      "curveDataEmpty": "Curve data is empty; no chart generated",
-      "curveDataParseFailed": "Curve data parse failed or empty; no chart generated"
+    "countdownTitle": "Measuring",
+    "countdownMessage": "Transient measurement in progress, please wait..."
     },
     "transientVoltage": {
       "title": "Transient voltage change rate and stabilization time",
