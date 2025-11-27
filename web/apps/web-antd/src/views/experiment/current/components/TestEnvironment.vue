@@ -1,44 +1,48 @@
 <template>
   <div class="test-environment-container min-h-[400px] p-4">
     <div class="mb-4">
-      <h3 class="mb-1 text-lg font-semibold">TEST CONDITION</h3>
-      <p class="text-gray-600">试验环境参数（可编辑）</p>
+      <h3 class="mb-1 text-lg font-semibold">{{ t('experiment.current.environment.titleEn') }}</h3>
+      <p class="text-gray-600">{{ t('experiment.current.environment.title') }}</p>
     </div>
 
     <div class="vp-raw w-full">
-      <Descriptions title="试验环境参数" bordered :column="2">
-        <DescriptionsItem label="地点 / Test place">
-          <Input v-model:value="localData.testPlace" placeholder="请输入地点" :disabled="!isEditable" />
+      <Descriptions :title="t('experiment.current.environment.descriptionsTitle')" bordered :column="2">
+        <DescriptionsItem :label="t('experiment.current.environment.fields.testPlace')">
+          <Input
+            v-model:value="localData.testPlace"
+            :placeholder="t('experiment.current.environment.placeholders.testPlace')"
+            :disabled="!isEditable"
+          />
         </DescriptionsItem>
-        <DescriptionsItem label="试验温度 / Temperature">
+        <DescriptionsItem :label="t('experiment.current.environment.fields.temperature')">
           <InputNumber
             v-model:value="localData.temperature"
-            placeholder="请输入温度"
+            :placeholder="t('experiment.current.environment.placeholders.temperature')"
             addon-after="°C"
             :disabled="!isEditable"
           />
         </DescriptionsItem>
-        <DescriptionsItem label="空气湿度 / Relative humidity">
+        <DescriptionsItem :label="t('experiment.current.environment.fields.relativeHumidity')">
           <InputNumber
             v-model:value="localData.relativeHumidity"
-            placeholder="请输入湿度"
+            :placeholder="t('experiment.current.environment.placeholders.relativeHumidity')"
             addon-after="%"
             :disabled="!isEditable"
           />
         </DescriptionsItem>
-        <DescriptionsItem label="大气压力 / Atmosphere">
+        <DescriptionsItem :label="t('experiment.current.environment.fields.atmosphere')">
           <InputNumber
             v-model:value="localData.atmosphericPressure"
-            placeholder="请输入压力"
+            :placeholder="t('experiment.current.environment.placeholders.atmosphere')"
             addon-after="kPa"
             :disabled="!isEditable"
           />
         </DescriptionsItem>
-        <DescriptionsItem label="检验日期 / Date of test" :span="2">
+        <DescriptionsItem :label="t('experiment.current.environment.fields.dateOfTest')" :span="2">
           <DatePicker
             v-model:value="localData.testDate"
             format="YYYY-MM-DD"
-            placeholder="请选择日期"
+            :placeholder="t('experiment.current.environment.placeholders.dateOfTest')"
             valueFormat="YYYY-MM-DDTHH:mm:ss"
             class="w-full"
             :disabled="!isEditable"
@@ -56,6 +60,7 @@ import { useDataCollector } from '#/composables/useDataCollector';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
 import dayjs from 'dayjs';
 import { canEditTable } from '#/composables/useExperimentPermissions';
+import { useI18n } from '@vben/locales';
 import {
   Input,
   InputNumber,
@@ -76,6 +81,7 @@ interface EnvironmentData {
 const experimentStore = useExperimentStore();
 const webSocketStore = useWebSocketStore();
 const { registerCollector, unregisterCollector } = useDataCollector();
+const { t } = useI18n();
 
 // 标志位，用于避免循环更新
 const isUpdatingFromStore = ref(false);

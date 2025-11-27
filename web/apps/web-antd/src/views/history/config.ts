@@ -2,6 +2,7 @@ import type { VbenFormSchema } from '#/adapter/form';
 import type { VxeTableGridOptions } from '@vben/plugins/vxe-table';
 import dayjs from 'dayjs';
 import { $t } from '#/locales';
+import { useUserStore } from '#/store/user';
 
 // 操作点击回调函数类型
 export type OnActionClickFn<T = any> = (params: {
@@ -129,6 +130,8 @@ export function useGridFormSchema(): VbenFormSchema[] {
 export function useColumns<T = HistoryRecord>(
   onActionClick: OnActionClickFn<T>,
 ): VxeTableGridOptions['columns'] {
+  const userStore = useUserStore();
+  const isEngineerRole = (userStore.userInfo?.roleCode ?? '') === 'engineer';
   return [
     {
       field: 'experimentNo',
@@ -222,17 +225,17 @@ export function useColumns<T = HistoryRecord>(
           {
             code: 'saveAsTemplate',
             text: $t('page.history.operation.saveAsTemplate'),
-            show: (row: any) => row.status === 1 && row.isTemplate === 0,
+            show: (row: any) => isEngineerRole && row.status === 1 && row.isTemplate === 0,
           },
           {
             code: 'deleteTemplate',
             text: $t('page.history.operation.deleteTemplate'),
-            show: (row: any) => row.status === 1 && row.isTemplate === 1,
+            show: (row: any) => isEngineerRole && row.status === 1 && row.isTemplate === 1,
           },
           {
             code: 'startByTemplate',
             text: $t('page.history.operation.startByTemplate'),
-            show: (row: any) => row.status === 1 && row.isTemplate === 1,
+            show: (row: any) => isEngineerRole && row.status === 1 && row.isTemplate === 1,
           },
         ],
         name: 'CellOperation',

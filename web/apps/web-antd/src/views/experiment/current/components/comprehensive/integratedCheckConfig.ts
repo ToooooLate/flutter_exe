@@ -1,6 +1,7 @@
 // ts-ignore
 import type { IntegratedCheckItem } from '#/store/experiment';
 import { canEditTable } from '#/composables/useExperimentPermissions';
+import { $t } from '#/locales';
 
 // 初始表格数据
 export const initialTableData: IntegratedCheckItem[] = [
@@ -24,67 +25,67 @@ export function createGridOptions(data: IntegratedCheckItem[]) {
   const gridColumns = [
     {
       field: 'serialNumber',
-      title: '序号',
+      title: $t('experiment.current.columns.serialNumber'),
       width: 80,
       align: 'center' as const,
     },
     {
       field: 'loadPercent',
-      title: '负载',
+      title: $t('experiment.current.columns.load'),
       width: 100,
       align: 'center' as const,
       editRender: {
         name: 'VxeInput',
         props: {
-          placeholder: '请输入负载百分比',
+          placeholder: $t('experiment.current.placeholders.inputLoadPercent'),
         },
       },
     },
     {
       field: 'timeMin',
-      title: '时间 (min)',
+      title: $t('experiment.current.columns.timeMin'),
       width: 120,
       align: 'center' as const,
       editRender: {
         name: 'VxeInput',
         props: {
-          placeholder: '请输入时间',
+          placeholder: $t('experiment.current.placeholders.inputTime'),
         },
       },
     },
     {
       field: 'ua',
-      title: 'UA (V)',
+      title: $t('experiment.current.columns.ua'),
       width: 100,
       align: 'center' as const,
       editRender: {
         name: 'VxeInput',
         props: {
-          placeholder: '请输入电压值',
+          placeholder: $t('experiment.current.placeholders.inputVoltage'),
         },
       },
     },
     {
       field: 'ia',
-      title: 'IA (A)',
+      title: $t('experiment.current.columns.ia'),
       width: 100,
       align: 'center' as const,
       editRender: {
         name: 'VxeInput',
         props: {
-          placeholder: '请输入电流值',
+          placeholder: $t('experiment.current.placeholders.inputCurrent'),
         },
       },
     },
     {
       field: 'powerFactor',
-      title: '功率因数 Power Factor',
+      title: $t('experiment.current.columns.powerFactor'),
       width: 150,
       align: 'center' as const,
       editRender: {
         name: 'VxeNumberInput',
         props: {
-          placeholder: '请输入功率因数',
+          placeholder: $t('experiment.current.placeholders.inputPowerFactor'),
           min: 0,
           max: 1,
           step: 0.01,
@@ -93,13 +94,13 @@ export function createGridOptions(data: IntegratedCheckItem[]) {
     },
     {
       field: 'frequency',
-      title: '频率 (Hz) Frequency',
+      title: $t('experiment.current.columns.frequency'),
       width: 150,
       align: 'center' as const,
       editRender: {
         name: 'VxeNumberInput',
         props: {
-          placeholder: '请输入频率值',
+          placeholder: $t('experiment.current.placeholders.inputFrequency'),
           min: 0,
           step: 0.01,
         },
@@ -107,13 +108,13 @@ export function createGridOptions(data: IntegratedCheckItem[]) {
     },
     {
       field: 'umax',
-      title: 'Umax',
+      title: $t('experiment.current.columns.umax'),
       width: 100,
       align: 'center' as const,
       editRender: {
         name: 'VxeNumberInput',
         props: {
-          placeholder: '请输入最大电压',
+          placeholder: $t('experiment.current.placeholders.inputUmax'),
           min: 0,
           step: 0.01,
         },
@@ -121,26 +122,26 @@ export function createGridOptions(data: IntegratedCheckItem[]) {
     },
     {
       field: 'umin',
-      title: 'Umin',
+      title: $t('experiment.current.columns.umin'),
       width: 100,
       align: 'center' as const,
       editRender: {
         name: 'VxeNumberInput',
         props: {
-          placeholder: '请输入最小电压',
+          placeholder: $t('experiment.current.placeholders.inputUmin'),
           min: 0,
         },
       },
     },
     {
       field: 'fmax',
-      title: 'Fmax',
+      title: $t('experiment.current.columns.fmax'),
       width: 100,
       align: 'center' as const,
       editRender: {
         name: 'VxeNumberInput',
         props: {
-          placeholder: '请输入最大频率',
+          placeholder: $t('experiment.current.placeholders.inputFmax'),
           min: 0,
           step: 0.01,
         },
@@ -148,20 +149,20 @@ export function createGridOptions(data: IntegratedCheckItem[]) {
     },
     {
       field: 'fmin',
-      title: 'Fmin',
+      title: $t('experiment.current.columns.fmin'),
       width: 100,
       align: 'center' as const,
       editRender: {
         name: 'VxeNumberInput',
         props: {
-          placeholder: '请输入最小频率',
+          placeholder: $t('experiment.current.placeholders.inputFmin'),
           min: 0,
           step: 0.01,
         },
       },
     },
     {
-      title: '操作',
+      title: $t('experiment.current.columns.action'),
       width: 180,
       align: 'center' as const,
       fixed: 'right' as const,

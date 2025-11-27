@@ -1,0 +1,503 @@
+{
+  "current": {
+    "credential": {
+      "title": "Temporary Access URL",
+      "copy": "Copy",
+      "account": "Account",
+      "password": "Password",
+      "expiredAt": "Valid Until",
+      "extend": "Extend",
+      "copyAll": "Copy All",
+      "createSuccess": "Temporary credential created successfully",
+      "createFailed": "Failed to create temporary credential",
+      "extendSuccess": "Temporary credential extended successfully",
+      "extendFailed": "Failed to extend temporary credential",
+      "viewTitle": "View Access Credential",
+      "addressLabel": "Temporary Access URL",
+      "accountLabel": "Account",
+      "passwordLabel": "Password"
+    },
+    "message": {
+      "restored": "Experiment restored",
+      "restoreFailed": "Failed to restore experiment, please create a new one",
+      "endSuccess": "Experiment ended successfully",
+      "noExperiment": "No ongoing experiment",
+      "abandonSuccess": "Experiment abandoned successfully",
+      "backMissingId": "Cannot return to static: experiment ID not found",
+      "backCommandSent": "Static command sent",
+      "previewMissingInfo": "Missing experiment ID or number, please create or restore",
+      "syncSuccess": "Experiment data synchronized",
+      "collectorSyncFailed": "Data collector sync failed",
+      "syncFailed": "Experiment data sync failed",
+      "benchPositionEmpty": "Bench position is empty",
+      "measureCommandSent": "Measurement command sent",
+      "measureCommandFailed": "Failed to send measurement command",
+      "callCommandSent": "Recall command sent",
+      "callCommandFailed": "Failed to send recall command",
+      "experimentIdEmpty": "Experiment ID is empty",
+      "realtimeCommandSuccess": "Realtime command sent successfully",
+      "realtimeCommandFailed": "Failed to send realtime command",
+      "realtimeCheckInfo": "Please check experiment ID, bench position, or sync data first",
+      "voltageModulationSent": "Voltage modulation command sent",
+      "voltageModulationFailed": "Failed to send voltage modulation command",
+      "countdownEndMeasureDone": "Countdown ended, measurement complete",
+      "returnStaticCommandSent": "Return-to-static command sent",
+      "returnStaticCommandFailed": "Failed to send return-to-static command",
+      "returningStatic": "Returning to static state...",
+      "integratedPushFailed": "Integrated experiment data push failed",
+      "transientPushFailed": "Transient data push failed",
+      "curveDataEmpty": "Curve data is empty, chart not generated",
+      "curveDataParseFailed": "Curve data parse failed or empty, chart not generated",
+      "generatedCurve": "Generated transient curve for {{state}} with {{count}} points",
+      "noChartsToDownload": "No rendered charts available for download",
+      "dcuEnableSuccess": "DCU enabled successfully",
+      "dcuEnableFailed": "Failed to enable DCU"
+    },
+    "buttons": {
+      "create": "New Experiment",
+      "end": "End Experiment",
+      "abandon": "Abandon Experiment",
+      "preview": "Report Preview",
+      "sync": "Data Sync",
+      "back": "Return Static",
+      "credentialGenerate": "Generate Credential",
+      "credentialView": "View Credential",
+      "initialize": "Initialize"
+    },
+    "tabs": {
+      "environment": "Environment",
+      "appearance": "Appearance",
+      "coldInsulation": "Cold-state Insulation",
+      "startup": "Start Performance",
+      "operation": "Operation Check",
+      "protection": "Protection Devices",
+      "comprehensive": "Comprehensive",
+      "transient": "Transient",
+      "hotInsulation": "Hot-state Insulation"
+    },
+    "monitorTabs": {
+      "realtime": "Realtime Data",
+      "monitoring": "Device Monitoring"
+    },
+    "monitoring": {
+      "contentPlaceholder": "Device monitoring content area"
+    },
+    "realtime": {
+      "title": "Realtime Data",
+      "pushButton": "Push Data",
+      "voltageModulationTitle": "Voltage Modulation",
+      "descriptions": {
+        "ua": "UA (V)",
+        "ub": "UB (V)",
+        "uc": "UC (V)",
+        "ia": "IA (A)",
+        "ib": "IB (A)",
+        "ic": "IC (A)",
+        "powerKw": "Power (kW)",
+        "frequencyHz": "Frequency (Hz)",
+        "powerFactorCos": "Power factor (cosΦ)",
+        "speedRpm": "Speed (rpm)",
+        "oilTempC": "Oil temperature (℃)",
+        "coolantTempC": "Coolant temperature (℃)",
+        "exhaustTempC": "Exhaust temperature (℃)",
+        "oilPressureBar": "Oil pressure (Bar)"
+      }
+    },
+    "protection": {
+      "title": "Unit Protection Device Test",
+      "equipmentDesc": "Test equipment: pressure gauge, oil heating device",
+      "tabs": {
+        "overspeed": "Overspeed Protection Test",
+        "protection": "Protection Test"
+      },
+      "overspeed": {
+        "title": "(1) Overspeed Protection Test",
+        "requirements": "Requirement: Adjust speed to 113%–115% of rated speed; control box shows overspeed alarm; engine should stop immediately. All three attempts must succeed.",
+        "columns": {
+          "sequence": "No.",
+          "speedRpm": "Speed (rpm)",
+          "alarmStop": "Alarm Shutdown",
+          "note": "Remark"
+        },
+        "labels": {
+          "conclusion": "Conclusion:"
+        },
+        "placeholders": {
+          "conclusion": "Please enter test conclusion..."
+        }
+      },
+      "test": {
+        "title": "Alarm and Safety Test",
+        "columns": {
+          "serialNumber": "No.",
+          "testItem": "Test Item",
+          "signalType": "Signal Type",
+          "setValue": "Set Value",
+          "localDisplay": "Local Display",
+          "localAlarm": "Local Alarm",
+          "localShd": "Local SHD",
+          "testResult": "Test Result",
+          "remark": "Remark (A: Applicable, NA: Inapplicability)"
+        },
+        "labels": {
+          "remark": "Remark:",
+          "conclusion": "Conclusion:"
+        },
+        "placeholders": {
+          "remark": "Please enter remark...",
+          "conclusion": "Please enter test conclusion..."
+        },
+        "items": {
+          "oilPressureLowAlarm": "Low Lubricating Oil Pressure Alarm",
+          "coolantTempHighAlarm": "High Coolant Temperature Alarm",
+          "lubOilTempHighAlarm": "High Lubricating Oil Temperature Alarm",
+          "fuelLeakage": "Fuel Leakage",
+          "controlPowerVoltageLowAlarm": "Control Power Voltage Low Alarm",
+          "overspeedAlarm": "Overspeed Alarm",
+          "coolantLevelLowAlarm": "Coolant Level Low Alarm",
+          "highCoolantTemperatureShutdown": "High Coolant Temperature Shutdown",
+          "lowLubOilPressureShutdown": "Low Lubricating Oil Pressure Shutdown",
+          "localEmergencyStop": "Local Emergency Stop",
+          "remoteEmergencyStop": "Remote Emergency Stop",
+          "overspeedShutdown": "Overspeed Shutdown",
+          "startFailure": "Start Failure"
+        }
+      }
+    },
+    "settings": {
+      "title": "Experiment Settings",
+      "collapse": "Collapse",
+      "expand": "Expand",
+      "connectionParams": "Connection Parameters",
+      "deviceParams": "Device Parameters",
+      "fields": {
+        "testPerson": "Tester",
+        "inspector": "Inspector",
+        "reviewer": "Reviewer",
+        "phaseType": "Phase Type",
+        "benchPosition": "Bench Position",
+        "generatorComPort": "Generator COM Port",
+        "engineComPort": "Engine COM Port",
+        "generatorBaudRate": "Generator Baud Rate",
+        "engineBaudRate": "Engine Baud Rate",
+        "dcuSetting": "DCU Configuration",
+        "customer": "Customer",
+        "projectName": "Project Name",
+        "shipyard": "Shipyard",
+        "shipNumber": "Ship Number",
+        "unitModel": "Unit Model",
+        "unitSerial": "Unit Serial",
+        "engineModel": "Engine Model",
+        "generatorModel": "Generator Model",
+        "engineSerial": "Engine Serial",
+        "generatorSerial": "Generator Serial",
+        "ratedFrequency": "Rated Frequency (Hz)",
+        "powerFactor": "Power Factor",
+        "noLoadFrequency": "No-load Frequency (Hz)",
+        "fullLoadFrequency": "Full-load Frequency (Hz)",
+        "apparentPower": "Apparent Power (kW)",
+        "ratedPower": "Rated Power (kW)",
+        "ratedCurrent": "Rated Current (A)",
+        "ratedVoltage": "Rated Voltage (V)"
+      },
+      "placeholders": {
+        "testPerson": "Please enter tester",
+        "inspector": "Please enter inspector",
+        "reviewer": "Please enter reviewer",
+        "phaseType": "Select phase",
+        "benchPosition": "Select bench",
+        "generatorComPort": "Select generator COM port",
+        "engineComPort": "Select engine COM port",
+        "generatorBaudRate": "Enter baud rate",
+        "engineBaudRate": "Enter engine signal baud rate",
+        "dcuSetting": "Select DCU configuration",
+        "customer": "Enter customer",
+        "projectName": "Enter project name",
+        "shipyard": "Enter shipyard",
+        "shipNumber": "Enter ship number",
+        "unitModel": "Enter unit model",
+        "unitSerial": "Enter unit serial",
+        "engineModel": "Enter engine model",
+        "generatorModel": "Enter generator model",
+        "engineSerial": "Enter engine serial",
+        "generatorSerial": "Enter generator serial",
+        "ratedFrequency": "Enter rated frequency",
+        "powerFactor": "Enter power factor",
+        "noLoadFrequency": "Enter no-load frequency",
+        "fullLoadFrequency": "Enter full-load frequency",
+        "apparentPower": "Enter apparent power",
+        "ratedPower": "Enter rated power",
+        "ratedCurrent": "Enter rated current",
+        "ratedVoltage": "Enter rated voltage"
+      },
+      "options": {
+        "singlePhase": "Single phase",
+        "threePhase": "Three phase",
+        "bench1": "Bench 1",
+        "bench2": "Bench 2",
+        "bench3": "Bench 3",
+        "bench4": "Bench 4",
+        "bench5": "Bench 5",
+        "bench6": "Bench 6"
+      },
+      "dcuStatus": {
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "comprehensive": {
+      "subTabs": {
+        "dataMeasurement": "Data Measurement",
+        "loadTestReport": "Load Test Report",
+        "steadyStateReport": "Steady-state Report",
+        "fluctuationReport": "Fluctuation Report"
+      },
+      "steady": {
+        "tabs": {
+          "speed": "Steady Speed Regulation Test",
+          "voltage": "Steady Voltage Adjustment Test",
+          "range": "Adjustable Range & No-load Voltage"
+        },
+        "rangeCheck": {
+          "title": "Adjustable range of steady-state speed regulation and no-load voltage check",
+          "subtitle": "Steady-state speed regulation range & no-load voltage inspection",
+          "descriptionsTitle": "Steady Regulation Parameters",
+          "noloadVoltage": {
+            "title": "No-load Voltage Check"
+          },
+          "labels": {
+            "ratedVoltage": "Rated Voltage (V)",
+            "noLoadMaxPlus5": "No-load max voltage +5% (V)",
+            "noLoadMinMinus5": "No-load min voltage -5% (V)",
+            "noLoadFreqZero": "0% No-load Frequency (Hz)",
+            "fullLoadFreqHundred": "100% Full-load Frequency (Hz)",
+            "steadyRegulationDelta": "Steady speed regulation δ(%)"
+          },
+          "placeholders": {
+            "ratedVoltage": "Enter rated voltage",
+            "noLoadMaxPlus5": "Enter +5% voltage",
+            "noLoadMinMinus5": "Enter -5% voltage",
+            "speedRegulation": "Enter regulation rate"
+          },
+          "maxSpeedRegulation": {
+            "title": "Maximum speed regulation"
+          },
+          "minSpeedRegulation": {
+            "title": "Minimum speed regulation"
+          }
+        },
+        "voltageAdjustment": {
+          "title": "Steady Voltage Adjustment",
+          "labels": {
+            "standard": "Standard: Steady voltage adjustment Δu% ≤ ±2.5%",
+            "conclusion": "Conclusion:"
+          },
+          "placeholders": {
+            "conclusion": "Please enter conclusion..."
+          },
+          "columns": {
+            "serialNumber": "No.",
+            "loadPercent": "Load (%)",
+            "power": "Power (kW)",
+            "frequency": "Frequency (Hz)",
+            "powerFactor": "Power Factor (cosΦ)",
+            "ua": "UA (V)",
+            "ub": "UB (V)",
+            "uc": "UC (V)",
+            "ia": "IA (A)",
+            "ib": "IB (A)",
+            "ic": "IC (A)",
+            "phaseAVoltage": "Phase A Voltage (V)",
+            "steadyVoltageDeviation": "Steady Voltage Deviation (Δu%)"
+          }
+        }
+      },
+      "fluctuation": {
+        "speed": {
+          "title": "Speed Fluctuation Test",
+          "labels": {
+            "standard": "Speed Fluctuation Standard:"
+          },
+          "placeholders": {
+            "standard": "Enter speed fluctuation standard..."
+          },
+          "columns": {
+            "load": "Load (%)",
+            "power": "Power (kW)",
+            "frequency": "Frequency (Hz)",
+            "powerFactor": "Power Factor (cosΦ)",
+            "measuredFreqBeforeExperiment": "Measured frequency before fluctuation testing",
+            "frequencyWaveMax": "Frequency wave motion in 1 min - Max",
+            "frequencyWaveMin": "Frequency wave motion in 1 min - Min",
+            "frequencyWaveAve": "Frequency wave motion in 1 min - Ave",
+            "speedFluctuationRate": "Speed fluctuation value (%)"
+          }
+        },
+        "voltage": {
+          "title": "Voltage Fluctuation Test",
+          "labels": {
+            "standard": "Voltage Fluctuation Standard:"
+          },
+          "placeholders": {
+            "standard": "Enter voltage fluctuation standard...",
+            "conclusion": "Please enter test conclusion..."
+          },
+          "columns": {
+            "serialNumber": "No.",
+            "load": "Load (%)",
+            "power": "Power (kW)",
+            "frequency": "Frequency (Hz)",
+            "powerFactor": "Power Factor (cosΦ)",
+            "ua": "UA (V)",
+            "ub": "UB (V)",
+            "uc": "UC (V)",
+            "measuredVoltageBeforeExperiment": "Measured voltage before fluctuation testing",
+            "voltageWaveMax": "Voltage wave motion in 1 min - Max",
+            "voltageWaveMin": "Voltage wave motion in 1 min - Min",
+            "voltageWaveAve": "Voltage wave motion in 1 min - Ave",
+            "voltageFluctuationRate": "Voltage fluctuation value (Δu%)"
+          }
+        }
+      },
+      "experiments": {
+        "first": "First Experiment",
+        "second": "Second Experiment",
+        "third": "Third Experiment",
+        "save": "Save data for experiment {index}"
+      },
+      "loadTitle": "Load Experiment"
+    },
+    "integrated": {
+      "measurementTitle": "Experiment {index} Data Measurement",
+      "editProject": "Edit Items",
+      "measure": "Measure",
+      "voltageModulation": "Voltage Modulation",
+      "selectItemsToShow": "Select items to display:",
+      "countdownTitle": "Measuring",
+      "countdownMessage": "Measurement in progress, please wait..."
+    },
+    "appearance": {
+      "title": "Comprehensive inspection of generator set (editable)",
+      "titleEn": "Check all systems of generator set:",
+      "conclusionLabel": "Conclusion:",
+      "placeholderConclusion": "Please enter inspection conclusion..."
+    },
+    "environment": {
+      "title": "Test environment inspection (editable)",
+      "titleEn": "Check test environment:",
+      "descriptionsTitle": "Environment Parameters",
+      "fields": {
+        "testPlace": "Test Place",
+        "temperature": "Temperature",
+        "relativeHumidity": "Relative Humidity",
+        "atmosphere": "Atmospheric Pressure",
+        "dateOfTest": "Date of Test"
+      },
+      "placeholders": {
+        "testPlace": "Enter test place",
+        "temperature": "Enter temperature",
+        "relativeHumidity": "Enter relative humidity",
+        "atmosphere": "Enter atmospheric pressure",
+        "dateOfTest": "Select test date"
+      }
+    },
+    "transient": {
+      "title": "Transient Speed Regulation and Stabilization Time",
+      "subtitle": "Transient speed regulation and stabilization time measurement",
+      "tabs": {
+        "speed": "Transient speed regulation and stabilization time",
+        "voltage": "Transient voltage variation rate and stabilization time"
+      },
+      "editProject": "Edit Items",
+      "measure": "Measure",
+      "curve": "Curve",
+      "stabilizationRange": "Stabilization time range",
+      "conclusionLabel": "Conclusion:",
+      "placeholderConclusion": "Please enter conclusion...",
+      "projectControl": "Project Control",
+      "selectItemsLabel": "Select test items to display:",
+      "chartSectionTitle": "Chart Display",
+      "downloadAllPng": "Download All PNG",
+      "chartTitleSuffix": "Transient regulation curve",
+      "xAxisTime": "Time (s)",
+      "yAxisFrequency": "Frequency (Hz)",
+      "countdownTitle": "Measuring",
+      "countdownMessage": "Transient measurement in progress, please wait..."
+    },
+    "columns": {
+      "serialNumber": "No.",
+      "load": "Load",
+      "timeMin": "Time (min)",
+      "ua": "UA (V)",
+      "ia": "IA (A)",
+      "powerFactor": "Power Factor",
+      "frequency": "Frequency (Hz)",
+      "umax": "Umax",
+      "umin": "Umin",
+      "fmax": "Fmax",
+      "fmin": "Fmin",
+      "action": "Action",
+      "speedRpm": "Speed (rpm)",
+      "alarmStop": "Alarm Stop",
+      "note": "Note",
+      "checkContent": "Inspection Item",
+      "checkRequirement": "Requirement",
+      "checkStatus": "Status",
+      "remarks": "Remarks",
+      "loadChangeState": "Load change state",
+      "beforeChangeFrequency": "Pre-change frequency (Hz)",
+      "beforeChangePower": "Pre-change power (kW)",
+      "instantaneousFrequencyMaxMin": "Instantaneous freq. max/min (Hz)",
+      "afterChangeFrequency": "Post-change frequency (Hz)",
+      "afterChangePower": "Post-change power (kW)",
+      "stabilityTime": "Stabilization time t(s)",
+      "transientSpeedRegulationRate": "Transient regulation δ(%)"
+    },
+    "placeholders": {
+      "inputLoadPercent": "Enter load percentage",
+      "inputTime": "Enter time",
+      "inputVoltage": "Enter voltage",
+      "inputCurrent": "Enter current",
+      "inputPowerFactor": "Enter power factor",
+      "inputFrequency": "Enter frequency",
+      "inputUmax": "Enter max voltage",
+      "inputUmin": "Enter min voltage",
+      "inputFmax": "Enter max frequency",
+      "inputFmin": "Enter min frequency",
+      "inputConclusion": "Enter test conclusion...",
+      "inputCheckConclusion": "Enter inspection conclusion..."
+    },
+    "chart": {
+      "downloadPng": "Download PNG",
+      "defaultTitle": "Line Chart",
+      "xAxis": "X Axis",
+      "yAxis": "Y Axis",
+      "seriesData": "Data",
+      "rangeUpper": "Range Upper",
+      "rangeLower": "Range Lower",
+      "legendRange": "Range",
+      "tooltipRangeLabel": "Range"
+    },
+    "common": {
+      "processing": "Processing...",
+      "returnStatic": "Return Static",
+      "seconds": "s",
+      "conclusionLabel": "Conclusion:"
+    },
+    "modal": {
+      "countdown": {
+        "title": "Countdown",
+        "message": "Please wait until the countdown finishes...",
+        "returnStatic": "Return Static",
+        "processing": "Processing...",
+        "returnStaticSent": "Return-to-static command sent"
+      }
+    },
+    "leaveConfirm": {
+      "title": "Submit data before leaving?",
+      "content": "Submit to sync experiment data before leaving, or leave without submitting.",
+      "okText": "Submit",
+      "cancelText": "Don't submit"
+    }
+  }
+}

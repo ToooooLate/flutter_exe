@@ -11,13 +11,13 @@
     <!-- 备注和结论 -->
     <div class="mt-6">
       <div class="mb-2">
-        <label class="text-sm font-medium">备注:</label>
+        <label class="text-sm font-medium">{{ t('experiment.current.protection.test.labels.remark') }}</label>
       </div>
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="remark"
           class="h-full w-full resize-none border-none outline-none"
-          placeholder="请输入备注信息..."
+          :placeholder="t('experiment.current.protection.test.placeholders.remark')"
           :readonly="!isEditable"
         ></textarea>
       </div>
@@ -25,13 +25,13 @@
 
     <div class="mt-6">
       <div class="mb-2">
-        <label class="text-sm font-medium">结论:</label>
+        <label class="text-sm font-medium">{{ t('experiment.current.protection.test.labels.conclusion') }}</label>
       </div>
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusion"
           class="h-full w-full resize-none border-none outline-none"
-          placeholder="请输入试验结论..."
+          :placeholder="t('experiment.current.protection.test.placeholders.conclusion')"
           :readonly="!isEditable"
         ></textarea>
       </div>
@@ -48,6 +48,7 @@ import { useDataCollector } from '#/composables/useDataCollector';
 import { useExperimentStore } from '#/store/experiment';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
 import { canEditTable } from '#/composables/useExperimentPermissions';
+import { useI18n } from '@vben/locales';
 
 interface RowType {
   id: string;
@@ -64,11 +65,12 @@ interface RowType {
 
 const experimentStore = useExperimentStore();
 const webSocketStore = useWebSocketStore();
+const { t } = useI18n();
 const tableData = [
   {
     id: '1',
     serialNumber: 1,
-    testItem: '润滑油压力低报警\nLubricating Oil Pressure',
+    testItem: t('experiment.current.protection.test.items.oilPressureLowAlarm'),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -80,7 +82,7 @@ const tableData = [
   {
     id: '2',
     serialNumber: 2,
-    testItem: '冷却水温度高报警\nCoolant Temperature',
+    testItem: t('experiment.current.protection.test.items.coolantTempHighAlarm'),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -92,7 +94,7 @@ const tableData = [
   {
     id: '3',
     serialNumber: 3,
-    testItem: '润滑油温度高报警\nLubricating Oil Temperature',
+    testItem: t('experiment.current.protection.test.items.lubOilTempHighAlarm'),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -104,7 +106,7 @@ const tableData = [
   {
     id: '4',
     serialNumber: 4,
-    testItem: '燃油泄漏\nFuel Leakage',
+    testItem: t('experiment.current.protection.test.items.fuelLeakage'),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -116,7 +118,7 @@ const tableData = [
   {
     id: '5',
     serialNumber: 5,
-    testItem: '控制电源电压低报警',
+    testItem: t('experiment.current.protection.test.items.controlPowerVoltageLowAlarm'),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -128,7 +130,7 @@ const tableData = [
   {
     id: '6',
     serialNumber: 6,
-    testItem: '超速报警\nEngine Speed',
+    testItem: t('experiment.current.protection.test.items.overspeedAlarm'),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -140,7 +142,7 @@ const tableData = [
   {
     id: '7',
     serialNumber: 7,
-    testItem: '冷却水液位低报警\nCoolant Level Low',
+    testItem: t('experiment.current.protection.test.items.coolantLevelLowAlarm'),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -152,7 +154,7 @@ const tableData = [
   {
     id: '8',
     serialNumber: 8,
-    testItem: '冷却水温度过高停车\nHigh Coolant Temperature Shutdown',
+    testItem: t('experiment.current.protection.test.items.highCoolantTemperatureShutdown'),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -164,7 +166,7 @@ const tableData = [
   {
     id: '9',
     serialNumber: 9,
-    testItem: '润滑油压力过低停车\nLow Lub. Oil Pressure Shutdown',
+    testItem: t('experiment.current.protection.test.items.lowLubOilPressureShutdown'),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -176,7 +178,7 @@ const tableData = [
   {
     id: '10',
     serialNumber: 10,
-    testItem: '本地急停\nLocal Emergency Stop',
+    testItem: t('experiment.current.protection.test.items.localEmergencyStop'),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -188,7 +190,7 @@ const tableData = [
   {
     id: '11',
     serialNumber: 11,
-    testItem: '远程急停\nRemote Emergency Stop',
+    testItem: t('experiment.current.protection.test.items.remoteEmergencyStop'),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -200,7 +202,7 @@ const tableData = [
   {
     id: '12',
     serialNumber: 12,
-    testItem: '超速停机\nOverspeed Shutdown',
+    testItem: t('experiment.current.protection.test.items.overspeedShutdown'),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -212,7 +214,7 @@ const tableData = [
   {
     id: '13',
     serialNumber: 13,
-    testItem: '启动失败',
+    testItem: t('experiment.current.protection.test.items.startFailure'),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -311,13 +313,13 @@ const gridOptions: VxeTableGridOptions<RowType> = {
   columns: [
     {
       field: 'serialNumber',
-      title: 'No.',
+      title: t('experiment.current.protection.test.columns.serialNumber'),
       width: 60,
       align: 'center',
     },
     {
       field: 'testItem',
-      title: '项目名称\nTest Item',
+      title: t('experiment.current.protection.test.columns.testItem'),
       minWidth: 200,
       showOverflow: false,
       cellRender: {
@@ -332,43 +334,43 @@ const gridOptions: VxeTableGridOptions<RowType> = {
     },
     {
       field: 'signalType',
-      title: '信号类型',
+      title: t('experiment.current.protection.test.columns.signalType'),
       width: 100,
       editRender: { name: 'input' },
     },
     {
       field: 'setValue',
-      title: '设定值\nSet Value',
+      title: t('experiment.current.protection.test.columns.setValue'),
       width: 100,
       editRender: { name: 'input' },
     },
     {
       field: 'localDisplay',
-      title: 'Local Display',
+      title: t('experiment.current.protection.test.columns.localDisplay'),
       width: 120,
       editRender: { name: 'input' },
     },
     {
       field: 'localAlarm',
-      title: 'Local Alarm',
+      title: t('experiment.current.protection.test.columns.localAlarm'),
       width: 120,
       editRender: { name: 'input' },
     },
     {
       field: 'localShd',
-      title: 'Local SHD',
+      title: t('experiment.current.protection.test.columns.localShd'),
       width: 120,
       editRender: { name: 'input' },
     },
     {
       field: 'testResult',
-      title: '测试结果\nTest Result',
+      title: t('experiment.current.protection.test.columns.testResult'),
       width: 120,
       editRender: { name: 'input' },
     },
     {
       field: 'remark',
-      title: '备注\nRemark\nA: Applicable\nNA: Inapplicability',
+      title: t('experiment.current.protection.test.columns.remark'),
       minWidth: 150,
       showOverflow: false,
       editRender: { name: 'input' },

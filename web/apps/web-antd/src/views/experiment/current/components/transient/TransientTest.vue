@@ -1,8 +1,8 @@
 <template>
   <div class="p-6">
     <div class="mb-6">
-      <h3 class="text-lg font-semibold text-gray-800">瞬态实验</h3>
-      <p class="text-sm text-gray-600">瞬态条件下的性能测试</p>
+      <h3 class="text-lg font-semibold text-gray-800">{{ t('experiment.current.transient.title') }}</h3>
+      <p class="text-sm text-gray-600">{{ t('experiment.current.transient.subtitle') }}</p>
     </div>
 
     <!-- Tab 切换 -->
@@ -18,7 +18,7 @@
                 : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
             ]"
           >
-            瞬态调速率和稳定时间测定
+            {{ t('experiment.current.transient.tabs.speed') }}
           </button>
           <button
             @click="activeTab = 'voltage'"
@@ -29,7 +29,7 @@
                 : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
             ]"
           >
-            瞬态电压变化率和稳定时间测定
+            {{ t('experiment.current.transient.tabs.voltage') }}
           </button>
         </nav>
       </div>
@@ -45,11 +45,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from '@vben/locales';
 import TransientSpeedRegulation from './TransientSpeedRegulation.vue';
 import TransientVoltageChange from './TransientVoltageChange.vue';
 
 // 当前激活的tab
 const activeTab = ref<'speed' | 'voltage'>('speed');
+
+const { t } = useI18n();
 </script>
 
 <style scoped>

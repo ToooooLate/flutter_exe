@@ -2,11 +2,11 @@
   <div class="line-chart-container">
     <div class="chart-header">
       <div class="chart-title">
-        {{ title }}
+        {{ displayTitle }}
       </div>
       <div class="chart-actions">
         <button type="button" class="download-btn" @click="downloadChart()">
-          下载PNG
+          {{ t('experiment.current.chart.downloadPng') }}
         </button>
       </div>
     </div>
@@ -20,6 +20,9 @@
 import { ref, watch, nextTick, computed } from 'vue';
 import type { EchartsUIType } from '@vben/plugins/echarts';
 import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
+import { useI18n } from '@vben/locales';
+
+const { t } = useI18n();
 
 export interface ChartDataPoint {
   x: number | string | Date;
@@ -50,9 +53,9 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   width: '100%',
   height: '520px',
-  title: '折线图',
-  xAxisName: 'X轴',
-  yAxisName: 'Y轴',
+  title: '',
+  xAxisName: '',
+  yAxisName: '',
   lineColor: '#1890ff',
   backgroundColor: '#ffffff',
   gridColor: '#f0f0f0',
@@ -61,6 +64,9 @@ const props = withDefaults(defineProps<Props>(), {
 
 const chartRef = ref<EchartsUIType>();
 const { renderEcharts, getChartInstance } = useEcharts(chartRef);
+
+// 显示标题（优先使用外部传入，否则使用 i18n 默认）
+const displayTitle = computed(() => props.title || t('experiment.current.chart.defaultTitle'));
 
 // 计算图表配置选项
 const chartOptions = computed(() => {
@@ -84,7 +90,7 @@ const chartOptions = computed(() => {
   // 构建系列数据
   const series: any[] = [
     {
-      name: '数据',
+      name: t('experiment.current.chart.seriesData'),
       type: 'line',
       data: props.data.map((p) => [Number(p.x), p.y]),
       smooth: true,
@@ -122,7 +128,7 @@ const chartOptions = computed(() => {
   // 添加范围区间
   if (props.rangeArea) {
     series.push({
-      name: props.rangeArea.name || '范围区间上限',
+      name: props.rangeArea.name || t('experiment.current.chart.rangeUpper'),
       type: 'line',
       data: props.data.map((p) => [Number(p.x), props.rangeArea!.max]),
       lineStyle: {
@@ -135,7 +141,7 @@ const chartOptions = computed(() => {
     });
 
     series.push({
-      name: props.rangeArea.name || '范围区间下限',
+      name: props.rangeArea.name || t('experiment.current.chart.rangeLower'),
       type: 'line',
       data: props.data.map((p) => [Number(p.x), props.rangeArea!.min]),
       lineStyle: {
@@ -154,7 +160,7 @@ const chartOptions = computed(() => {
   return {
     backgroundColor: props.backgroundColor,
     title: {
-      text: props.title,
+      text: props.title || t('experiment.current.chart.defaultTitle'),
       left: 'center',
       textStyle: {
         color: '#333',
@@ -173,18 +179,21 @@ const chartOptions = computed(() => {
       formatter: (params: any) => {
         let result = `${params[0].axisValue}<br/>`;
         params.forEach((param: any) => {
-          if (param.seriesName === '数据') {
+          if (param.seriesName === t('experiment.current.chart.seriesData')) {
             result += `${param.marker}${param.seriesName}: ${param.value}<br/>`;
           }
         });
         if (props.rangeArea) {
-          result += `<span style="color: ${props.rangeArea.color || '#ff4d4f'}">● 范围区间: ${props.rangeArea.min} - ${props.rangeArea.max}</span>`;
+          result += `<span style="color: ${props.rangeArea.color || '#ff4d4f'}">● ${t('experiment.current.chart.tooltipRangeLabel')}: ${props.rangeArea.min} - ${props.rangeArea.max}</span>`;
         }
         return result;
       },
     },
     legend: {
-      data: ['数据', ...(props.rangeArea ? ['范围区间'] : [])],
+      data: [
+        t('experiment.current.chart.seriesData'),
+        ...(props.rangeArea ? [t('experiment.current.chart.legendRange')] : [])
+      ],
       top: 30,
     },
     grid: {
@@ -197,7 +206,7 @@ const chartOptions = computed(() => {
     },
     xAxis: {
       type: 'value',
-      name: props.xAxisName,
+      name: props.xAxisName || t('experiment.current.chart.xAxis'),
       nameLocation: 'middle',
       nameGap: 25,
       nameTextStyle: {
@@ -235,7 +244,7 @@ const chartOptions = computed(() => {
     },
     yAxis: {
       type: 'value',
-      name: props.yAxisName,
+      name: props.yAxisName || t('experiment.current.chart.yAxis'),
       nameLocation: 'middle',
       nameGap: 40,
       nameTextStyle: {

@@ -1,7 +1,7 @@
 <template>
   <div class="overspeed-protection-test-container">
     <div class="mb-4">
-      <h4 class="text-base font-medium">（1）超速保护试验</h4>
+      <h4 class="text-base font-medium">{{ t('experiment.current.protection.overspeed.title') }}</h4>
     </div>
 
     <div class="vp-raw w-full">
@@ -11,20 +11,20 @@
     <!-- 要求说明 -->
     <div class="mb-4 mt-4">
       <p class="text-sm">
-        要求：转速调整到113%~115%额定转速，控制箱显示超速报警，发动机应立即停车，试验三次要全部成功。
+        {{ t('experiment.current.protection.overspeed.requirements') }}
       </p>
     </div>
 
     <!-- 结论部分 -->
     <div class="mt-6">
       <div class="mb-2">
-        <label class="text-sm font-medium">结论:</label>
+        <label class="text-sm font-medium">{{ t('experiment.current.protection.overspeed.labels.conclusion') }}</label>
       </div>
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusion"
           class="h-full w-full resize-none border-none outline-none"
-          placeholder="请输入试验结论..."
+          :placeholder="t('experiment.current.protection.overspeed.placeholders.conclusion')"
           :readonly="!isEditable"
         ></textarea>
       </div>
@@ -37,6 +37,7 @@
 import type { VxeTableGridOptions } from '@vben/plugins/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { useI18n } from '@vben/locales';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { useExperimentStore } from '#/store/experiment';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
@@ -57,17 +58,19 @@ const { registerCollector, unregisterCollector } = useDataCollector();
 
 const conclusion = ref('');
 
+const { t } = useI18n();
+
 const gridOptions: VxeTableGridOptions<RowType> = {
   columns: [
     {
       field: 'sequence',
-      title: '序号',
+      title: t('experiment.current.protection.overspeed.columns.sequence'),
       width: 80,
       align: 'center',
     },
     {
       field: 'speed',
-      title: '转速(rpm)',
+      title: t('experiment.current.protection.overspeed.columns.speedRpm'),
       minWidth: 150,
       editRender: {
         name: 'VxeNumberInput',
@@ -79,13 +82,13 @@ const gridOptions: VxeTableGridOptions<RowType> = {
     },
     {
       field: 'alarmStop',
-      title: '报警停车',
+      title: t('experiment.current.protection.overspeed.columns.alarmStop'),
       minWidth: 150,
       editRender: { name: 'input' },
     },
     {
       field: 'note',
-      title: '备注',
+      title: t('experiment.current.protection.overspeed.columns.note'),
       minWidth: 150,
       editRender: { name: 'input' },
     },

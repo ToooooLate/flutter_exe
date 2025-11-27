@@ -1,7 +1,7 @@
 <template>
   <div class="steady-voltage-adjustment">
     <h3 class="text-foreground mb-2 text-lg font-semibold">
-      机组稳态电压调整率测定 Steady Voltage Adjustment
+      {{ t('experiment.comprehensive.steady.voltageAdjustment.title') }}
     </h3>
 
     <div class="table-container">
@@ -9,13 +9,13 @@
     </div>
 
     <div class="form-section">
-      <p class="mb-1">标准/Standard：稳态电压调整率△u%不大于±2.5%</p>
+      <p class="mb-1">{{ t('experiment.comprehensive.steady.voltageAdjustment.labels.standard') }}</p>
       <div class="form-row">
-        <label>结论 Conclusion:</label>
+        <label>{{ t('experiment.comprehensive.steady.voltageAdjustment.labels.conclusion') }}</label>
         <textarea
           v-model="conclusion"
           :readonly="!isEditable"
-          placeholder="请输入结论..."
+          :placeholder="t('experiment.comprehensive.steady.voltageAdjustment.placeholders.conclusion')"
           class="h-20 w-full resize-none rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           :class="{ 'bg-gray-100': !isEditable }"
         />
@@ -33,6 +33,9 @@ import { useUserRole } from '#/composables/useUserRole';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
 import { canEditTable } from '#/composables/useExperimentPermissions';
+import { useI18n } from '@vben/locales';
+
+const { t } = useI18n();
 
 // 响应式数据
 const conclusion = ref('');
@@ -77,90 +80,90 @@ const gridOptions: VxeGridProps = {
   columns: [
     {
       field: 'serialNumber',
-      title: '序号',
+      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.serialNumber'),
       width: 60,
       align: 'center',
     },
     {
       field: 'loadPercent',
-      title: '负载 (%)\nLoad',
+      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.loadPercent'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'power',
-      title: '功率 (kW)\nPower',
+      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.power'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequency',
-      title: '频率 (Hz)\nFrequency',
+      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.frequency'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'powerFactor',
-      title: '功率因数 COS Φ\nPower Factor',
+      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.powerFactor'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ua',
-      title: 'UA (V)',
+      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.ua'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ub',
-      title: 'UB (V)',
+      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.ub'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'uc',
-      title: 'UC (V)',
+      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.uc'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ia',
-      title: 'IA (A)',
+      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.ia'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ib',
-      title: 'IB (A)',
+      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.ib'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ic',
-      title: 'IC (A)',
+      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.ic'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'phaseAVoltage',
-      title: 'A相电压 (V)\nPhase A Voltage',
+      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.phaseAVoltage'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'steadyVoltageDeviation',
-      title: '稳态电压调整率 Δu%\nSteady Voltage Deviation',
+      title: t('experiment.comprehensive.steady.voltageAdjustment.columns.steadyVoltageDeviation'),
       width: 160,
       align: 'center',
       editRender: { name: 'VxeInput' },

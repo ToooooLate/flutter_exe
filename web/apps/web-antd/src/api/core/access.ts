@@ -8,7 +8,8 @@ export interface AccessCredentialPayload {
 export interface AccessCredentialResp {
   url: string;
   password: string;
-  expiresAt?: string;
+  begin?: number;
+  end?: number;
 }
 
 export function generateAccessCredentialApi(

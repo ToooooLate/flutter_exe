@@ -2,47 +2,47 @@
   <div class="steady-range-check-container min-h-[400px] p-4">
     <div class="mb-4">
       <h3 class="mb-1 text-lg font-semibold">
-        机组稳态调速率可调范围和空载电压检查
+        {{ t('experiment.current.comprehensive.steady.rangeCheck.title') }}
       </h3>
       <p class="text-gray-600">
-        Steady State Speed Regulation Range and No-load Voltage Check
+        {{ t('experiment.current.comprehensive.steady.rangeCheck.subtitle') }}
       </p>
     </div>
 
     <div class="vp-raw w-full">
-      <Descriptions title="稳态调速参数" bordered :column="3">
+      <Descriptions :title="t('experiment.current.comprehensive.steady.rangeCheck.descriptionsTitle')" bordered :column="3">
         <!-- 空载电压部分 -->
-        <DescriptionsItem label="空载电压检查" :span="3">
+        <DescriptionsItem :label="t('experiment.current.comprehensive.steady.rangeCheck.noloadVoltage.title')" :span="3">
           <div class="grid grid-cols-3 gap-4">
             <div>
-              <label class="mb-1 block text-sm font-medium"
-                >额定电压（V）</label
-              >
+              <label class="mb-1 block text-sm font-medium">
+                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.ratedVoltage') }}
+              </label>
               <Input
                 v-model:value="formData.ratedVoltage"
-                placeholder="请输入标准电压"
+                :placeholder="t('experiment.current.comprehensive.steady.rangeCheck.placeholders.ratedVoltage')"
                 :disabled="!isEditable"
                 class="w-full"
               />
             </div>
             <div>
-              <label class="mb-1 block text-sm font-medium"
-                >空载最大电压 +5% Volt（V）</label
-              >
+              <label class="mb-1 block text-sm font-medium">
+                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.noLoadMaxPlus5') }}
+              </label>
               <Input
                 v-model:value="formData.noLoadMaxVoltage"
-                placeholder="请输入+5%电压"
+                :placeholder="t('experiment.current.comprehensive.steady.rangeCheck.placeholders.noLoadMaxPlus5')"
                 :disabled="!isEditable"
                 class="w-full"
               />
             </div>
             <div>
-              <label class="mb-1 block text-sm font-medium"
-                >空载最小电压 -5% Volt（V）</label
-              >
+              <label class="mb-1 block text-sm font-medium">
+                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.noLoadMinMinus5') }}
+              </label>
               <Input
                 v-model:value="formData.noLoadMinVoltage"
-                placeholder="请输入-5%电压"
+                :placeholder="t('experiment.current.comprehensive.steady.rangeCheck.placeholders.noLoadMinMinus5')"
                 :disabled="!isEditable"
                 class="w-full"
               />
@@ -51,37 +51,37 @@
         </DescriptionsItem>
 
         <!-- 最大调速率部分 -->
-        <DescriptionsItem label="最大调速率" :span="3">
+        <DescriptionsItem :label="t('experiment.current.comprehensive.steady.rangeCheck.maxSpeedRegulation.title')" :span="3">
           <div class="grid grid-cols-3 gap-4">
             <div>
-              <label class="mb-1 block text-sm font-medium"
-                >0% 空载频率 (Hz)</label
-              >
+              <label class="mb-1 block text-sm font-medium">
+                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.noLoadFreqZero') }}
+              </label>
               <Input
                 v-model:value="formData.maxSpeedRegulationNoLoadFreq"
-                placeholder="请输入频率"
+                :placeholder="t('experiment.current.placeholders.inputFrequency')"
                 :disabled="!isEditable"
                 class="w-full"
               />
             </div>
             <div>
-              <label class="mb-1 block text-sm font-medium"
-                >100% 满载频率 (Hz)</label
-              >
+              <label class="mb-1 block text-sm font-medium">
+                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.fullLoadFreqHundred') }}
+              </label>
               <Input
                 v-model:value="formData.maxSpeedRegulationFullLoadFreq"
-                placeholder="请输入频率"
+                :placeholder="t('experiment.current.placeholders.inputFrequency')"
                 :disabled="!isEditable"
                 class="w-full"
               />
             </div>
             <div>
-              <label class="mb-1 block text-sm font-medium"
-                >稳态调速率 δ(%)</label
-              >
+              <label class="mb-1 block text-sm font-medium">
+                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.steadyRegulationDelta') }}
+              </label>
               <Input
                 v-model:value="formData.maxSteadyStateSpeedRegulation"
-                placeholder="请输入调速率"
+                :placeholder="t('experiment.current.comprehensive.steady.rangeCheck.placeholders.speedRegulation')"
                 :disabled="!isEditable"
                 class="w-full"
               />
@@ -90,37 +90,37 @@
         </DescriptionsItem>
 
         <!-- 最小调速率部分 -->
-        <DescriptionsItem label="最小调速率" :span="3">
+        <DescriptionsItem :label="t('experiment.current.comprehensive.steady.rangeCheck.minSpeedRegulation.title')" :span="3">
           <div class="grid grid-cols-3 gap-4">
             <div>
-              <label class="mb-1 block text-sm font-medium"
-                >0% 空载频率 (Hz)</label
-              >
+              <label class="mb-1 block text-sm font-medium">
+                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.noLoadFreqZero') }}
+              </label>
               <Input
                 v-model:value="formData.minSpeedRegulationNoLoadFreq"
-                placeholder="请输入频率"
+                :placeholder="t('experiment.current.placeholders.inputFrequency')"
                 :disabled="!isEditable"
                 class="w-full"
               />
             </div>
             <div>
-              <label class="mb-1 block text-sm font-medium"
-                >100% 满载频率 (Hz)</label
-              >
+              <label class="mb-1 block text-sm font-medium">
+                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.fullLoadFreqHundred') }}
+              </label>
               <Input
                 v-model:value="formData.minSpeedRegulationFullLoadFreq"
-                placeholder="请输入频率"
+                :placeholder="t('experiment.current.placeholders.inputFrequency')"
                 :disabled="!isEditable"
                 class="w-full"
               />
             </div>
             <div>
-              <label class="mb-1 block text-sm font-medium"
-                >稳态调速率 δ(%)</label
-              >
+              <label class="mb-1 block text-sm font-medium">
+                {{ t('experiment.current.comprehensive.steady.rangeCheck.labels.steadyRegulationDelta') }}
+              </label>
               <Input
                 v-model:value="formData.minSteadyStateSpeedRegulation"
-                placeholder="请输入调速率"
+                :placeholder="t('experiment.current.comprehensive.steady.rangeCheck.placeholders.speedRegulation')"
                 :disabled="!isEditable"
                 class="w-full"
               />
@@ -132,13 +132,15 @@
 
     <!-- 结论部分 -->
     <div class="mt-6">
-      <label class="mb-2 block text-sm font-medium">结论/Conclusion:</label>
+      <label class="mb-2 block text-sm font-medium">
+        {{ t('experiment.current.common.conclusionLabel') }}
+      </label>
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="formData.conclusion"
           :readonly="!isEditable"
           class="h-full w-full resize-none border-0 outline-none"
-          placeholder="请输入结论..."
+          :placeholder="t('experiment.current.placeholders.inputConclusion')"
         />
       </div>
     </div>
@@ -153,6 +155,9 @@ import { canEditTable } from '#/composables/useExperimentPermissions';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
 import { Input, Descriptions, DescriptionsItem } from 'ant-design-vue';
+import { useI18n } from '@vben/locales';
+
+const { t } = useI18n();
 
 // 使用 stores
 const experimentStore = useExperimentStore();

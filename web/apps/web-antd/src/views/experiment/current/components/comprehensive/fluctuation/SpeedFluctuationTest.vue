@@ -1,7 +1,7 @@
 <template>
   <div class="speed-fluctuation-test">
     <h3 class="text-foreground mb-2 text-lg font-semibold">
-      机组转速波动率测定 Speed Fluctuation Test
+      {{ t('experiment.comprehensive.fluctuation.speed.title') }}
     </h3>
 
     <div class="table-container">
@@ -10,21 +10,21 @@
 
     <div class="form-section">
       <div class="form-row">
-        <label>转速波动率要求/Standard:</label>
+        <label>{{ t('experiment.comprehensive.fluctuation.speed.labels.standard') }}</label>
         <input
           v-model="speedFluctuationStandard"
           :disabled="!isEditable"
-          placeholder="请输入转速波动率要求..."
+          :placeholder="t('experiment.comprehensive.fluctuation.speed.placeholders.standard')"
           class="w-full rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           :class="{ 'bg-gray-100': !isEditable }"
         />
       </div>
       <div class="form-row">
-        <label>结论 Conclusion:</label>
+        <label>{{ t('experiment.common.conclusionLabel') }}</label>
         <textarea
           v-model="conclusion"
           :readonly="!isEditable"
-          placeholder="请输入结论..."
+          :placeholder="t('experiment.placeholders.inputConclusion')"
           class="h-20 w-full resize-none rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           :class="{ 'bg-gray-100': !isEditable }"
         />
@@ -42,6 +42,7 @@ import { useExperimentStore } from '#/store/experiment';
 import { useUserRole } from '#/composables/useUserRole';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
 import { canEditTable } from '#/composables/useExperimentPermissions';
+import { useI18n } from '@vben/locales';
 
 // 响应式数据
 const conclusion = ref('');
@@ -53,6 +54,7 @@ const webSocketStore = useWebSocketStore();
 const { isAdmin } = useUserRole();
 const isEditable = computed(() => canEditTable());
 const { registerCollector, unregisterCollector } = useDataCollector();
+const { t } = useI18n();
 
 // 标志位，用于避免循环更新
 const isUpdatingFromStore = ref(false);
@@ -83,66 +85,66 @@ const fullTableData = ref<any[]>([]);
 const gridOptions: VxeGridProps = {
   data: tableData.value,
   columns: [
-    { field: 'serialNumber', title: '序号', width: 60, align: 'center' },
+    { field: 'serialNumber', title: t('experiment.columns.serialNumber'), width: 60, align: 'center' },
     {
       field: 'load',
-      title: '负载 (%)\nLoad',
+      title: t('experiment.comprehensive.fluctuation.speed.columns.load'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'power',
-      title: '功率 (kW)\nPower',
+      title: t('experiment.comprehensive.fluctuation.speed.columns.power'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequency',
-      title: '频率 (Hz)\nFrequency',
+      title: t('experiment.comprehensive.fluctuation.speed.columns.frequency'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'powerFactor',
-      title: '功率因数 COS Φ\nPower Factor',
+      title: t('experiment.comprehensive.fluctuation.speed.columns.powerFactor'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'measuredFreqBeforeExperiment',
-      title: '波动试验前频率\nMeasured frequency before motion testing',
+      title: t('experiment.comprehensive.fluctuation.speed.columns.measuredFreqBeforeExperiment'),
       width: 160,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequencyWaveMax',
-      title: '频率 Max\nFrequency wave motion in 1 mins - Max',
+      title: t('experiment.comprehensive.fluctuation.speed.columns.frequencyWaveMax'),
       width: 160,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequencyWaveMin',
-      title: '频率 Min\nFrequency wave motion in 1 mins - Min',
+      title: t('experiment.comprehensive.fluctuation.speed.columns.frequencyWaveMin'),
       width: 160,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequencyWaveAve',
-      title: '频率 Ave\nFrequency wave motion in 1 mins Ave',
+      title: t('experiment.comprehensive.fluctuation.speed.columns.frequencyWaveAve'),
       width: 160,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'speedFluctuationRate',
-      title: '转速波动值 %\nFrequency wave motion rate',
+      title: t('experiment.comprehensive.fluctuation.speed.columns.speedFluctuationRate'),
       width: 140,
       align: 'center',
       editRender: { name: 'VxeInput' },

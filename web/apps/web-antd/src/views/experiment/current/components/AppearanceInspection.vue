@@ -1,10 +1,8 @@
 <template>
   <div class="appearance-inspection-container min-h-[400px] p-4">
     <div class="mb-4">
-      <h3 class="mb-1 text-lg font-semibold">
-        Check all systems of generator set:
-      </h3>
-      <p class="text-gray-600">发电机组系统全面检查（可编辑）</p>
+      <h3 class="mb-1 text-lg font-semibold">{{ t('experiment.current.appearance.titleEn') }}</h3>
+      <p class="text-gray-600">{{ t('experiment.current.appearance.title') }}</p>
     </div>
 
     <div class="vp-raw w-full">
@@ -14,14 +12,14 @@
     <!-- 结论部分 -->
     <div class="mt-6">
       <div class="mb-2">
-        <label class="text-sm font-medium">结论/Conclusion:</label>
+        <label class="text-sm font-medium">{{ t('experiment.current.appearance.conclusionLabel') }}</label>
       </div>
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusionValue"
           :readonly="!isEditable"
           class="h-full w-full resize-none border-none outline-none"
-          placeholder="请输入检查结论..."
+          :placeholder="t('experiment.current.appearance.placeholderConclusion')"
         ></textarea>
       </div>
     </div>
@@ -38,6 +36,7 @@ import { useUserRole } from '#/composables/useUserRole';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
 import { canEditTable } from '#/composables/useExperimentPermissions';
+import { useI18n } from '@vben/locales';
 
 // 类型定义
 interface RowType {
@@ -52,6 +51,7 @@ interface RowType {
 // Store
 const experimentStore = useExperimentStore();
 const webSocketStore = useWebSocketStore();
+const { t } = useI18n();
 
 // 编辑权限（基于权限码与实验状态）
 const isEditable = computed(() => canEditTable());
@@ -69,10 +69,10 @@ const tableData = ref<RowType[]>([]);
 const gridOptions = () => {
   return {
     columns: [
-      { field: 'serialNumber', title: '序号', width: 60, align: 'center' },
+      { field: 'serialNumber', title: t('experiment.current.columns.serialNumber'), width: 60, align: 'center' },
       {
         field: 'checkContent',
-        title: '检查内容',
+        title: t('experiment.current.columns.checkContent'),
         minWidth: 280,
         showOverflow: false,
         cellRender: {
@@ -87,7 +87,7 @@ const gridOptions = () => {
       },
       {
         field: 'checkRequirement',
-        title: '检查要求',
+        title: t('experiment.current.columns.checkRequirement'),
         minWidth: 200,
         showOverflow: false,
         cellRender: {
@@ -105,7 +105,7 @@ const gridOptions = () => {
           name: 'input',
         },
         field: 'checkStatus',
-        title: '检查情况',
+        title: t('experiment.current.columns.checkStatus'),
         minWidth: 150,
         showOverflow: false,
       },
@@ -114,7 +114,7 @@ const gridOptions = () => {
           name: 'input',
         },
         field: 'remarks',
-        title: '备注',
+        title: t('experiment.current.columns.remarks'),
         minWidth: 120,
         showOverflow: false,
       },

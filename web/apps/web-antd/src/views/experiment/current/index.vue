@@ -25,8 +25,10 @@ import {
 } from '#/composables/useExperimentStorage';
 
 import { useRefresh } from '@vben/hooks';
+import { useI18n } from 'vue-i18n';
 
 const { refresh } = useRefresh();
+const { t } = useI18n();
 
 // 实验组件静态导入（预加载）
 // @ts-ignore
@@ -73,6 +75,7 @@ const {
   handleMonitorTabChange,
   experimentStore,
   initializeExperimentData,
+  extendAccessDuration,
 } = useCurrentExperiment();
 
 // 安全的实验编号与ID（避免模板中的可选链导致解析错误）
@@ -98,7 +101,7 @@ function handleInitialize() {
 
 // 使用 Vben 模态框替代 antd Modal，并抽离内容组件
 const [CredentialModal, credentialModal] = useVbenModal({
-  title: '访问凭证',
+  title: t('experiment.current.credential.viewTitle'),
   footer: false,
   onOpenChange: (isOpen: boolean) => {
     credentialModalOpen.value = isOpen;
@@ -137,10 +140,10 @@ onBeforeRouteLeave((to, from, next) => {
   if (getLocalExperimentStatus() === 0) {
     try {
       Modal.confirm({
-        title: '是否提交数据？',
-        content: '选择提交将同步实验数据后离开，选择不提交直接离开。',
-        okText: '提交',
-        cancelText: '不提交',
+        title: t('experiment.current.leaveConfirm.title'),
+        content: t('experiment.current.leaveConfirm.content'),
+        okText: t('experiment.current.leaveConfirm.okText'),
+        cancelText: t('experiment.current.leaveConfirm.cancelText'),
         async onOk() {
           try {
             // 复用数据同步按钮的完整逻辑
@@ -167,7 +170,7 @@ onBeforeRouteLeave((to, from, next) => {
   <Page>
     <template #title>
       <div class="flex w-full items-center justify-between">
-        <span> 负载实验{{ safeExperimentNo }} </span>
+        <span> {{ $t('experiment.current.comprehensive.loadTitle') }}{{ safeExperimentNo }} </span>
         <template v-if="isEngineer">
           <div class="flex gap-2" v-if="isPendingOrInit">
             <span v-for="button in experimentButtons" :key="button.key">
@@ -176,49 +179,12 @@ onBeforeRouteLeave((to, from, next) => {
                 placement="bottomRight"
               >
                 <template #content>
-                  <div class="space-y-2">
-                    <div>
-                      <span class="mr-2">临时访问地址：</span>
-                      <span class="break-all text-blue-600">{{
-                        accessCredential.url
-                      }}</span>
-                      <Button
-                        size="small"
-                        type="link"
-                        @click="copyText(accessCredential.url)"
-                        >复制</Button
-                      >
-                    </div>
-                    <div>
-                      <span class="mr-2">账号：</span>
-                      <span class="text-gray-800">{{
-                        accessCredential.account
-                      }}</span>
-                      <Button
-                        size="small"
-                        type="link"
-                        @click="copyText(accessCredential.account)"
-                        >复制</Button
-                      >
-                    </div>
-                    <div>
-                      <span class="mr-2">密码：</span>
-                      <span class="text-gray-800">{{
-                        accessCredential.password
-                      }}</span>
-                      <Button
-                        size="small"
-                        type="link"
-                        @click="copyText(accessCredential.password)"
-                        >复制</Button
-                      >
-                    </div>
-                    <div class="pt-1">
-                      <Button size="small" @click="copyCredentialAll"
-                        >一键复制全部</Button
-                      >
-                    </div>
-                  </div>
+                  <CredentialModalContent
+                    :access-credential="accessCredential"
+                    :copy-text="copyText"
+                    :copy-credential-all="copyCredentialAll"
+                    @extend="extendAccessDuration"
+                  />
                 </template>
                 <Button
                   :type="button.type"
@@ -241,7 +207,7 @@ onBeforeRouteLeave((to, from, next) => {
             </span>
           </div>
           <div class="flex gap-2" v-else>
-            <Button type="primary" @click="handleInitialize">初始化</Button>
+            <Button type="primary" @click="handleInitialize">{{ $t('experiment.current.buttons.initialize') }}</Button>
           </div>
         </template>
       </div>
@@ -292,7 +258,7 @@ onBeforeRouteLeave((to, from, next) => {
                   v-else-if="tab.key === 'monitoring'"
                   class="text-center text-gray-500"
                 >
-                  设备监控内容区域
+                  {{ $t('experiment.current.monitoring.contentPlaceholder') }}
                 </div>
               </div>
             </TabPane>
@@ -301,11 +267,12 @@ onBeforeRouteLeave((to, from, next) => {
       </div>
     </div>
     <!-- 访问凭证弹窗（Vben Modal） -->
-    <CredentialModal>
+      <CredentialModal>
       <CredentialModalContent
         :access-credential="accessCredential"
         :copy-text="copyText"
         :copy-credential-all="copyCredentialAll"
+        @extend="extendAccessDuration"
       />
     </CredentialModal>
   </Page>

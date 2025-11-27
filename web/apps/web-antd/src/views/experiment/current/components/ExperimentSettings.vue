@@ -2,14 +2,14 @@
   <Card class="mb-4">
     <template #title>
       <div class="flex items-center justify-between">
-        <span>实验设置</span>
+        <span>{{ t('experiment.current.settings.title') }}</span>
         <Button
           type="text"
           size="small"
           @click="toggleExpanded"
           class="flex items-center"
         >
-          <span class="text-sm">{{ expanded ? '收起' : '展开' }}</span>
+          <span class="text-sm">{{ expanded ? t('experiment.current.settings.collapse') : t('experiment.current.settings.expand') }}</span>
         </Button>
       </div>
     </template>
@@ -24,6 +24,7 @@
 import { computed, ref, watch, nextTick, onMounted, onUnmounted } from 'vue';
 import { Card, Button } from 'ant-design-vue';
 import { message } from 'ant-design-vue';
+import { useI18n } from 'vue-i18n';
 // @ts-ignore 依赖的类型由本地 src/env.d.ts 提供
 import { useVbenForm } from '@vben/common-ui';
 // @ts-ignore 依赖的类型由本地 src/env.d.ts 提供
@@ -82,6 +83,8 @@ const expanded = computed(() => props.expanded ?? false);
 // 是否可编辑：权限+实验状态
 const isEditable = computed(() => canEditTable());
 
+const { t } = useI18n();
+
 const toggleExpanded = () => {
   emit('update:expanded', !expanded.value);
 };
@@ -90,28 +93,28 @@ const formSchema: VbenFormSchema[] = [
   {
     component: 'Input',
     componentProps: {
-      placeholder: '请输入测试人员',
+      placeholder: t('experiment.current.settings.placeholders.testPerson'),
     },
     fieldName: 'testPerson',
-    label: '测试人员',
+    label: t('experiment.current.settings.fields.testPerson'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: '请输入检验人员',
+      placeholder: t('experiment.current.settings.placeholders.inspector'),
     },
     fieldName: 'inspector',
-    label: '检验人员',
+    label: t('experiment.current.settings.fields.inspector'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: '请输入审核人员',
+      placeholder: t('experiment.current.settings.placeholders.reviewer'),
     },
     fieldName: 'reviewer',
-    label: '审核人员',
+    label: t('experiment.current.settings.fields.reviewer'),
     formItemClass: 'col-span-1',
   },
   {
@@ -120,44 +123,44 @@ const formSchema: VbenFormSchema[] = [
       orientation: 'left',
     },
     fieldName: 'divider1',
-    label: '连接参数',
+    label: t('experiment.current.settings.connectionParams'),
     formItemClass: 'col-span-5',
     layout: 'vertical',
   },
   {
     component: 'Select',
     componentProps: {
-      placeholder: '请选择相位',
+      placeholder: t('experiment.current.settings.placeholders.phaseType'),
       options: [
-        { label: '单相', value: 'singlePhase' },
-        { label: '三相', value: 'threePhase' },
+        { label: t('experiment.current.settings.options.singlePhase'), value: 'singlePhase' },
+        { label: t('experiment.current.settings.options.threePhase'), value: 'threePhase' },
       ],
     },
     fieldName: 'phaseType',
-    label: '相位类型',
+    label: t('experiment.current.settings.fields.phaseType'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'Select',
     componentProps: {
-      placeholder: '请选择台位',
+      placeholder: t('experiment.current.settings.placeholders.benchPosition'),
       options: [
-        { label: '台位1', value: 1 },
-        { label: '台位2', value: 2 },
-        { label: '台位3', value: 3 },
-        { label: '台位4', value: 4 },
-        { label: '台位5', value: 5 },
-        { label: '台位6', value: 6 },
+        { label: t('experiment.current.settings.options.bench1'), value: 1 },
+        { label: t('experiment.current.settings.options.bench2'), value: 2 },
+        { label: t('experiment.current.settings.options.bench3'), value: 3 },
+        { label: t('experiment.current.settings.options.bench4'), value: 4 },
+        { label: t('experiment.current.settings.options.bench5'), value: 5 },
+        { label: t('experiment.current.settings.options.bench6'), value: 6 },
       ],
     },
     fieldName: 'benchPosition',
-    label: '台位选择',
+    label: t('experiment.current.settings.fields.benchPosition'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'Select',
     componentProps: {
-      placeholder: '请选择发电机通讯端口',
+      placeholder: t('experiment.current.settings.placeholders.generatorComPort'),
       options: [
         { label: 'COM1', value: 1 },
         { label: 'COM2', value: 2 },
@@ -168,13 +171,13 @@ const formSchema: VbenFormSchema[] = [
       ],
     },
     fieldName: 'generatorComPort',
-    label: '发电机通讯端口',
+    label: t('experiment.current.settings.fields.generatorComPort'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'Select',
     componentProps: {
-      placeholder: '请选择发动机通讯端口',
+      placeholder: t('experiment.current.settings.placeholders.engineComPort'),
       options: [
         { label: 'COM1', value: 1 },
         { label: 'COM2', value: 2 },
@@ -185,37 +188,37 @@ const formSchema: VbenFormSchema[] = [
       ],
     },
     fieldName: 'engineComPort',
-    label: '发动机通讯端口',
+    label: t('experiment.current.settings.fields.engineComPort'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'InputNumber',
     componentProps: {
-      placeholder: '请输入波特率',
+      placeholder: t('experiment.current.settings.placeholders.generatorBaudRate'),
       precision: 0,
     },
     fieldName: 'generatorBaudRate',
-    label: '发电机波特率',
+    label: t('experiment.current.settings.fields.generatorBaudRate'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'InputNumber',
     componentProps: {
-      placeholder: '请输入发动机信号波特率',
+      placeholder: t('experiment.current.settings.placeholders.engineBaudRate'),
       precision: 0,
     },
     fieldName: 'engineBaudRate',
-    label: '发动机波特率',
+    label: t('experiment.current.settings.fields.engineBaudRate'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'Select',
     componentProps: {
-      placeholder: '请选择发电机DCU配置',
+      placeholder: t('experiment.current.settings.placeholders.dcuSetting'),
       options: [],
     },
     fieldName: 'DCUSetting',
-    label: 'DCU配置',
+    label: t('experiment.current.settings.fields.dcuSetting'),
     formItemClass: 'col-span-1',
   },
   {
@@ -224,106 +227,106 @@ const formSchema: VbenFormSchema[] = [
       orientation: 'left',
     },
     fieldName: 'divider2',
-    label: '设备参数',
+    label: t('experiment.current.settings.deviceParams'),
     formItemClass: 'col-span-5',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: '请输入客户',
+      placeholder: t('experiment.current.settings.placeholders.customer'),
     },
     fieldName: 'customer',
-    label: '客户',
+    label: t('experiment.current.settings.fields.customer'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: '请输入项目名称',
+      placeholder: t('experiment.current.settings.placeholders.projectName'),
     },
     fieldName: 'projectName',
-    label: '项目名称',
+    label: t('experiment.current.settings.fields.projectName'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: '请输入船厂',
+      placeholder: t('experiment.current.settings.placeholders.shipyard'),
     },
     fieldName: 'shipyard',
-    label: '船厂',
+    label: t('experiment.current.settings.fields.shipyard'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: '请输入船号',
+      placeholder: t('experiment.current.settings.placeholders.shipNumber'),
     },
     fieldName: 'shipNumber',
-    label: '船号',
+    label: t('experiment.current.settings.fields.shipNumber'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: '请输入机组型号',
+      placeholder: t('experiment.current.settings.placeholders.unitModel'),
     },
     fieldName: 'unitModel',
-    label: '机组型号',
+    label: t('experiment.current.settings.fields.unitModel'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: '请输入机组编号',
+      placeholder: t('experiment.current.settings.placeholders.unitSerial'),
     },
     fieldName: 'unitSerial',
-    label: '机组编号',
+    label: t('experiment.current.settings.fields.unitSerial'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: '请输入发动机型号',
+      placeholder: t('experiment.current.settings.placeholders.engineModel'),
     },
     fieldName: 'engineModel',
-    label: '发动机型号',
+    label: t('experiment.current.settings.fields.engineModel'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: '请输入发电机型号',
+      placeholder: t('experiment.current.settings.placeholders.generatorModel'),
     },
     fieldName: 'generatorModel',
-    label: '发电机型号',
+    label: t('experiment.current.settings.fields.generatorModel'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: '请输入发动机编号',
+      placeholder: t('experiment.current.settings.placeholders.engineSerial'),
     },
     fieldName: 'engineSerial',
-    label: '发动机编号',
+    label: t('experiment.current.settings.fields.engineSerial'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'Input',
     componentProps: {
-      placeholder: '请输入发电机编号',
+      placeholder: t('experiment.current.settings.placeholders.generatorSerial'),
     },
     fieldName: 'generatorSerial',
-    label: '发电机编号',
+    label: t('experiment.current.settings.fields.generatorSerial'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'InputNumber',
     componentProps: {
-      placeholder: '请输入额定频率',
+      placeholder: t('experiment.current.settings.placeholders.ratedFrequency'),
     },
     fieldName: 'ratedFrequency',
-    label: '额定频率 (Hz)',
+    label: t('experiment.current.settings.fields.ratedFrequency'),
     formItemClass: 'col-span-1',
   },
   // {
@@ -347,64 +350,64 @@ const formSchema: VbenFormSchema[] = [
   {
     component: 'InputNumber',
     componentProps: {
-      placeholder: '请输入功率因数',
+      placeholder: t('experiment.current.settings.placeholders.powerFactor'),
     },
     fieldName: 'powerFactor',
-    label: '功率因数',
+    label: t('experiment.current.settings.fields.powerFactor'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'InputNumber',
     componentProps: {
-      placeholder: '请输入空载频率',
+      placeholder: t('experiment.current.settings.placeholders.noLoadFrequency'),
     },
     fieldName: 'noLoadFrequency',
-    label: '空载频率 (Hz)',
+    label: t('experiment.current.settings.fields.noLoadFrequency'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'InputNumber',
     componentProps: {
-      placeholder: '请输入满载频率',
+      placeholder: t('experiment.current.settings.placeholders.fullLoadFrequency'),
     },
     fieldName: 'fullLoadFrequency',
-    label: '满载频率 (Hz)',
+    label: t('experiment.current.settings.fields.fullLoadFrequency'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'InputNumber',
     componentProps: {
-      placeholder: '请输入视在功率',
+      placeholder: t('experiment.current.settings.placeholders.apparentPower'),
     },
     fieldName: 'apparentPower',
-    label: '视在功率 (kW)',
+    label: t('experiment.current.settings.fields.apparentPower'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'InputNumber',
     componentProps: {
-      placeholder: '请输入额定功率',
+      placeholder: t('experiment.current.settings.placeholders.ratedPower'),
     },
     fieldName: 'ratedPower',
-    label: '额定功率 (kW)',
+    label: t('experiment.current.settings.fields.ratedPower'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'InputNumber',
     componentProps: {
-      placeholder: '请输入额定电流',
+      placeholder: t('experiment.current.settings.placeholders.ratedCurrent'),
     },
     fieldName: 'ratedCurrent',
-    label: '额定电流 (A)',
+    label: t('experiment.current.settings.fields.ratedCurrent'),
     formItemClass: 'col-span-1',
   },
   {
     component: 'InputNumber',
     componentProps: {
-      placeholder: '请输入额定电压',
+      placeholder: t('experiment.current.settings.placeholders.ratedVoltage'),
     },
     fieldName: 'ratedVoltage',
-    label: '额定电压 (V)',
+    label: t('experiment.current.settings.fields.ratedVoltage'),
     formItemClass: 'col-span-1',
   },
 ];
@@ -453,7 +456,9 @@ watch(
 const dcuOptions = ref<{ label: string; value: string; status?: number }[]>([]);
 
 function mapStatusLabel(status?: number) {
-  return status === 1 ? '启用中' : '未启用';
+  return status === 1
+    ? t('experiment.current.settings.dcuStatus.active')
+    : t('experiment.current.settings.dcuStatus.inactive');
 }
 
 async function loadDcuOptions() {
@@ -463,7 +468,7 @@ async function loadDcuOptions() {
     const name = item.name ?? item.nameCh ?? item.nameEn ?? item.id;
     const statusText = mapStatusLabel(item.status);
     return {
-      label: `${name}（${statusText}）`,
+      label: `${name} (${statusText})`,
       value: item.id,
       status: item.status ?? 0,
     };
@@ -494,14 +499,14 @@ async function onSelectDcu(value: string) {
       experimentId: experimentStore.state.currentExperiment?.id || '',
     });
     if (res) {
-      message.success('DCU启用成功');
+      message.success(t('experiment.current.message.dcuEnableSuccess'));
       // 重新加载 DCU 列表以刷新“启用中/未启用”状态标签
       await loadDcuOptions();
     } else {
-      message.error('DCU启用失败');
+      message.error(t('experiment.current.message.dcuEnableFailed'));
     }
   } catch (error) {
-    message.error('DCU启用失败');
+    message.error(t('experiment.current.message.dcuEnableFailed'));
   }
 }
 

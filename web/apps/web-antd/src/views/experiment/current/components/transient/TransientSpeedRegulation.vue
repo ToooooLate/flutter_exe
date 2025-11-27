@@ -3,10 +3,10 @@
     <!-- 标题部分 -->
     <div class="mb-6">
       <h4 class="text-base font-semibold text-gray-800">
-        瞬态调速率和稳定时间测定
+        {{ $t('experiment.current.transient.title') }}
       </h4>
       <p class="mt-1 text-sm text-gray-600">
-        Transient speed regulation and stabilization time measurement
+        {{ $t('experiment.current.transient.subtitle') }}
       </p>
     </div>
 
@@ -18,7 +18,7 @@
         :disabled="!isEditable"
         @click="handleEditProject"
       >
-        编辑项目
+        {{ $t('experiment.current.transient.editProject') }}
       </Button>
       <!-- <Button type="primary">打印曲线</Button> -->
       <Grid>
@@ -30,14 +30,14 @@
               class="rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600"
               @click="handleMeasure(row)"
             >
-              测定
+              {{ $t('experiment.current.transient.measure') }}
             </Button>
             <Button
               type="button"
               class="rounded bg-purple-500 px-3 py-1 text-sm text-white hover:bg-purple-600"
               @click="handleCurve(row)"
             >
-              曲线
+              {{ $t('experiment.current.transient.curve') }}
             </Button>
           </div>
         </template>
@@ -48,7 +48,7 @@
     <div class="mb-6">
       <div class="flex items-center gap-4">
         <label class="whitespace-nowrap text-sm font-medium text-gray-700">
-          稳定时间范围设置
+          {{ $t('experiment.current.transient.stabilizationRange') }}
         </label>
         <div class="flex items-center gap-2">
           <span class="text-sm text-gray-600"> ± </span>
@@ -66,22 +66,22 @@
 
     <!-- 结论部分 -->
     <div class="mb-4">
-      <label class="mb-2 block text-sm font-medium">结论/Conclusion:</label>
+      <label class="mb-2 block text-sm font-medium">{{ $t('experiment.current.transient.conclusionLabel') }}</label>
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusion"
           :readonly="!isEditable"
           class="h-full w-full resize-none border-0 outline-none"
-          placeholder="请输入结论..."
+          :placeholder="$t('experiment.current.transient.placeholderConclusion')"
         />
       </div>
     </div>
 
     <!-- 项目控制弹窗 -->
-    <ProjectControlModal class="w-[600px]" title="项目控制">
+    <ProjectControlModal class="w-[600px]" :title="$t('experiment.current.transient.projectControl')">
       <div class="p-4">
         <div class="mb-4">
-          <span class="text-sm text-gray-600">选择需要显示的测试项目：</span>
+          <span class="text-sm text-gray-600">{{ $t('experiment.current.transient.selectItemsLabel') }}</span>
         </div>
         <CheckboxGroup
           :value="selectedRows"
@@ -95,12 +95,12 @@
     <!-- 曲线展示（与表格行对应） -->
     <div class="mt-6">
       <div class="mb-2 flex items-center justify-between">
-        <h5 class="text-sm font-medium text-gray-700">曲线展示</h5>
+        <h5 class="text-sm font-medium text-gray-700">{{ $t('experiment.current.transient.chartSectionTitle') }}</h5>
         <Button
           type="primary"
           :disabled="renderedCount === 0"
           @click="handleDownloadAllCharts"
-          >下载所有PNG</Button
+          >{{ $t('experiment.current.transient.downloadAllPng') }}</Button
         >
       </div>
 
@@ -117,13 +117,13 @@
             :data="chartsData[String(row.serialNumber)] || []"
             :title="
               chartsTitles[String(row.serialNumber)] ||
-              `${row.loadChangeState} - 瞬态调速曲线`
+              `${row.loadChangeState} - ${$t('experiment.current.transient.chartTitleSuffix')}`
             "
             :range-area="
               chartsRangeAreas[String(row.serialNumber)] || defaultRangeArea
             "
-            x-axis-name="时间 (s)"
-            y-axis-name="频率 (Hz)"
+            :x-axis-name="$t('experiment.current.transient.xAxisTime')"
+            :y-axis-name="$t('experiment.current.transient.yAxisFrequency')"
             height="468px"
             line-color="#1890ff"
             :auto-resize="true"
@@ -136,8 +136,8 @@
     <CountdownModal
       ref="countdownModalRef"
       :countdown-seconds="15"
-      title="测定进行中"
-      message="瞬态调速率测定正在进行中，请耐心等待..."
+      :title="$t('experiment.current.transient.countdownTitle')"
+      :message="$t('experiment.current.transient.countdownMessage')"
       :show-return-button="true"
       @countdown-end="handleCountdownEnd"
       @return-static="handleReturnStatic"
@@ -171,6 +171,7 @@ import {
 import { LineChart } from '../charts';
 import type { ChartDataPoint, RangeArea } from '../charts/types';
 import { canEditTable } from '#/composables/useExperimentPermissions';
+import { $t } from '#/locales';
 
 interface RowType {
   id: string;
@@ -368,9 +369,9 @@ const updateAllData = async () => {
 
   if (syncSuccess) {
     await experimentStore.submitExperimentData();
-    message.success('实验数据同步成功');
+    message.success($t('experiment.current.message.syncSuccess'));
   } else {
-    message.error('数据收集器同步失败');
+    message.error($t('experiment.current.message.collectorSyncFailed'));
     return;
   }
 };
@@ -379,7 +380,7 @@ const updateAllData = async () => {
 const handleMeasure = async (row: RowType) => {
   await updateAllData();
   if (!experimentStore.state.currentExperiment?.benchPosition) {
-    message.error('实验台位为空');
+    message.error($t('experiment.current.message.benchPositionEmpty'));
     return;
   }
   // 调用瞬态调速率检测 API
@@ -394,50 +395,57 @@ const handleMeasure = async (row: RowType) => {
     ...commandParams,
     experimentStatus: true,
   }).then((res) => {
-    res ? message.success('测定指令已发送') : message.error('测定指令发送失败');
+    res
+      ? message.success($t('experiment.current.message.measureCommandSent'))
+      : message.error($t('experiment.current.message.measureCommandFailed'));
   });
 };
 
 // 倒计时结束处理函数
 const handleCountdownEnd = () => {
-  message.info('倒计时结束，测定完成');
+  message.info($t('experiment.current.message.countdownEndMeasureDone'));
   // 发送DCU监控命令，开启实时数据推送
   sendDcuDeviceMonitoringCommand(1);
   stabilityCheckApi({
     ...commandParams,
     experimentStatus: false,
   }).then((res) => {
-    res ? message.success('召测指令已发送') : message.error('召测指令发送失败');
+    res
+      ? message.success($t('experiment.current.message.callCommandSent'))
+      : message.error($t('experiment.current.message.callCommandFailed'));
   });
 };
 
 // 返回静态处理函数
 const handleReturnStatic = async () => {
   // 这里可以添加返回静态的API调用
-  message.info('正在返回静态状态...');
+  message.info($t('experiment.current.message.returningStatic'));
 };
 
 const handleCurve = (row: RowType) => {
   // 仅使用后端返回的曲线数据，移除模拟数据后备逻辑
   if (!row.curveInfo) {
-    message.error('曲线数据为空，未生成图表');
+    message.error($t('experiment.current.message.curveDataEmpty'));
     return;
   }
   const points = parseCurveInfoToPoints(row.curveInfo);
   if (points.length === 0) {
-    message.error('曲线数据解析失败或为空，未生成图表');
+    message.error($t('experiment.current.message.curveDataParseFailed'));
     return;
   }
 
   const key = String(row.serialNumber);
   chartsData.value[key] = points;
-  chartsTitles.value[key] = `${row.loadChangeState} - 瞬态调速曲线`;
+  chartsTitles.value[key] = `${row.loadChangeState} - ${$t('experiment.current.transient.chartTitleSuffix')}`;
   chartsRangeAreas.value[key] = defaultRangeArea.value;
   if (!renderedIds.value.includes(key)) {
     renderedIds.value.push(key);
   }
   message.success(
-    `已生成 ${row.loadChangeState} 的瞬态调速曲线，共${points.length}个数据点`,
+    $t('experiment.current.message.generatedCurve', {
+      state: row.loadChangeState,
+      count: points.length,
+    }),
   );
 };
 
@@ -472,7 +480,7 @@ function sanitizeFileName(name: string) {
 const sendDcuDeviceMonitoringCommand = async (state: 0 | 1) => {
   const experimentId = experimentStore.state.currentExperiment?.id || '';
   if (!experimentId) {
-    message.error('实验ID为空');
+    message.error($t('experiment.current.message.experimentIdEmpty'));
     return;
   }
   const res = await sendDcuDeviceMonitoringCommandApi({
@@ -480,9 +488,9 @@ const sendDcuDeviceMonitoringCommand = async (state: 0 | 1) => {
     state,
   });
   if (res) {
-    message.success('实时数据指令发送成功');
+    message.success($t('experiment.current.message.realtimeCommandSuccess'));
   } else {
-    message.error('实时数据指令发送失败');
+    message.error($t('experiment.current.message.realtimeCommandFailed'));
   }
 };
 
@@ -491,13 +499,13 @@ function handleDownloadAllCharts() {
     (r) => r.visible && renderedIds.value.includes(String(r.serialNumber)),
   );
   if (rowsToDownload.length === 0) {
-    message.warning('暂无已渲染的图表可下载');
+    message.warning($t('experiment.current.message.noChartsToDownload'));
     return;
   }
   rowsToDownload.forEach((row) => {
     const ref = chartRefs[String(row.serialNumber)];
     if (ref && typeof ref.downloadChart === 'function') {
-      const filename = `瞬态调速_${sanitizeFileName(`${row.serialNumber}_${row.loadChangeState}`)}`;
+      const filename = `${$t('experiment.current.transient.chartTitleSuffix')}_${sanitizeFileName(`${row.serialNumber}_${row.loadChangeState}`)}`;
       ref.downloadChart(filename);
     }
   });
@@ -685,10 +693,10 @@ onUnmounted(() => {
 const gridOptions: VxeGridProps = {
   data: tableData.value,
   columns: [
-    { field: 'serialNumber', title: '序号', width: 80 },
+    { field: 'serialNumber', title: $t('experiment.current.columns.serialNumber'), width: 80 },
     {
       field: 'loadChangeState',
-      title: '负载变化状态',
+      title: $t('experiment.current.columns.loadChangeState'),
       width: 200,
       editRender: {
         name: 'VxeInput',
@@ -697,7 +705,7 @@ const gridOptions: VxeGridProps = {
     },
     {
       field: 'beforeChangeFrequency',
-      title: '突变前频率(Hz)',
+      title: $t('experiment.current.columns.beforeChangeFrequency'),
       width: 130,
       editRender: {
         name: 'VxeInput',
@@ -706,7 +714,7 @@ const gridOptions: VxeGridProps = {
     },
     {
       field: 'beforeChangePower',
-      title: '突变前功率(kW)',
+      title: $t('experiment.current.columns.beforeChangePower'),
       width: 130,
       editRender: {
         name: 'VxeInput',
@@ -715,7 +723,7 @@ const gridOptions: VxeGridProps = {
     },
     {
       field: 'instantaneousFrequencyMaxMin',
-      title: '瞬时频率最大或最小(Hz)',
+      title: $t('experiment.current.columns.instantaneousFrequencyMaxMin'),
       width: 180,
       editRender: {
         name: 'VxeInput',
@@ -724,7 +732,7 @@ const gridOptions: VxeGridProps = {
     },
     {
       field: 'afterChangeFrequency',
-      title: '突变后频率(Hz)',
+      title: $t('experiment.current.columns.afterChangeFrequency'),
       width: 130,
       editRender: {
         name: 'VxeInput',
@@ -733,7 +741,7 @@ const gridOptions: VxeGridProps = {
     },
     {
       field: 'afterChangePower',
-      title: '突变后功率(kW)',
+      title: $t('experiment.current.columns.afterChangePower'),
       width: 130,
       editRender: {
         name: 'VxeInput',
@@ -742,7 +750,7 @@ const gridOptions: VxeGridProps = {
     },
     {
       field: 'stabilityTime',
-      title: '稳定时间t(s)',
+      title: $t('experiment.current.columns.stabilityTime'),
       width: 120,
       editRender: {
         name: 'VxeInput',
@@ -751,7 +759,7 @@ const gridOptions: VxeGridProps = {
     },
     {
       field: 'transientSpeedRegulationRate',
-      title: '瞬态调速率δ(%)',
+      title: $t('experiment.current.columns.transientSpeedRegulationRate'),
       width: 140,
       editRender: {
         name: 'VxeInput',
@@ -760,7 +768,7 @@ const gridOptions: VxeGridProps = {
     },
     {
       field: 'action',
-      title: '操作',
+      title: $t('experiment.current.columns.action'),
       width: 206,
       fixed: 'right',
       slots: { default: 'action' },

@@ -1,7 +1,7 @@
 <template>
   <div class="voltage-fluctuation-test">
     <h3 class="text-foreground mb-2 text-lg font-semibold">
-      机组电压波动率测定 Voltage Fluctuation Test
+      {{ t('experiment.comprehensive.fluctuation.voltage.title') }}
     </h3>
 
     <div class="table-container">
@@ -10,21 +10,21 @@
 
     <div class="form-section">
       <div class="form-row">
-        <label>电压波动率标准值:</label>
+        <label>{{ t('experiment.comprehensive.fluctuation.voltage.labels.standard') }}</label>
         <input
           v-model="voltageFluctuationStandard"
           type="text"
-          placeholder="请输入电压波动率标准值..."
+          :placeholder="t('experiment.comprehensive.fluctuation.voltage.placeholders.standard')"
           class="w-full rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           :disabled="!isEditable"
         />
       </div>
       <div class="form-row">
-        <label>结论 Conclusion:</label>
+        <label>{{ t('experiment.common.conclusionLabel') }}</label>
         <textarea
           v-model="conclusion"
           :readonly="!isEditable"
-          placeholder="请输入结论..."
+          :placeholder="t('experiment.comprehensive.fluctuation.voltage.placeholders.conclusion')"
           class="h-20 w-full resize-none rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           :class="{ 'bg-gray-100': !isEditable }"
         />
@@ -35,6 +35,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { useDataCollector } from '#/composables/useDataCollector';
@@ -49,6 +50,7 @@ const webSocketStore = useWebSocketStore();
 const { isAdmin } = useUserRole();
 const isEditable = computed(() => canEditTable());
 const { registerCollector, unregisterCollector } = useDataCollector();
+const { t } = useI18n();
 
 // 标志位，用于避免循环更新
 const isUpdatingFromStore = ref(false);
@@ -65,87 +67,87 @@ const conclusion = ref('');
 const gridOptions: VxeGridProps = {
   data: tableData.value,
   columns: [
-    { field: 'serialNumber', title: '序号', width: 60, align: 'center' },
+    { field: 'serialNumber', title: t('experiment.comprehensive.fluctuation.voltage.columns.serialNumber'), width: 60, align: 'center' },
     {
       field: 'load',
-      title: '负载 (%)\nLoad',
+      title: t('experiment.comprehensive.fluctuation.voltage.columns.load'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'power',
-      title: '功率 (kW)\nPower',
+      title: t('experiment.comprehensive.fluctuation.voltage.columns.power'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'frequency',
-      title: '频率 (Hz)\nFrequency',
+      title: t('experiment.comprehensive.fluctuation.voltage.columns.frequency'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'powerFactor',
-      title: '功率因数 COS Φ\nPower Factor',
+      title: t('experiment.comprehensive.fluctuation.voltage.columns.powerFactor'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ua',
-      title: 'UA (V)',
+      title: t('experiment.comprehensive.fluctuation.voltage.columns.ua'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'ub',
-      title: 'UB (V)',
+      title: t('experiment.comprehensive.fluctuation.voltage.columns.ub'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'uc',
-      title: 'UC (V)',
+      title: t('experiment.comprehensive.fluctuation.voltage.columns.uc'),
       width: 100,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'measuredVoltageBeforeExperiment',
-      title: '波动试验前电压(V)\nMeasured Voltage\nBefore Experiment',
+      title: t('experiment.comprehensive.fluctuation.voltage.columns.measuredVoltageBeforeExperiment'),
       width: 140,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'voltageWaveMax',
-      title: '电压 Max\nVoltage Wave\nMax',
+      title: t('experiment.comprehensive.fluctuation.voltage.columns.voltageWaveMax'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'voltageWaveMin',
-      title: '电压 Min\nVoltage Wave\nMin',
+      title: t('experiment.comprehensive.fluctuation.voltage.columns.voltageWaveMin'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'voltageWaveAve',
-      title: '电压 Ave\nVoltage Wave\nAve',
+      title: t('experiment.comprehensive.fluctuation.voltage.columns.voltageWaveAve'),
       width: 120,
       align: 'center',
       editRender: { name: 'VxeInput' },
     },
     {
       field: 'voltageFluctuationRate',
-      title: '电压波动值 △u%\nVoltage Fluctuation\nRate',
+      title: t('experiment.comprehensive.fluctuation.voltage.columns.voltageFluctuationRate'),
       width: 140,
       align: 'center',
       editRender: { name: 'VxeInput' },

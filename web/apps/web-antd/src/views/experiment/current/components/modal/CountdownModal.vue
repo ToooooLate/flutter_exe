@@ -6,6 +6,7 @@ import { useVbenModal } from '@vben/common-ui';
 import { Button, Progress, message as antMessage } from 'ant-design-vue';
 import { returnStaticCommand } from '#/api/core/experiment';
 import { useExperimentStore } from '#/store/experiment';
+import { useI18n } from '@vben/locales';
 
 interface CountdownModalProps {
   countdownSeconds?: number;
@@ -17,8 +18,8 @@ interface CountdownModalProps {
 
 const props = withDefaults(defineProps<CountdownModalProps>(), {
   countdownSeconds: 10,
-  title: '倒计时',
-  message: '请等待倒计时结束...',
+  title: undefined,
+  message: undefined,
   showReturnButton: true,
 });
 
@@ -34,6 +35,18 @@ let timer: number | null = null;
 
 // 实验状态管理
 const experimentStore = useExperimentStore();
+const { t } = useI18n();
+
+// 标题与消息国际化（支持外部覆盖）
+const modalTitle = computed(() => props.title ?? t('experiment.current.modal.countdown.title'));
+const modalMessage = computed(() => props.message ?? t('experiment.current.modal.countdown.message'));
+const returnButtonLabel = computed(() =>
+  isReturning.value
+    ? t('experiment.current.modal.countdown.processing')
+    : t('experiment.current.modal.countdown.returnStatic'),
+);
+
+const formatCountdown = () => `${remainingTime.value}${t('experiment.current.common.seconds')}`;
 
 // 计算进度百分比（从100%递减到0%）
 const progressPercent = computed(() => {
@@ -100,7 +113,7 @@ const handleReturnStatic = async () => {
     experimentId: experimentStore.state.currentExperiment?.id || '',
   });
   if (res) {
-    antMessage.success('返回静态指令已发送');
+    antMessage.success(t('experiment.current.modal.countdown.returnStaticSent'));
     modalApi.close();
   }
 };
@@ -130,7 +143,7 @@ defineExpose({
 </script>
 
 <template>
-  <Modal :title="title" class="countdown-modal w-[400px]">
+  <Modal :title="modalTitle" class="countdown-modal w-[400px]">
     <div class="py-5 text-center">
       <!-- 倒计时显示区域 -->
       <div class="mb-6 flex items-center justify-center">
@@ -141,16 +154,14 @@ defineExpose({
           :stroke-width="8"
           stroke-color="#1890ff"
           trail-color="#f0f0f0"
-          :format="() => `${remainingTime}秒`"
+          :format="formatCountdown"
           :show-info="true"
         />
       </div>
 
       <!-- 提示信息 -->
       <div class="mb-6 flex min-h-[48px] items-center justify-center">
-        <p class="text-center text-gray-600">
-          {{ message }}
-        </p>
+        <p class="text-center text-gray-600">{{ modalMessage }}</p>
       </div>
 
       <!-- 操作按钮 -->
@@ -162,7 +173,7 @@ defineExpose({
           @click="handleReturnStatic"
           class="min-w-[120px]"
         >
-          {{ isReturning ? '处理中...' : '返回静态' }}
+          {{ returnButtonLabel }}
         </Button>
       </div>
     </div>

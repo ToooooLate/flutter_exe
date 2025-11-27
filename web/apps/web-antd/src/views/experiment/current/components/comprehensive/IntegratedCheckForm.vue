@@ -2,15 +2,15 @@
   <div class="integrated-check-form">
     <!-- 操作按钮区域 -->
     <div class="mb-2 gap-2">
-      <p class="text-lg font-bold">第{{ experimentIndex }}次数据测定实验</p>
-      <Button type="primary" :disabled="!isEditable" @click="handleEditProject"> 编辑项目 </Button>
+      <p class="text-lg font-bold">{{ $t('experiment.current.integrated.measurementTitle', { index: experimentIndex }) }}</p>
+      <Button type="primary" :disabled="!isEditable" @click="handleEditProject"> {{ $t('experiment.current.integrated.editProject') }} </Button>
     </div>
 
     <!-- 表格区域 -->
     <Grid>
       <template #action="{ row }">
         <Button type="link" size="small" :disabled="!isEditable" @click="handleMeasure(row)">
-          测定
+          {{ $t('experiment.current.integrated.measure') }}
         </Button>
         <Button
           type="link"
@@ -18,16 +18,16 @@
           :disabled="!isEditable"
           @click="handleMeasurehandleVoltageModulation(row)"
         >
-          电压调制
+          {{ $t('experiment.current.integrated.voltageModulation') }}
         </Button>
       </template>
     </Grid>
 
     <!-- 项目控制弹窗 -->
-    <ProjectControlModal title="编辑项目" :width="600">
+    <ProjectControlModal :title="$t('experiment.current.integrated.editProject')" :width="600">
       <div class="p-4">
         <div class="mb-4">
-          <h4 class="mb-2">选择要显示的项目：</h4>
+          <h4 class="mb-2">{{ $t('experiment.current.integrated.selectItemsToShow') }}</h4>
           <CheckboxGroup v-model:value="selectedRows">
             <div class="grid grid-cols-2 gap-2">
               <Checkbox
@@ -48,8 +48,8 @@
     <CountdownModal
       ref="countdownModalRef"
       :countdown-seconds="60"
-      title="测定进行中"
-      message="测定正在进行中，请耐心等待..."
+      :title="$t('experiment.current.integrated.countdownTitle')"
+      :message="$t('experiment.current.integrated.countdownMessage')"
       :show-return-button="true"
       @countdown-end="handleCountdownEnd"
       @return-static="handleReturnStatic"
@@ -74,6 +74,7 @@ import { useExperimentStore } from '#/store/experiment';
 import { CountdownModal } from '../modal';
 import { useDataCollector } from '#/composables/useDataCollector';
 import { canEditTable } from '#/composables/useExperimentPermissions';
+import { $t } from '#/locales';
 
 // 使用实验store
 const experimentStore = useExperimentStore();
@@ -114,7 +115,7 @@ const selectedRows = ref<string[]>([]);
 // 构建 checkbox 选项
 const checkboxOptions = computed(() => {
   return localData.value.map((item) => ({
-    label: `${item.serialNumber}. 负载${item.loadPercent} - ${item.timeMin}`,
+    label: `${item.serialNumber}. ${$t('experiment.current.columns.load')}${item.loadPercent} - ${item.timeMin}`,
     value: item.id,
   }));
 });
@@ -130,9 +131,9 @@ const updateAllData = async () => {
 
   if (syncSuccess) {
     await experimentStore.submitExperimentData();
-    message.success('实验数据同步成功');
+    message.success($t('experiment.current.message.syncSuccess'));
   } else {
-    message.error('数据收集器同步失败');
+    message.error($t('experiment.current.message.collectorSyncFailed'));
     return;
   }
 };
@@ -141,7 +142,7 @@ const updateAllData = async () => {
 const handleMeasure = async (row: IntegratedCheckItem) => {
   await updateAllData();
   if (!experimentStore.state.currentExperiment?.benchPosition) {
-    message.error('实验台位为空');
+    message.error($t('experiment.current.message.benchPositionEmpty'));
     return;
   }
   // 调用集成检测 API
@@ -158,14 +159,14 @@ const handleMeasure = async (row: IntegratedCheckItem) => {
     ...commandParams,
     experimentStatus: true,
   }).then((res) => {
-    res ? message.success('测定指令已发送') : message.error('测定指令发送失败');
+    res ? message.success($t('experiment.current.message.measureCommandSent')) : message.error($t('experiment.current.message.measureCommandFailed'));
   });
 };
 
 const sendDcuDeviceMonitoringCommand = async (state: 0 | 1) => {
   const experimentId = experimentStore.state.currentExperiment?.id || '';
   if (!experimentId) {
-    message.error('实验ID为空');
+    message.error($t('experiment.current.message.experimentIdEmpty'));
     return;
   }
   const res = await sendDcuDeviceMonitoringCommandApi({
@@ -173,9 +174,9 @@ const sendDcuDeviceMonitoringCommand = async (state: 0 | 1) => {
     state,
   });
   if (res) {
-    message.success('实时数据指令发送成功');
+    message.success($t('experiment.current.message.realtimeCommandSuccess'));
   } else {
-    message.error('实时数据指令发送失败');
+    message.error($t('experiment.current.message.realtimeCommandFailed'));
   }
 };
 
@@ -189,14 +190,14 @@ const handleMeasurehandleVoltageModulation = (row: IntegratedCheckItem) => {
     ...commandParams,
   }).then((res) => {
     res
-      ? message.success('电压调制指令已发送')
-      : message.error('电压调制指令发送失败');
+      ? message.success($t('experiment.current.message.voltageModulationSent'))
+      : message.error($t('experiment.current.message.voltageModulationFailed'));
   });
 };
 
 // 倒计时结束处理函数
 const handleCountdownEnd = () => {
-  message.info('倒计时结束，测定完成');
+  message.info($t('experiment.current.message.countdownEndMeasureDone'));
   //终止实时数据推送
   sendDcuDeviceMonitoringCommand(1);
   integratedCheckApi({
@@ -204,15 +205,15 @@ const handleCountdownEnd = () => {
     experimentStatus: false,
   }).then((res) => {
     res
-      ? message.success('返回静态指令已发送')
-      : message.error('返回静态指令发送失败');
+      ? message.success($t('experiment.current.message.returnStaticCommandSent'))
+      : message.error($t('experiment.current.message.returnStaticCommandFailed'));
   });
 };
 
 // 返回静态处理函数
 const handleReturnStatic = async () => {
   // 这里可以添加返回静态的API调用
-  message.info('正在返回静态状态...');
+  message.info($t('experiment.current.message.returningStatic'));
 };
 
 // 编辑项目按钮处理函数

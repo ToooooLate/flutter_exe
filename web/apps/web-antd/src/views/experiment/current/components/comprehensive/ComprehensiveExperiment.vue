@@ -30,6 +30,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { Card, Button, Tabs, TabPane, message } from 'ant-design-vue';
+import { useI18n } from '@vben/locales';
 // @ts-ignore
 import DataMeasurement from './DataMeasurement.vue';
 // @ts-ignore
@@ -41,12 +42,13 @@ import FluctuationReport from './FluctuationReport.vue';
 
 // 子功能标签页配置
 const activeSubTab = ref('dataMeasurement');
+const { t } = useI18n();
 
 const subTabs = [
-  { key: 'dataMeasurement', label: '数据测定' },
-  { key: 'loadTestReport', label: '负载实验报告' },
-  { key: 'steadyStateReport', label: '稳态实验报告' },
-  { key: 'fluctuationReport', label: '波动实验报告' },
+  { key: 'dataMeasurement', label: t('experiment.current.comprehensive.subTabs.dataMeasurement') },
+  { key: 'loadTestReport', label: t('experiment.current.comprehensive.subTabs.loadTestReport') },
+  { key: 'steadyStateReport', label: t('experiment.current.comprehensive.subTabs.steadyStateReport') },
+  { key: 'fluctuationReport', label: t('experiment.current.comprehensive.subTabs.fluctuationReport') },
 ];
 
 // 子组件映射

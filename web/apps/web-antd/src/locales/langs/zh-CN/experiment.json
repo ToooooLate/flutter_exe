@@ -1,0 +1,503 @@
+{
+  "current": {
+    "credential": {
+      "title": "临时访问地址",
+      "copy": "复制",
+      "account": "账号",
+      "password": "密码",
+      "expiredAt": "有效期至",
+      "extend": "延长许可",
+      "copyAll": "一键复制全部",
+      "createSuccess": "临时访问凭证创建成功",
+      "createFailed": "临时访问凭证创建失败",
+      "extendSuccess": "临时访问凭证延长成功",
+      "extendFailed": "临时访问凭证延长失败",
+      "viewTitle": "查看访问凭证",
+      "addressLabel": "临时访问地址",
+      "accountLabel": "账号",
+      "passwordLabel": "密码"
+    },
+    "message": {
+      "restored": "已恢复实验",
+      "restoreFailed": "恢复实验数据失败，请重新创建实验",
+      "endSuccess": "实验已成功结束",
+      "noExperiment": "没有正在进行的实验",
+      "abandonSuccess": "实验已成功废弃",
+      "backMissingId": "无法返回静态：未找到实验ID",
+      "backCommandSent": "静态指令已发送",
+      "previewMissingInfo": "缺少实验ID或编号，建议先创建或恢复实验",
+      "syncSuccess": "实验数据同步成功",
+      "collectorSyncFailed": "数据收集器同步失败",
+      "syncFailed": "实验数据同步失败",
+      "benchPositionEmpty": "实验台位为空",
+      "measureCommandSent": "测定指令已发送",
+      "measureCommandFailed": "测定指令发送失败",
+      "callCommandSent": "召测指令已发送",
+      "callCommandFailed": "召测指令发送失败",
+      "experimentIdEmpty": "实验ID为空",
+      "realtimeCommandSuccess": "实时数据指令发送成功",
+      "realtimeCommandFailed": "实时数据指令发送失败",
+      "realtimeCheckInfo": "请检查实验ID、实验台位或同步数据后操作",
+      "voltageModulationSent": "电压调制指令已发送",
+      "voltageModulationFailed": "电压调制指令发送失败",
+      "countdownEndMeasureDone": "倒计时结束，测定完成",
+      "returnStaticCommandSent": "返回静态指令已发送",
+      "returnStaticCommandFailed": "返回静态指令发送失败",
+      "returningStatic": "正在返回静态状态...",
+      "integratedPushFailed": "综合试验数据推送失败",
+      "transientPushFailed": "瞬态数据推送失败",
+      "curveDataEmpty": "曲线数据为空，未生成图表",
+      "curveDataParseFailed": "曲线数据解析失败或为空，未生成图表",
+      "generatedCurve": "已生成 {{state}} 的瞬态调速曲线，共{{count}}个数据点",
+      "noChartsToDownload": "暂无已渲染的图表可下载",
+      "dcuEnableSuccess": "DCU启用成功",
+      "dcuEnableFailed": "DCU启用失败"
+    },
+    "buttons": {
+      "create": "新建实验",
+      "end": "结束本次实验",
+      "abandon": "废弃本次实验",
+      "preview": "报告预览",
+      "sync": "数据同步",
+      "back": "返回静态",
+      "credentialGenerate": "生成访问凭证",
+      "credentialView": "查看访问凭证",
+      "initialize": "初始化"
+    },
+    "tabs": {
+      "environment": "试验环境",
+      "appearance": "外观检查",
+      "coldInsulation": "冷态绝缘电阻测量",
+      "startup": "启动性能试验",
+      "operation": "机组运转检查",
+      "protection": "机组保护装置试验",
+      "comprehensive": "综合实验",
+      "transient": "瞬态实验",
+      "hotInsulation": "热态绝缘电阻测量"
+    },
+    "monitorTabs": {
+      "realtime": "实时数据",
+      "monitoring": "设备监控"
+    },
+    "monitoring": {
+      "contentPlaceholder": "设备监控内容区域"
+    },
+    "realtime": {
+      "title": "实时数据",
+      "pushButton": "数据推送",
+      "voltageModulationTitle": "电压调制",
+      "descriptions": {
+        "ua": "UA (V)",
+        "ub": "UB (V)",
+        "uc": "UC (V)",
+        "ia": "IA (A)",
+        "ib": "IB (A)",
+        "ic": "IC (A)",
+        "powerKw": "功率(kW)",
+        "frequencyHz": "频率 (Hz)",
+        "powerFactorCos": "功率因数(cosΦ)",
+        "speedRpm": "转速(rpm)",
+        "oilTempC": "机油温度(℃)",
+        "coolantTempC": "冷却水温度(℃)",
+        "exhaustTempC": "排气温度(℃)",
+        "oilPressureBar": "机油压力(Bar)"
+      }
+    },
+    "protection": {
+      "title": "机组保护装置试验",
+      "equipmentDesc": "测试设备：压力表，油加热装置",
+      "tabs": {
+        "overspeed": "超速保护试验",
+        "protection": "保护试验"
+      },
+      "overspeed": {
+        "title": "（1）超速保护试验",
+        "requirements": "要求：转速调整到113%~115%额定转速，控制箱显示超速报警，发动机应立即停车，试验三次要全部成功。",
+        "columns": {
+          "sequence": "序号",
+          "speedRpm": "转速(rpm)",
+          "alarmStop": "报警停车",
+          "note": "备注"
+        },
+        "labels": {
+          "conclusion": "结论:"
+        },
+        "placeholders": {
+          "conclusion": "请输入试验结论..."
+        }
+      },
+      "test": {
+        "title": "报警与安全试验",
+        "columns": {
+          "serialNumber": "序号",
+          "testItem": "项目名称",
+          "signalType": "信号类型",
+          "setValue": "设定值",
+          "localDisplay": "本地显示",
+          "localAlarm": "本地报警",
+          "localShd": "本地停机",
+          "testResult": "测试结果",
+          "remark": "备注（A：适用，NA：不适用）"
+        },
+        "labels": {
+          "remark": "备注:",
+          "conclusion": "结论:"
+        },
+        "placeholders": {
+          "remark": "请输入备注信息...",
+          "conclusion": "请输入试验结论..."
+        },
+        "items": {
+          "oilPressureLowAlarm": "润滑油压力低报警",
+          "coolantTempHighAlarm": "冷却水温度高报警",
+          "lubOilTempHighAlarm": "润滑油温度高报警",
+          "fuelLeakage": "燃油泄漏",
+          "controlPowerVoltageLowAlarm": "控制电源电压低报警",
+          "overspeedAlarm": "超速报警",
+          "coolantLevelLowAlarm": "冷却水液位低报警",
+          "highCoolantTemperatureShutdown": "冷却水温度过高停车",
+          "lowLubOilPressureShutdown": "润滑油压力过低停车",
+          "localEmergencyStop": "本地急停",
+          "remoteEmergencyStop": "远程急停",
+          "overspeedShutdown": "超速停机",
+          "startFailure": "启动失败"
+        }
+      }
+    },
+    "settings": {
+      "title": "实验设置",
+      "collapse": "收起",
+      "expand": "展开",
+      "connectionParams": "连接参数",
+      "deviceParams": "设备参数",
+      "fields": {
+        "testPerson": "测试人员",
+        "inspector": "检验人员",
+        "reviewer": "审核人员",
+        "phaseType": "相位类型",
+        "benchPosition": "台位选择",
+        "generatorComPort": "发电机通讯端口",
+        "engineComPort": "发动机通讯端口",
+        "generatorBaudRate": "发电机波特率",
+        "engineBaudRate": "发动机波特率",
+        "dcuSetting": "DCU配置",
+        "customer": "客户",
+        "projectName": "项目名称",
+        "shipyard": "船厂",
+        "shipNumber": "船号",
+        "unitModel": "机组型号",
+        "unitSerial": "机组编号",
+        "engineModel": "发动机型号",
+        "generatorModel": "发电机型号",
+        "engineSerial": "发动机编号",
+        "generatorSerial": "发电机编号",
+        "ratedFrequency": "额定频率 (Hz)",
+        "powerFactor": "功率因数",
+        "noLoadFrequency": "空载频率 (Hz)",
+        "fullLoadFrequency": "满载频率 (Hz)",
+        "apparentPower": "视在功率 (kW)",
+        "ratedPower": "额定功率 (kW)",
+        "ratedCurrent": "额定电流 (A)",
+        "ratedVoltage": "额定电压 (V)"
+      },
+      "placeholders": {
+        "testPerson": "请输入测试人员",
+        "inspector": "请输入检验人员",
+        "reviewer": "请输入审核人员",
+        "phaseType": "请选择相位",
+        "benchPosition": "请选择台位",
+        "generatorComPort": "请选择发电机通讯端口",
+        "engineComPort": "请选择发动机通讯端口",
+        "generatorBaudRate": "请输入波特率",
+        "engineBaudRate": "请输入发动机信号波特率",
+        "dcuSetting": "请选择发电机DCU配置",
+        "customer": "请输入客户",
+        "projectName": "请输入项目名称",
+        "shipyard": "请输入船厂",
+        "shipNumber": "请输入船号",
+        "unitModel": "请输入机组型号",
+        "unitSerial": "请输入机组编号",
+        "engineModel": "请输入发动机型号",
+        "generatorModel": "请输入发电机型号",
+        "engineSerial": "请输入发动机编号",
+        "generatorSerial": "请输入发电机编号",
+        "ratedFrequency": "请输入额定频率",
+        "powerFactor": "请输入功率因数",
+        "noLoadFrequency": "请输入空载频率",
+        "fullLoadFrequency": "请输入满载频率",
+        "apparentPower": "请输入视在功率",
+        "ratedPower": "请输入额定功率",
+        "ratedCurrent": "请输入额定电流",
+        "ratedVoltage": "请输入额定电压"
+      },
+      "options": {
+        "singlePhase": "单相",
+        "threePhase": "三相",
+        "bench1": "台位1",
+        "bench2": "台位2",
+        "bench3": "台位3",
+        "bench4": "台位4",
+        "bench5": "台位5",
+        "bench6": "台位6"
+      },
+      "dcuStatus": {
+        "active": "启用中",
+        "inactive": "未启用"
+      }
+    },
+    "comprehensive": {
+      "subTabs": {
+        "dataMeasurement": "数据测定",
+        "loadTestReport": "负载实验报告",
+        "steadyStateReport": "稳态实验报告",
+        "fluctuationReport": "波动实验报告"
+      },
+      "steady": {
+        "tabs": {
+          "speed": "机组稳态调速特性测定",
+          "voltage": "机组稳态电压调整率测定",
+          "range": "机组稳态调速率可调范围和空载电压检查"
+        },
+        "rangeCheck": {
+          "title": "机组稳态调速率可调范围和空载电压检查",
+          "subtitle": "稳态调速率范围与空载电压检查",
+          "descriptionsTitle": "稳态调速参数",
+          "noloadVoltage": {
+            "title": "空载电压检查"
+          },
+          "labels": {
+            "ratedVoltage": "额定电压（V）",
+            "noLoadMaxPlus5": "空载最大电压 +5%（V）",
+            "noLoadMinMinus5": "空载最小电压 -5%（V）",
+            "noLoadFreqZero": "0% 空载频率 (Hz)",
+            "fullLoadFreqHundred": "100% 满载频率 (Hz)",
+            "steadyRegulationDelta": "稳态调速率 δ(%)"
+          },
+          "placeholders": {
+            "ratedVoltage": "请输入额定电压",
+            "noLoadMaxPlus5": "请输入 +5% 电压",
+            "noLoadMinMinus5": "请输入 -5% 电压",
+            "speedRegulation": "请输入调速率"
+          },
+          "maxSpeedRegulation": {
+            "title": "最大调速率"
+          },
+          "minSpeedRegulation": {
+            "title": "最小调速率"
+          }
+        },
+        "voltageAdjustment": {
+          "title": "机组稳态电压调整率测定 Steady Voltage Adjustment",
+          "labels": {
+            "standard": "标准/Standard：稳态电压调整率△u%不大于±2.5%",
+            "conclusion": "结论/Conclusion:"
+          },
+          "placeholders": {
+            "conclusion": "请输入结论..."
+          },
+          "columns": {
+            "serialNumber": "序号",
+            "loadPercent": "负载 (%)\nLoad",
+            "power": "功率 (kW)\nPower",
+            "frequency": "频率 (Hz)\nFrequency",
+            "powerFactor": "功率因数 COS Φ\nPower Factor",
+            "ua": "UA (V)",
+            "ub": "UB (V)",
+            "uc": "UC (V)",
+            "ia": "IA (A)",
+            "ib": "IB (A)",
+            "ic": "IC (A)",
+            "phaseAVoltage": "A相电压 (V)\nPhase A Voltage",
+            "steadyVoltageDeviation": "稳态电压调整率 △u%\nSteady Voltage Deviation"
+          }
+        }
+      },
+      "fluctuation": {
+        "speed": {
+          "title": "机组转速波动率测定 Speed Fluctuation Test",
+          "labels": {
+            "standard": "转速波动率要求/Standard:"
+          },
+          "placeholders": {
+            "standard": "请输入转速波动率要求..."
+          },
+          "columns": {
+            "load": "负载 (%)\nLoad",
+            "power": "功率 (kW)\nPower",
+            "frequency": "频率 (Hz)\nFrequency",
+            "powerFactor": "功率因数 COS Φ\nPower Factor",
+            "measuredFreqBeforeExperiment": "波动试验前频率\nMeasured frequency before motion testing",
+            "frequencyWaveMax": "频率 Max\nFrequency wave motion in 1 mins - Max",
+            "frequencyWaveMin": "频率 Min\nFrequency wave motion in 1 mins - Min",
+            "frequencyWaveAve": "频率 Ave\nFrequency wave motion in 1 mins Ave",
+            "speedFluctuationRate": "转速波动值 %\nFrequency wave motion rate"
+          }
+        },
+        "voltage": {
+          "title": "机组电压波动率测定 Voltage Fluctuation Test",
+          "labels": {
+            "standard": "电压波动率标准值:"
+          },
+          "placeholders": {
+            "standard": "请输入电压波动率标准值...",
+            "conclusion": "请输入结论..."
+          },
+          "columns": {
+            "serialNumber": "序号",
+            "load": "负载 (%)\nLoad",
+            "power": "功率 (kW)\nPower",
+            "frequency": "频率 (Hz)\nFrequency",
+            "powerFactor": "功率因数 COS Φ\nPower Factor",
+            "ua": "UA (V)",
+            "ub": "UB (V)",
+            "uc": "UC (V)",
+            "measuredVoltageBeforeExperiment": "波动试验前电压(V)\nMeasured Voltage\nBefore Experiment",
+            "voltageWaveMax": "电压 Max\nVoltage Wave\nMax",
+            "voltageWaveMin": "电压 Min\nVoltage Wave\nMin",
+            "voltageWaveAve": "电压 Ave\nVoltage Wave\nAve",
+            "voltageFluctuationRate": "电压波动值 △u%\nVoltage Fluctuation\nRate"
+          }
+        }
+      },
+      "experiments": {
+        "first": "第一次实验",
+        "second": "第二次实验",
+        "third": "第三次实验",
+        "save": "保存第{index}次实验数据"
+      },
+      "loadTitle": "负载实验"
+    },
+    "integrated": {
+      "measurementTitle": "第{index}次数据测定实验",
+      "editProject": "编辑项目",
+      "measure": "测定",
+      "voltageModulation": "电压调制",
+      "selectItemsToShow": "选择要显示的项目：",
+      "countdownTitle": "测定进行中",
+      "countdownMessage": "测定正在进行中，请耐心等待..."
+    },
+    "appearance": {
+      "title": "发电机组系统全面检查（可编辑）",
+      "titleEn": "Check all systems of generator set:",
+      "conclusionLabel": "结论/Conclusion:",
+      "placeholderConclusion": "请输入检查结论..."
+    },
+    "environment": {
+      "title": "试验环境检查（可编辑）",
+      "titleEn": "Check test environment:",
+      "descriptionsTitle": "环境参数",
+      "fields": {
+        "testPlace": "试验地点",
+        "temperature": "温度",
+        "relativeHumidity": "相对湿度",
+        "atmosphere": "大气压",
+        "dateOfTest": "试验日期"
+      },
+      "placeholders": {
+        "testPlace": "请输入试验地点",
+        "temperature": "请输入温度",
+        "relativeHumidity": "请输入相对湿度",
+        "atmosphere": "请输入大气压",
+        "dateOfTest": "请选择试验日期"
+      }
+    },
+    "transient": {
+      "title": "瞬态调速率和稳定时间测定",
+      "subtitle": "Transient speed regulation and stabilization time measurement",
+      "tabs": {
+        "speed": "瞬态调速率和稳定时间测定",
+        "voltage": "瞬态电压变化率和稳定时间测定"
+      },
+      "editProject": "编辑项目",
+      "measure": "测定",
+      "curve": "曲线",
+      "stabilizationRange": "稳定时间范围设置",
+      "conclusionLabel": "结论/Conclusion:",
+      "placeholderConclusion": "请输入结论...",
+      "projectControl": "项目控制",
+      "selectItemsLabel": "选择需要显示的测试项目：",
+      "chartSectionTitle": "曲线展示",
+      "downloadAllPng": "下载所有PNG",
+      "chartTitleSuffix": "瞬态调速曲线",
+      "xAxisTime": "时间 (s)",
+      "yAxisFrequency": "频率 (Hz)",
+      "countdownTitle": "测定进行中",
+      "countdownMessage": "瞬态调速率测定正在进行中，请耐心等待..."
+    },
+    "columns": {
+      "serialNumber": "序号",
+      "load": "负载",
+      "timeMin": "时间 (min)",
+      "ua": "UA (V)",
+      "ia": "IA (A)",
+      "powerFactor": "功率因数",
+      "frequency": "频率 (Hz)",
+      "umax": "Umax",
+      "umin": "Umin",
+      "fmax": "Fmax",
+      "fmin": "Fmin",
+      "action": "操作",
+      "speedRpm": "转速(rpm)",
+      "alarmStop": "报警停车",
+      "note": "备注",
+      "checkContent": "检查内容",
+      "checkRequirement": "检查要求",
+      "checkStatus": "检查情况",
+      "remarks": "备注",
+      "loadChangeState": "负载变化状态",
+      "beforeChangeFrequency": "突变前频率(Hz)",
+      "beforeChangePower": "突变前功率(kW)",
+      "instantaneousFrequencyMaxMin": "瞬时频率最大或最小(Hz)",
+      "afterChangeFrequency": "突变后频率(Hz)",
+      "afterChangePower": "突变后功率(kW)",
+      "stabilityTime": "稳定时间t(s)",
+      "transientSpeedRegulationRate": "瞬态调速率δ(%)"
+    },
+    "placeholders": {
+      "inputLoadPercent": "请输入负载百分比",
+      "inputTime": "请输入时间",
+      "inputVoltage": "请输入电压值",
+      "inputCurrent": "请输入电流值",
+      "inputPowerFactor": "请输入功率因数",
+      "inputFrequency": "请输入频率值",
+      "inputUmax": "请输入最大电压",
+      "inputUmin": "请输入最小电压",
+      "inputFmax": "请输入最大频率",
+      "inputFmin": "请输入最小频率",
+      "inputConclusion": "请输入试验结论...",
+      "inputCheckConclusion": "请输入检查结论..."
+    },
+    "chart": {
+      "downloadPng": "下载PNG",
+      "defaultTitle": "折线图",
+      "xAxis": "X轴",
+      "yAxis": "Y轴",
+      "seriesData": "数据",
+      "rangeUpper": "范围区间上限",
+      "rangeLower": "范围区间下限",
+      "legendRange": "范围区间",
+      "tooltipRangeLabel": "范围区间"
+    },
+    "common": {
+      "processing": "处理中...",
+      "returnStatic": "返回静态",
+      "seconds": "秒",
+      "conclusionLabel": "结论/Conclusion:"
+    },
+    "modal": {
+      "countdown": {
+        "title": "倒计时",
+        "message": "请等待倒计时结束...",
+        "returnStatic": "返回静态",
+        "processing": "处理中...",
+        "returnStaticSent": "返回静态指令已发送"
+      }
+    },
+    "leaveConfirm": {
+      "title": "是否提交数据？",
+      "content": "选择提交将同步实验数据后离开，选择不提交直接离开。",
+      "okText": "提交",
+      "cancelText": "不提交"
+    }
+  }
+}

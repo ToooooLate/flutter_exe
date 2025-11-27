@@ -68,3 +68,13 @@ export async function deleteUserAccountApi(data: {
 export async function addUserAccountApi(data: UserAccountItem) {
   return requestClient.post<UserAccountItem>('/api/sg/user/add', data);  
 }
+
+/**
+ * 延长用户账号访问权限
+ */
+export async function extendUserAccountAccessApi(data: {
+  username: string;
+  end: number;
+}) {
+  return requestClient.post<UserAccountItem>('/api/sg/user/renewal', data);  
+}

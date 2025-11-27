@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // @ts-nocheck
 import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { useI18n } from '@vben/locales';
 import {
   Button,
   message,
@@ -43,6 +44,8 @@ const data = ref({
   umodMin: '',
   umodSPercent: '',
 });
+
+const { t } = useI18n();
 
 // 通用数据更新函数
 const updateDataFields = (
@@ -106,7 +109,7 @@ const handlePushData = async () => {
   const benchPosition =
     experimentStore.state.currentExperiment?.benchPosition || '';
   if (!experimentId || !benchPosition) {
-    message.error('请检查实验ID、实验台位或同步数据后操作');
+    message.error(t('experiment.current.message.realtimeCheckInfo'));
     return;
   }
   const res = await sendDcuDeviceMonitoringCommandApi({
@@ -114,9 +117,9 @@ const handlePushData = async () => {
     state: 1,
   });
   if (res) {
-    message.success('实时数据指令发送成功');
+    message.success(t('experiment.current.message.realtimeCommandSuccess'));
   } else {
-    message.error('实时数据指令发送失败');
+    message.error(t('experiment.current.message.realtimeCommandFailed'));
   }
 };
 </script>
@@ -124,43 +127,31 @@ const handlePushData = async () => {
 <template>
   <div class="space-y-6">
     <!-- 读数呈列：Ant Design Vue Descriptions（带边框与背景） -->
-    <Descriptions bordered title="实时数据" :column="2" size="small">
+    <Descriptions bordered :title="t('experiment.current.realtime.title')" :column="2" size="small">
       <template #extra>
         <Button type="primary" size="small" @click="handlePushData"
-          >数据推送</Button
+          >{{ t('experiment.current.realtime.pushButton') }}</Button
         >
       </template>
-      <DescriptionsItem label="UA (V)">{{ data.ua }}</DescriptionsItem>
-      <DescriptionsItem label="IA (A)">{{ data.ia }}</DescriptionsItem>
-      <DescriptionsItem label="UB (V)">{{ data.ub }}</DescriptionsItem>
-      <DescriptionsItem label="IB (A)">{{ data.ib }}</DescriptionsItem>
-      <DescriptionsItem label="UC (V)">{{ data.uc }}</DescriptionsItem>
-      <DescriptionsItem label="IC (A)">{{ data.ic }}</DescriptionsItem>
-      <DescriptionsItem label="功率(kW)">{{ data.power }}</DescriptionsItem>
-      <DescriptionsItem label="频率 (Hz)">{{
-        data.frequency
-      }}</DescriptionsItem>
+      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.ua')">{{ data.ua }}</DescriptionsItem>
+      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.ia')">{{ data.ia }}</DescriptionsItem>
+      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.ub')">{{ data.ub }}</DescriptionsItem>
+      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.ib')">{{ data.ib }}</DescriptionsItem>
+      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.uc')">{{ data.uc }}</DescriptionsItem>
+      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.ic')">{{ data.ic }}</DescriptionsItem>
+      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.powerKw')">{{ data.power }}</DescriptionsItem>
+      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.frequencyHz')">{{ data.frequency }}</DescriptionsItem>
       <!-- <DescriptionsItem label="负载(%)">{{ data.load }}</DescriptionsItem> -->
-      <DescriptionsItem label="功率因数(cosΦ)">{{
-        data.powerFactor
-      }}</DescriptionsItem>
-      <DescriptionsItem label="转速(rpm)">{{ data.speed }}</DescriptionsItem>
-      <DescriptionsItem label="机油温度(℃)">{{
-        data.oilTemperature
-      }}</DescriptionsItem>
-      <DescriptionsItem label="冷却水温度(℃)">{{
-        data.coolantTemperature
-      }}</DescriptionsItem>
-      <DescriptionsItem label="排气温度(℃)">{{
-        data.exhaustTemp
-      }}</DescriptionsItem>
-      <DescriptionsItem label="机油压力(Bar)">{{
-        data.oilPressure
-      }}</DescriptionsItem>
+      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.powerFactorCos')">{{ data.powerFactor }}</DescriptionsItem>
+      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.speedRpm')">{{ data.speed }}</DescriptionsItem>
+      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.oilTempC')">{{ data.oilTemperature }}</DescriptionsItem>
+      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.coolantTempC')">{{ data.coolantTemperature }}</DescriptionsItem>
+      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.exhaustTempC')">{{ data.exhaustTemp }}</DescriptionsItem>
+      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.oilPressureBar')">{{ data.oilPressure }}</DescriptionsItem>
     </Descriptions>
 
     <!-- 电压调制参数 -->
-    <Descriptions bordered title="电压调制" :column="2" size="small">
+    <Descriptions bordered :title="t('experiment.current.realtime.voltageModulationTitle')" :column="2" size="small">
       <DescriptionsItem label="Umod.max">{{ data.umodMax }}</DescriptionsItem>
       <DescriptionsItem label="Umod.min">{{ data.umodMin }}</DescriptionsItem>
       <DescriptionsItem label="Umod.s%">{{

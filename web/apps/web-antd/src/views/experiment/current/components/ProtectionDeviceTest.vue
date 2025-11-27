@@ -1,8 +1,8 @@
 <template>
   <div class="protection-device-test-container min-h-[400px] p-4">
     <div class="mb-4">
-      <h3 class="mb-1 text-lg font-semibold">机组保护装置试验</h3>
-      <p class="text-gray-600">测试设备：压力表，油加热装置</p>
+      <h3 class="mb-1 text-lg font-semibold">{{ t('experiment.current.protection.title') }}</h3>
+      <p class="text-gray-600">{{ t('experiment.current.protection.equipmentDesc') }}</p>
     </div>
 
     <!-- Tab 切换 -->
@@ -43,14 +43,16 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from '@vben/locales';
 import OverspeedProtectionTest from './OverspeedProtectionTest.vue';
 import ProtectionTest from './ProtectionTest.vue';
 
 const activeTab = ref('overspeed');
+const { t } = useI18n();
 
 const tabs = [
-  { key: 'overspeed', label: '超速保护试验' },
-  { key: 'protection', label: '保护试验' },
+  { key: 'overspeed', label: t('experiment.current.protection.tabs.overspeed') },
+  { key: 'protection', label: t('experiment.current.protection.tabs.protection') },
 ];
 </script>
 

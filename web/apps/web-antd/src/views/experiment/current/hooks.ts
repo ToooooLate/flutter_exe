@@ -3,10 +3,12 @@ import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
 import { useClipboard } from '@vueuse/core';
 import { generateAccessCredentialApi, getAccessCredentialApi } from '#/api/core';
+import { extendUserAccountAccessApi } from '#/api/core/user';
 import { generateExperimentNumApi, returnStaticCommand, getExperimentDetailByIdApi, getExperimentIdByNoApi } from '#/api/core/experiment';
 import { useExperimentStore } from '#/store/experiment';
 import { useUserStore } from '#/store/user';
 import { useDataCollector } from '#/composables/useDataCollector';
+import { $t } from '#/locales';
 import {
   saveExperimentToStorage,
   getExperimentFromStorage,
@@ -26,7 +28,7 @@ export function useCurrentExperiment() {
 
   const hasCredential = ref(false);
   const credentialModalOpen = ref(false);
-  const accessCredential = ref<{ url: string; account: string; password: string }>({
+  const accessCredential = ref<{ url: string; account: string; password: string, begin?: number , end?: number }>({
     url: '',
     account: '',
     password: '',
@@ -35,13 +37,13 @@ export function useCurrentExperiment() {
   const isSettingsExpanded = ref(true);
 
   const experimentButtons = ref([
-    { key: 'create', label: '新建实验', type: 'primary', icon: 'plus', disabled: false },
-    { key: 'end', label: '结束本次实验', type: 'default', icon: 'check', disabled: true },
-    { key: 'abandon', label: '废弃本次实验', type: 'default', icon: 'close', disabled: true, danger: true },
-    { key: 'preview', label: '报告预览', type: 'default', icon: 'eye', disabled: true },
-    { key: 'sync', label: '数据同步', type: 'default', icon: 'sync', disabled: true },
-    { key: 'back', label: '返回静态', type: 'primary', icon: 'arrow-left', disabled: true },
-    { key: 'credential', label: '生成访问凭证', type: 'default', icon: 'key', disabled: true },
+    { key: 'create', label: $t('experiment.current.buttons.create'), type: 'primary', icon: 'plus', disabled: false },
+    { key: 'end', label: $t('experiment.current.buttons.end'), type: 'default', icon: 'check', disabled: true },
+    { key: 'abandon', label: $t('experiment.current.buttons.abandon'), type: 'default', icon: 'close', disabled: true, danger: true },
+    { key: 'preview', label: $t('experiment.current.buttons.preview'), type: 'default', icon: 'eye', disabled: true },
+    { key: 'sync', label: $t('experiment.current.buttons.sync'), type: 'default', icon: 'sync', disabled: true },
+    { key: 'back', label: $t('experiment.current.buttons.back'), type: 'primary', icon: 'arrow-left', disabled: true },
+    { key: 'credential', label: $t('experiment.current.buttons.credentialGenerate'), type: 'default', icon: 'key', disabled: true },
   ]);
 
   const updateButtonStates = () => {
@@ -54,7 +56,7 @@ export function useCurrentExperiment() {
 
   const setCredentialButtonLabel = () => {
     const btn = experimentButtons.value.find((b: any) => b.key === 'credential');
-    if (btn) btn.label = hasCredential.value ? '查看访问凭证' : '生成访问凭证';
+    if (btn) btn.label = hasCredential.value ? $t('experiment.current.buttons.credentialView') : $t('experiment.current.buttons.credentialGenerate');
   };
 
   // 初始化实验数据，从 localStorage 恢复
@@ -88,12 +90,12 @@ export function useCurrentExperiment() {
           
           updateButtonStates();
           console.log('实验数据已从后端恢复并同步到store:', experimentDetail);
-          message.success(`已恢复实验 ${storedData.experimentNo}`);
+          message.success(`${$t('experiment.current.message.restored')} ${storedData.experimentNo}`);
       } catch (error) {
         console.error('恢复实验数据失败:', error);
         // 如果获取失败，清除本地存储避免重复尝试
         clearExperimentFromStorage();
-        message.error('恢复实验数据失败，请重新创建实验');
+        message.error($t('experiment.current.message.restoreFailed'));
       }
     } 
   };
@@ -137,12 +139,12 @@ export function useCurrentExperiment() {
             console.log('experimentStore:', experimentStore.state.currentExperiment);
             updateButtonStates(); 
             
-            message.success('实验已成功结束');
+            message.success($t('experiment.current.message.endSuccess'));
             
             // 跳转到历史记录页面
             router.push('/history');
           } else {
-            message.warning('没有正在进行的实验');
+            message.warning($t('experiment.current.message.noExperiment'));
           }
         break;
       }
@@ -162,22 +164,22 @@ export function useCurrentExperiment() {
             
             updateButtonStates(); 
             
-            message.success('实验已成功废弃');
+            message.success($t('experiment.current.message.abandonSuccess'));
             
             // 跳转到历史记录页面
             router.push('/history');
           } else {
-            message.warning('没有正在进行的实验');
+            message.warning($t('experiment.current.message.noExperiment'));
           }
         break;
       }
       case 'back': {
         const expId = experimentStore.state.currentExperiment?.id;
         if (!expId) {
-          message.warning('无法返回静态：未找到实验ID');
+          message.warning($t('experiment.current.message.backMissingId'));
         } else {
           await returnStaticCommand({ experimentId: expId });
-          message.info('静态指令已发送');
+          message.info($t('experiment.current.message.backCommandSent'));
         }
         break;
       }
@@ -188,7 +190,7 @@ export function useCurrentExperiment() {
         const idParam = stored?.id || experimentStore.state.currentExperiment?.id || '';
         const expNoParam = stored?.experimentNo || experimentNo.value || '';
         if (!idParam || !expNoParam) {
-          message.warning('缺少实验ID或编号，建议先创建或恢复实验');
+          message.warning($t('experiment.current.message.previewMissingInfo'));
         }
         router.push({
           path: '/report',
@@ -209,13 +211,13 @@ export function useCurrentExperiment() {
             // 直接使用store中的数据进行同步，简化流程
             console.log('直接使用store中的数据进行同步:', experimentStore.state.currentExperiment);
             await experimentStore.submitExperimentData();
-            message.success('实验数据同步成功');
+            message.success($t('experiment.current.message.syncSuccess'));
           } else {
-            message.error('数据收集器同步失败');
+            message.error($t('experiment.current.message.collectorSyncFailed'));
           }
         } catch (error) {
           console.error('同步数据失败:', error);
-          message.error('实验数据同步失败');
+          message.error($t('experiment.current.message.syncFailed'));
         }
         break;
       }
@@ -223,7 +225,7 @@ export function useCurrentExperiment() {
         if (!experimentNo.value) return;
         const expId = experimentStore.state.currentExperiment?.id;
         if (!expId) {
-          message.warning('请先创建实验，缺少实验ID');
+          message.warning($t('experiment.current.message.experimentIdEmpty'));
           break;
         }
         try {
@@ -241,27 +243,31 @@ export function useCurrentExperiment() {
               url: fetched?.url ?? accessCredential.value.url ?? '',
               account: experimentNo.value,
               password: fetched?.password ?? accessCredential.value.password ?? '',
+              begin: accessCredential.value.begin ?? 0,
+              end: fetched?.end ?? accessCredential.value.end ?? 0,
             };
             hasCredential.value = true;
             setCredentialButtonLabel();
             credentialModalOpen.value = true;
-            message.success('已获取访问凭证');
+            message.success($t('experiment.current.message.fetchedCredentialSuccess'));
           } else {
             // 不存在则生成新的临时账号
             const res = await generateAccessCredentialApi({ username: experimentNo.value, end: 1 });
             accessCredential.value = {
               url: res?.url ?? '',
               account: experimentNo.value,
-              password: res?.password ?? String(Math.floor(100000 + Math.random() * 900000)),
+              password: res?.password ?? accessCredential.value.password ?? '',
+              begin: accessCredential.value.begin ?? 0,
+              end: res?.end ?? accessCredential.value.end ?? 0,
             };
             hasCredential.value = true;
             setCredentialButtonLabel();
             credentialModalOpen.value = true;
-            message.success('访问凭证已生成');
+            message.success($t('experiment.current.message.generatedCredentialSuccess'));
           }
         } catch (e) {
           credentialModalOpen.value = false;
-          message.error('访问凭证处理失败');
+          message.error($t('experiment.current.message.credentialProcessFailed'));
         }
         break;
       }
@@ -269,21 +275,50 @@ export function useCurrentExperiment() {
   };
 
   const copyCredentialAll = async () => {
-    const text = `临时访问地址：${accessCredential.value.url}\n账号：${accessCredential.value.account}\n密码：${accessCredential.value.password}`;
+    const text = `${$t('experiment.current.credential.addressLabel')}: ${accessCredential.value.url}\n${$t('experiment.current.credential.accountLabel')}: ${accessCredential.value.account}\n${$t('experiment.current.credential.passwordLabel')}: ${accessCredential.value.password}`;
     try {
       await copy(text);
-      message.success('已复制到剪贴板');
+      message.success($t('experiment.current.message.copiedToClipboard'));
     } catch {
-      message.error('复制失败');
+      message.error($t('experiment.current.message.copyFailed'));
     }
   };
 
   const copyText = async (text: string) => {
     try {
       await copy(text);
-      message.success('已复制');
+      message.success($t('experiment.current.message.copied'));
     } catch {
-      message.error('复制失败');
+      message.error($t('experiment.current.message.copyFailed'));
+    }
+  };
+
+  // 统一管理：延长临时访问许可并同步凭证状态
+  const extendAccessDuration = async () => {
+    try {
+      const username = experimentNo.value || accessCredential.value.account;
+      if (!username) {
+        message.warning($t('experiment.current.message.missingExperimentNo'));
+        return;
+      }
+      await extendUserAccountAccessApi({ username, end: 1 });
+
+      // 续期后重新拉取最新的临时访问凭证
+      const fetched = await getAccessCredentialApi({ username });
+      // end 为 number，直接使用；展示层会做秒/毫秒处理
+      const endTs = typeof fetched?.end === 'number'
+        ? fetched.end
+        : (typeof accessCredential.value.end === 'number' ? accessCredential.value.end : 0);
+      accessCredential.value = {
+        url: fetched?.url ?? accessCredential.value.url ?? '',
+        account: username,
+        password: fetched?.password ?? accessCredential.value.password ?? '',
+        begin: accessCredential.value.begin ?? 0,
+        end: endTs ?? 0,
+      };
+      message.success($t('experiment.current.message.extendSuccess'));
+    } catch (e) {
+      message.error($t('experiment.current.message.extendFailed'));
     }
   };
 
@@ -291,23 +326,23 @@ export function useCurrentExperiment() {
   const activeMonitorTab = ref('realtime');
 
   const experimentTabs = [
-    { key: 'environment', label: '试验环境' },
-    { key: 'appearance', label: '外观检查' },
-    { key: 'cold-insulation', label: '冷态绝缘电阻测量' },
-    { key: 'startup', label: '启动性能试验' },
-    { key: 'operation', label: '机组运转检查' },
-    { key: 'protection', label: '机组保护装置试验' },
-    { key: 'comprehensive', label: '综合实验' },
-    // { key: 'load', label: '负载试验' },
-    // { key: 'steady', label: '稳态试验' },
-    // { key: 'fluctuation', label: '波动试验' },
-    { key: 'transient', label: '瞬态实验' },
-    { key: 'hot-insulation', label: '热态绝缘电阻测量' },
+    { key: 'environment', label: $t('experiment.current.tabs.environment') },
+    { key: 'appearance', label: $t('experiment.current.tabs.appearance') },
+    { key: 'cold-insulation', label: $t('experiment.current.tabs.coldInsulation') },
+    { key: 'startup', label: $t('experiment.current.tabs.startup') },
+    { key: 'operation', label: $t('experiment.current.tabs.operation') },
+    { key: 'protection', label: $t('experiment.current.tabs.protection') },
+    { key: 'comprehensive', label: $t('experiment.current.tabs.comprehensive') },
+    // { key: 'load', label: $t('experiment.current.tabs.load') },
+    // { key: 'steady', label: $t('experiment.current.tabs.steady') },
+    // { key: 'fluctuation', label: $t('experiment.current.tabs.fluctuation') },
+    { key: 'transient', label: $t('experiment.current.tabs.transient') },
+    { key: 'hot-insulation', label: $t('experiment.current.tabs.hotInsulation') },
   ];
 
   const monitorTabs = [
-    { key: 'realtime', label: '实时数据' },
-    { key: 'monitoring', label: '设备监控' },
+    { key: 'realtime', label: $t('experiment.current.monitorTabs.realtime') },
+    { key: 'monitoring', label: $t('experiment.current.monitorTabs.monitoring') },
   ];
 
   const handleTabChange = (key: string) => {
@@ -338,5 +373,6 @@ export function useCurrentExperiment() {
     handleMonitorTabChange,
     experimentStore,
     initializeExperimentData,
+    extendAccessDuration,
   };
 }
