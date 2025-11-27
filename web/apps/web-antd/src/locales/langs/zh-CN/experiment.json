@@ -48,7 +48,7 @@
       "transientPushFailed": "瞬态数据推送失败",
       "curveDataEmpty": "曲线数据为空，未生成图表",
       "curveDataParseFailed": "曲线数据解析失败或为空，未生成图表",
-      "generatedCurve": "已生成 {{state}} 的瞬态调速曲线，共{{count}}个数据点",
+      "generatedCurve": "已生成 {state} 的瞬态调速曲线，共{count}个数据点",
       "noChartsToDownload": "暂无已渲染的图表可下载",
       "dcuEnableSuccess": "DCU启用成功",
       "dcuEnableFailed": "DCU启用失败"

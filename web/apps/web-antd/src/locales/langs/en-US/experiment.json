@@ -48,7 +48,7 @@
       "transientPushFailed": "Transient data push failed",
       "curveDataEmpty": "Curve data is empty, chart not generated",
       "curveDataParseFailed": "Curve data parse failed or empty, chart not generated",
-      "generatedCurve": "Generated transient curve for {{state}} with {{count}} points",
+      "generatedCurve": "Generated transient curve for {state} with {count} points",
       "noChartsToDownload": "No rendered charts available for download",
       "dcuEnableSuccess": "DCU enabled successfully",
       "dcuEnableFailed": "Failed to enable DCU"
