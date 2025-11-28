@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from '@vben/locales';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { useDataCollector } from '#/composables/useDataCollector';

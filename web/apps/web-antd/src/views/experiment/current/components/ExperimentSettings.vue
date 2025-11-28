@@ -9,7 +9,11 @@
           @click="toggleExpanded"
           class="flex items-center"
         >
-          <span class="text-sm">{{ expanded ? t('experiment.current.settings.collapse') : t('experiment.current.settings.expand') }}</span>
+          <span class="text-sm">{{
+            expanded
+              ? t('experiment.current.settings.collapse')
+              : t('experiment.current.settings.expand')
+          }}</span>
         </Button>
       </div>
     </template>
@@ -24,7 +28,7 @@
 import { computed, ref, watch, nextTick, onMounted, onUnmounted } from 'vue';
 import { Card, Button } from 'ant-design-vue';
 import { message } from 'ant-design-vue';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from '@vben/locales';
 // @ts-ignore 依赖的类型由本地 src/env.d.ts 提供
 import { useVbenForm } from '@vben/common-ui';
 // @ts-ignore 依赖的类型由本地 src/env.d.ts 提供
@@ -132,8 +136,14 @@ const formSchema: VbenFormSchema[] = [
     componentProps: {
       placeholder: t('experiment.current.settings.placeholders.phaseType'),
       options: [
-        { label: t('experiment.current.settings.options.singlePhase'), value: 'singlePhase' },
-        { label: t('experiment.current.settings.options.threePhase'), value: 'threePhase' },
+        {
+          label: t('experiment.current.settings.options.singlePhase'),
+          value: 'singlePhase',
+        },
+        {
+          label: t('experiment.current.settings.options.threePhase'),
+          value: 'threePhase',
+        },
       ],
     },
     fieldName: 'phaseType',
@@ -160,7 +170,9 @@ const formSchema: VbenFormSchema[] = [
   {
     component: 'Select',
     componentProps: {
-      placeholder: t('experiment.current.settings.placeholders.generatorComPort'),
+      placeholder: t(
+        'experiment.current.settings.placeholders.generatorComPort',
+      ),
       options: [
         { label: 'COM1', value: 1 },
         { label: 'COM2', value: 2 },
@@ -194,7 +206,9 @@ const formSchema: VbenFormSchema[] = [
   {
     component: 'InputNumber',
     componentProps: {
-      placeholder: t('experiment.current.settings.placeholders.generatorBaudRate'),
+      placeholder: t(
+        'experiment.current.settings.placeholders.generatorBaudRate',
+      ),
       precision: 0,
     },
     fieldName: 'generatorBaudRate',
@@ -314,7 +328,9 @@ const formSchema: VbenFormSchema[] = [
   {
     component: 'Input',
     componentProps: {
-      placeholder: t('experiment.current.settings.placeholders.generatorSerial'),
+      placeholder: t(
+        'experiment.current.settings.placeholders.generatorSerial',
+      ),
     },
     fieldName: 'generatorSerial',
     label: t('experiment.current.settings.fields.generatorSerial'),
@@ -359,7 +375,9 @@ const formSchema: VbenFormSchema[] = [
   {
     component: 'InputNumber',
     componentProps: {
-      placeholder: t('experiment.current.settings.placeholders.noLoadFrequency'),
+      placeholder: t(
+        'experiment.current.settings.placeholders.noLoadFrequency',
+      ),
     },
     fieldName: 'noLoadFrequency',
     label: t('experiment.current.settings.fields.noLoadFrequency'),
@@ -368,7 +386,9 @@ const formSchema: VbenFormSchema[] = [
   {
     component: 'InputNumber',
     componentProps: {
-      placeholder: t('experiment.current.settings.placeholders.fullLoadFrequency'),
+      placeholder: t(
+        'experiment.current.settings.placeholders.fullLoadFrequency',
+      ),
     },
     fieldName: 'fullLoadFrequency',
     label: t('experiment.current.settings.fields.fullLoadFrequency'),

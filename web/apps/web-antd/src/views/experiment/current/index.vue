@@ -25,7 +25,7 @@ import {
 } from '#/composables/useExperimentStorage';
 
 import { useRefresh } from '@vben/hooks';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from '@vben/locales';
 
 const { refresh } = useRefresh();
 const { t } = useI18n();
@@ -170,7 +170,10 @@ onBeforeRouteLeave((to, from, next) => {
   <Page>
     <template #title>
       <div class="flex w-full items-center justify-between">
-        <span> {{ $t('experiment.current.comprehensive.loadTitle') }}{{ safeExperimentNo }} </span>
+        <span>
+          {{ $t('experiment.current.comprehensive.loadTitle')
+          }}{{ safeExperimentNo }}
+        </span>
         <template v-if="isEngineer">
           <div class="flex gap-2" v-if="isPendingOrInit">
             <span v-for="button in experimentButtons" :key="button.key">
@@ -207,7 +210,9 @@ onBeforeRouteLeave((to, from, next) => {
             </span>
           </div>
           <div class="flex gap-2" v-else>
-            <Button type="primary" @click="handleInitialize">{{ $t('experiment.current.buttons.initialize') }}</Button>
+            <Button type="primary" @click="handleInitialize">{{
+              $t('experiment.current.buttons.initialize')
+            }}</Button>
           </div>
         </template>
       </div>
@@ -267,7 +272,7 @@ onBeforeRouteLeave((to, from, next) => {
       </div>
     </div>
     <!-- 访问凭证弹窗（Vben Modal） -->
-      <CredentialModal>
+    <CredentialModal>
       <CredentialModalContent
         :access-credential="accessCredential"
         :copy-text="copyText"
