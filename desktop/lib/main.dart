@@ -329,6 +329,11 @@ class _WebShellState extends State<WebShell> {
             // 仅允许在同一域名下导航
             final dest = Uri.parse(request.url);
             final base = Uri.parse(widget.url);
+            // 允许系统/初始页面（about:blank、edge:、data:、file:）
+            const allowedSchemes = {'about', 'edge', 'data', 'file'};
+            if (allowedSchemes.contains(dest.scheme)) {
+              return NavigationDecision.navigate;
+            }
             if (dest.host == base.host) {
               return NavigationDecision.navigate;
             }
