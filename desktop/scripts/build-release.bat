@@ -4,13 +4,17 @@ setlocal enabledelayedexpansion
 REM Flutter Windows 桌面应用构建脚本
 REM 在 Windows 环境下运行
 
+REM 检测是否在 CI 环境（GitLab 会设置 CI=true）
+set IS_CI=
+if /I "%CI%"=="true" set IS_CI=1
+
 echo 🚀 开始构建 Flutter Windows 桌面应用...
 
 REM 检查 Flutter 是否安装
 where flutter >nul 2>nul
 if %errorlevel% neq 0 (
     echo ❌ 错误：Flutter 未安装或未添加到 PATH
-    pause
+    if not defined IS_CI pause
     exit /b 1
 )
 
@@ -66,7 +70,16 @@ if exist "%BUILD_DIR%" (
         cd ..
         echo ✅ 已创建分发包：releases\%RELEASE_NAME%.zip
     ) else (
-        echo ⚠️  7z 未安装，请手动打包 releases\%RELEASE_NAME% 目录
+        echo ⚠️  7z 未安装，尝试使用 PowerShell 压缩为 ZIP...
+        cd releases
+        powershell -NoProfile -Command "Compress-Archive -Path '%RELEASE_NAME%\*' -DestinationPath '%RELEASE_NAME%.zip' -Force"
+        if exist "%RELEASE_NAME%.zip" (
+            cd ..
+            echo ✅ 已创建分发包：releases\%RELEASE_NAME%.zip
+        ) else (
+            cd ..
+            echo ⚠️  ZIP 创建失败，请手动打包 releases\%RELEASE_NAME% 目录
+        )
     )
     
     echo.
@@ -79,10 +92,11 @@ if exist "%BUILD_DIR%" (
     
 ) else (
     echo ❌ 构建失败！请检查错误信息
-    pause
+    if not defined IS_CI pause
     exit /b 1
 )
 
 echo.
 echo 按任意键退出...
-pause >nul
+if not defined IS_CI pause >nul
+if defined IS_CI exit /b 0

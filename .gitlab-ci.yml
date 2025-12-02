@@ -1,0 +1,27 @@
+stages:
+  - build
+
+# 将 Runner 的 Flutter 路径加入 PATH（如果 Runner 已配置，可移除 variables）
+variables:
+  FLUTTER_HOME: 'C:\\flutter'
+  PATH: '%FLUTTER_HOME%\\bin;%FLUTTER_HOME%\\bin\\cache\\dart-sdk\\bin;%PATH%'
+  CI: 'true'
+
+build_windows_release:
+  stage: build
+  tags: [ 'windows' ]  # 需要 Windows Runner，标签需与 Runner 注册时一致
+  script:
+    - echo "开始 Windows 桌面构建 (GitLab CI)"
+    # 进入桌面项目目录并调用现有 bat 脚本
+    - cmd.exe /C "cd desktop && scripts\\build-release.bat"
+  artifacts:
+    when: always
+    expire_in: 14 days
+    paths:
+      - desktop/build/windows/runner/Release/
+      - desktop/releases/
+  # 可在需要时限制触发来源
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "tag"
