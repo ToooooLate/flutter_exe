@@ -37,8 +37,8 @@ dependencies:
   http: ^1.2.1
   connectivity_plus: ^6.0.3
   webview_flutter: ^4.8.0
-  # Ensure WebView works on Windows (Edge WebView2 backend)
-  webview_flutter_windows: ^0.3.3
+  # Windows 平台使用 webview_win_floating 作为 webview_flutter 的实现
+  webview_win_floating: ^3.0.0
   file_selector: ^0.9.5
   cross_file: ^0.3.4
 

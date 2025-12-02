@@ -192,6 +192,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  fullscreen_window:
+    dependency: transitive
+    description:
+      name: fullscreen_window
+      sha256: "262a19366157542c3e1fa07232ee7e8a5c82e5223d912b04a2771c47aa6a048d"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.2.1"
   http:
     dependency: "direct main"
     description:
@@ -413,6 +421,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.23.0"
+  webview_win_floating:
+    dependency: "direct main"
+    description:
+      name: webview_win_floating
+      sha256: "06c49ae0490063be3911d3561c498f6847f9d31f9e60edc0ab7573bab8264476"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "3.0.2"
   xml:
     dependency: transitive
     description:
