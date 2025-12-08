@@ -560,6 +560,9 @@
       "chartTitleSuffix": "瞬态调速曲线",
       "xAxisTime": "时间 (s)",
       "yAxisFrequency": "频率 (Hz)",
+      "charts": {
+        "rangeAreaName": "稳定频率范围"
+      },
     "countdownTitle": "测定进行中",
     "countdownMessage": "瞬态调速率测定正在进行中，请耐心等待..."
     },

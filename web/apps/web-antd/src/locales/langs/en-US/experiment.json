@@ -560,6 +560,9 @@
       "chartTitleSuffix": "Transient regulation curve",
       "xAxisTime": "Time (s)",
       "yAxisFrequency": "Frequency (Hz)",
+      "charts": {
+        "rangeAreaName": "Stable frequency range"
+      },
     "countdownTitle": "Measuring",
     "countdownMessage": "Transient measurement in progress, please wait..."
     },

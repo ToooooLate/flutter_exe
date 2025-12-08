@@ -133,8 +133,10 @@
             :range-area="
               chartsRangeAreas[String(row.serialNumber)] || defaultRangeArea
             "
-            x-axis-name="$t('experiment.current.transient.xAxisTime')"
-            y-axis-name="$t('experiment.current.transientVoltage.charts.yAxisVoltage')"
+            :x-axis-name="$t('experiment.current.transient.xAxisTime')"
+            :y-axis-name="
+              $t('experiment.current.transientVoltage.charts.yAxisVoltage')
+            "
             height="468px"
             line-color="#1890ff"
             :auto-resize="true"
@@ -314,7 +316,7 @@ const defaultRangeArea = computed<RangeArea>(() => {
     experimentStore.state.currentExperiment?.ratedVoltage ?? 220,
   );
   const deviationPercent = parseFloat(stableVoltageDeviationRange.value);
-  const p = isNaN(deviationPercent) ? 5 : deviationPercent; // 默认±5%
+  const p = isNaN(deviationPercent) ? 1 : deviationPercent; // 默认±1%
   const min = Number((baseVoltage * (1 - p / 100)).toFixed(2));
   const max = Number((baseVoltage * (1 + p / 100)).toFixed(2));
   return {

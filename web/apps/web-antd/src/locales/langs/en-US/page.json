@@ -179,10 +179,14 @@
       "2009": "2009 Version"
     },
     "exportExcel": "Export Excel Report",
+    "exportFullReport": "Export Full Report",
     "message": {
       "missingExperimentId": "Missing experiment ID. Enter via a route with id or select/create an experiment first.",
       "downloadFailed": "Report download failed. Please try again later.",
-      "downloadStarted": "Excel report download started."
+      "downloadStarted": "Excel report download started.",
+      "uploadSucceeded": "Image upload succeeded.",
+      "uploadFailed": "Image upload failed.",
+      "exportFailed": "Export failed."
     },
     "generatorPerformance": {
       "reportTitle": "Test report of generator set's performance",

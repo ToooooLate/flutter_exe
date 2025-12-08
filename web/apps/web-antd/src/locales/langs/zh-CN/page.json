@@ -179,10 +179,14 @@
       "2009": "2009版"
     },
     "exportExcel": "导出Excel报告",
+    "exportFullReport": "导出完整报告",
     "message": {
       "missingExperimentId": "缺少实验ID，请从带有 id 的路由进入或先选择/创建实验",
       "downloadFailed": "报告下载失败，请稍后重试",
-      "downloadStarted": "Excel报告已开始下载"
+      "downloadStarted": "Excel报告已开始下载",
+      "uploadSucceeded": "上传成功",
+      "uploadFailed": "上传失败",
+      "exportFailed": "导出失败"
     },
     "generatorPerformance": {
       "reportTitle": "发电机组性能测试报告",

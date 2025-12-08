@@ -9,8 +9,21 @@
         @change="onVersionChange"
       />
       <div class="flex gap-2">
-        <Button type="primary" size="small" :loading="exporting" @click="onExportClick">
+        <Button
+          type="primary"
+          size="small"
+          :loading="exporting"
+          @click="onExportClick"
+        >
           {{ $t('page.report.exportExcel') }}
+        </Button>
+        <Button
+          type="primary"
+          size="small"
+          :loading="exporting"
+          @click="onExportFullClick"
+        >
+          {{ $t('page.report.exportFullReport') }}
         </Button>
       </div>
     </div>
@@ -61,6 +74,15 @@ import { useI18n } from '@vben/locales';
 import { requestClient } from '#/api/request';
 import { useExperimentStore } from '#/store/experiment';
 import { useRoute } from 'vue-router';
+import {
+  getExperimentDetailByIdApi,
+  uploadExperimentImageApi,
+  exportFullExperimentReportWordApi,
+} from '#/api/core';
+// 直接使用已注册的 ECharts 实例以便离屏渲染
+// 注意：默认导出未在 index.ts 透出，因此使用子路径导入
+import { echarts } from '@vben/plugins/echarts';
+import { buildLineChartOptions } from '#/views/experiment/current/components/charts/optionBuilder';
 
 // 当前实验ID
 const experimentStore = useExperimentStore();
@@ -145,10 +167,14 @@ function saveBlob(blob: Blob, fileName: string) {
   URL.revokeObjectURL(objectUrl);
 }
 
-async function fetchExcelBlob(version: '1990' | '2009'): Promise<{ blob: Blob; fileName: string } | null> {
+async function fetchExcelBlob(
+  version: '1990' | '2009',
+): Promise<{ blob: Blob; fileName: string } | null> {
   // 优先从路由读取ID（支持 params 或 query），再回退到当前实验ID
   const routeId = (route.params?.id ?? route.query?.id ?? '') as string;
-  const id = String(routeId || experimentStore.state.currentExperiment?.id || '');
+  const id = String(
+    routeId || experimentStore.state.currentExperiment?.id || '',
+  );
   if (!id) {
     message.warning(t('page.report.message.missingExperimentId'));
     return null;
@@ -197,11 +223,251 @@ function onVersionChange(value: '1990' | '2009') {
 onMounted(() => {
   // 渲染后自动按系统语言下载1990版
   downloadExcel('1990');
+  generateOffscreenChartsAndUpload();
 });
 
 function formatCell(val: unknown): string {
   if (val === null || val === undefined) return '';
   return String(val);
+}
+
+// ====== 批量生成离屏图并上传 ======
+type ChartDataPoint = { x: number; y: number };
+
+function parseCurveInfoToPoints(info: string): ChartDataPoint[] {
+  try {
+    const parsed = JSON.parse(info);
+    if (Array.isArray(parsed)) {
+      return parsed
+        .map((p: any) => ({ x: Number(p.x), y: Number(p.y) }))
+        .filter((p) => !isNaN(p.x) && !isNaN(p.y))
+        .sort((a, b) => a.x - b.x);
+    }
+    if (parsed && typeof parsed === 'object') {
+      const points: ChartDataPoint[] = Object.keys(parsed)
+        .map((k) => ({ x: Number(k), y: Number((parsed as any)[k]) }))
+        .filter((p) => !isNaN(p.x) && !isNaN(p.y))
+        .sort((a, b) => a.x - b.x);
+      return points;
+    }
+  } catch (e) {
+    // ignore
+  }
+  return [];
+}
+
+function calcYAxisRange(points: ChartDataPoint[]) {
+  if (!points.length) return { min: 0, max: 1 };
+  const ys = points.map((p) => p.y);
+  const min = Math.min(...ys);
+  const max = Math.max(...ys);
+  if (min === max) {
+    const pad = Math.abs(min || 1) * 0.1;
+    return { min: min - pad, max: max + pad };
+  }
+  const span = max - min;
+  const pad = span * 0.1;
+  return { min: min - pad, max: max + pad };
+}
+
+function sanitizeFileName(name: string) {
+  return name.replace(/[\\/:*?"<>|]/g, '_');
+}
+
+async function generateOffscreenChartsAndUpload() {
+  // 读取实验ID
+  const routeId = (route.params?.id ?? route.query?.id ?? '') as string;
+  const id = String(
+    routeId || experimentStore.state.currentExperiment?.id || '',
+  );
+  if (!id) {
+    message.warning(t('page.report.message.missingExperimentId'));
+    return;
+  }
+
+  exporting.value = true;
+  try {
+    const detail = await getExperimentDetailByIdApi({
+      id,
+      isNewExperiment: false,
+    });
+    const speedList = (detail.transientSpeedList || []).filter(
+      (it: any) => it.curveInfo,
+    );
+    const voltageList = (detail.transientVoltageList || []).filter(
+      (it: any) => it.curveInfo,
+    );
+
+    const all = [
+      ...speedList.map((it: any) => ({
+        id: it.id,
+        type: 'transient-speed',
+        serialNumber: it.serialNumber,
+        label: it.loadChangeState,
+        info: it.curveInfo,
+      })),
+      ...voltageList.map((it: any) => ({
+        id: it.id,
+        type: 'transient-voltage',
+        serialNumber: it.serialNumber,
+        label: it.loadChangeState,
+        info: it.curveInfo,
+      })),
+    ];
+
+    if (!all.length) {
+      message.warning(t('experiment.current.message.noChartsToDownload'));
+      return;
+    }
+
+    const files: File[] = [];
+    const ids: string[] = [];
+    console.log('all:', all);
+    for (const row of all) {
+      const points = parseCurveInfoToPoints(row.info);
+      if (!points.length) continue;
+
+      // 离屏容器
+      const container = document.createElement('div');
+      container.style.cssText =
+        'position:fixed;left:-9999px;top:-9999px;width:800px;height:520px;background:#fff;';
+      document.body.appendChild(container);
+
+      const chart = echarts.init(container);
+      // 使用与瞬态页面一致的构造器，保证视觉一致性
+      const isVoltage = row.type === 'transient-voltage';
+      const titleSuffixKey = isVoltage
+        ? 'experiment.current.transientVoltage.charts.titleSuffix'
+        : 'experiment.current.transient.chartTitleSuffix';
+      const yAxisNameKey = isVoltage
+        ? 'experiment.current.transientVoltage.charts.yAxisVoltage'
+        : 'experiment.current.transient.yAxisFrequency';
+      const title = `${row.label} - ${t(titleSuffixKey)}`;
+
+      // 计算范围区间（与瞬态页面默认规则一致）
+      const rangeArea = (() => {
+        if (isVoltage) {
+          const base = Number(
+            experimentStore.state.currentExperiment?.ratedVoltage ?? 220,
+          );
+          const p = 1; // 默认±1%
+          const min = Number((base * (1 - p / 100)).toFixed(2));
+          const max = Number((base * (1 + p / 100)).toFixed(2));
+          return {
+            min,
+            max,
+            color: '#ff4d4f',
+            name: t('experiment.current.transientVoltage.charts.rangeAreaName'),
+          };
+        } else {
+          const base = Number(
+            experimentStore.state.currentExperiment?.ratedFrequency ?? 50,
+          );
+          const p = 3; // 默认±3%
+          const min = Number((base * (1 - p / 100)).toFixed(2));
+          const max = Number((base * (1 + p / 100)).toFixed(2));
+          return {
+            min,
+            max,
+            color: '#ff4d4f',
+            name: t('experiment.current.transient.charts.rangeAreaName'),
+          };
+        }
+      })();
+
+      let option = buildLineChartOptions({
+        data: points,
+        title,
+        xAxisName: t('experiment.current.transient.xAxisTime'),
+        yAxisName: t(yAxisNameKey),
+        rangeArea,
+        lineColor: '#1890ff',
+        backgroundColor: '#ffffff',
+        gridColor: '#f0f0f0',
+        t,
+      }) as any;
+
+      // 离屏导出时禁用动画，确保立即完成渲染
+      option = {
+        ...option,
+        animation: false,
+        animationDuration: 0,
+        animationEasing: 'linear',
+      };
+
+      chart.setOption(option, true);
+      chart.resize();
+      // 等待一次渲染完成或至少一个宏任务，以避免空白截图
+      await new Promise<void>((resolve) => {
+        const handler = () => {
+          try {
+            // @ts-ignore
+            chart?.off?.('finished', handler);
+          } catch {}
+          resolve();
+        };
+        try {
+          // @ts-ignore
+          chart?.on?.('finished', handler);
+        } catch {}
+        setTimeout(handler, 150);
+      });
+      const dataUrl = chart.getDataURL({
+        type: 'png',
+        pixelRatio: 2,
+        backgroundColor: '#fff',
+      });
+
+      // dataURL -> File
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      const fname = sanitizeFileName(
+        `${row.type}_${row.serialNumber}_${row.label}.png`,
+      );
+      const file = new File([blob], fname, { type: 'image/png' });
+      files.push(file);
+      if ((row as any).id) ids.push(String((row as any).id));
+
+      chart.dispose();
+      container.remove();
+    }
+    console.log('ids:', ids, 'files:', files);
+    if (!files.length) {
+      message.warning(t('experiment.current.message.curveDataParseFailed'));
+      return;
+    }
+    const idsString = ids.join(',');
+    await uploadExperimentImageApi({ ids: idsString, files });
+    message.success(t('page.report.message.uploadSucceeded'));
+  } catch (e) {
+    console.error(e);
+    message.error(t('page.report.message.uploadFailed'));
+  } finally {
+    exporting.value = false;
+  }
+}
+
+async function onExportFullClick() {
+  const routeId = (route.params?.id ?? route.query?.id ?? '') as string;
+  const id = String(
+    routeId || experimentStore.state.currentExperiment?.id || '',
+  );
+  const status = getLanguageStatus();
+  if (!id) {
+    message.warning(t('page.report.message.missingExperimentId'));
+    return;
+  }
+  try {
+    const result = await exportFullExperimentReportWordApi({
+      id,
+      status,
+    });
+    if (!result) return;
+    saveBlob(result.blob, result.fileName);
+  } catch (e) {
+    console.error(e);
+    message.error(t('page.report.message.exportFailed'));
+  }
 }
 
 async function renderTableFromBlob(blob: Blob) {
