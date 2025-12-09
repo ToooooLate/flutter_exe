@@ -47,7 +47,7 @@
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusion"
-          :disabled="!isEditable.value"
+          :disabled="!isEditable"
           class="h-full w-full resize-none border-0 outline-none"
           :placeholder="t('experiment.current.placeholders.inputConclusion')"
         />

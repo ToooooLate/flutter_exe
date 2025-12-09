@@ -11,13 +11,17 @@
     <!-- 备注和结论 -->
     <div class="mt-6">
       <div class="mb-2">
-        <label class="text-sm font-medium">{{ t('experiment.current.protection.test.labels.remark') }}</label>
+        <label class="text-sm font-medium">{{
+          t('experiment.current.protection.test.labels.remark')
+        }}</label>
       </div>
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="remark"
           class="h-full w-full resize-none border-none outline-none"
-          :placeholder="t('experiment.current.protection.test.placeholders.remark')"
+          :placeholder="
+            t('experiment.current.protection.test.placeholders.remark')
+          "
           :readonly="!isEditable"
         ></textarea>
       </div>
@@ -25,13 +29,17 @@
 
     <div class="mt-6">
       <div class="mb-2">
-        <label class="text-sm font-medium">{{ t('experiment.current.protection.test.labels.conclusion') }}</label>
+        <label class="text-sm font-medium">{{
+          t('experiment.current.protection.test.labels.conclusion')
+        }}</label>
       </div>
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusion"
           class="h-full w-full resize-none border-none outline-none"
-          :placeholder="t('experiment.current.protection.test.placeholders.conclusion')"
+          :placeholder="
+            t('experiment.current.protection.test.placeholders.conclusion')
+          "
           :readonly="!isEditable"
         ></textarea>
       </div>
@@ -82,7 +90,9 @@ const tableData = [
   {
     id: '2',
     serialNumber: 2,
-    testItem: t('experiment.current.protection.test.items.coolantTempHighAlarm'),
+    testItem: t(
+      'experiment.current.protection.test.items.coolantTempHighAlarm',
+    ),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -118,7 +128,9 @@ const tableData = [
   {
     id: '5',
     serialNumber: 5,
-    testItem: t('experiment.current.protection.test.items.controlPowerVoltageLowAlarm'),
+    testItem: t(
+      'experiment.current.protection.test.items.controlPowerVoltageLowAlarm',
+    ),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -142,7 +154,9 @@ const tableData = [
   {
     id: '7',
     serialNumber: 7,
-    testItem: t('experiment.current.protection.test.items.coolantLevelLowAlarm'),
+    testItem: t(
+      'experiment.current.protection.test.items.coolantLevelLowAlarm',
+    ),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -154,7 +168,9 @@ const tableData = [
   {
     id: '8',
     serialNumber: 8,
-    testItem: t('experiment.current.protection.test.items.highCoolantTemperatureShutdown'),
+    testItem: t(
+      'experiment.current.protection.test.items.highCoolantTemperatureShutdown',
+    ),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -166,7 +182,9 @@ const tableData = [
   {
     id: '9',
     serialNumber: 9,
-    testItem: t('experiment.current.protection.test.items.lowLubOilPressureShutdown'),
+    testItem: t(
+      'experiment.current.protection.test.items.lowLubOilPressureShutdown',
+    ),
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -427,6 +445,7 @@ const handleProtectExperimentFromServer = (payload: any) => {
 
   const last = list[list.length - 1];
   conclusion.value = last?.conclusion || '';
+  remark.value = last?.description || '';
 
   setTimeout(() => {
     GridApi.grid.loadData(rows);

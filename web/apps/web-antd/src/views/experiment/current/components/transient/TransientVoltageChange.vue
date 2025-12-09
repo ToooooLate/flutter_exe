@@ -25,7 +25,7 @@
         <template #action="{ row }">
           <div class="flex gap-2">
             <Button
-              type="button"
+              htmlType="button"
               :disabled="!isEditable"
               class="rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600"
               @click="handleMeasure(row)"
@@ -33,7 +33,8 @@
               {{ $t('experiment.current.transient.measure') }}
             </Button>
             <Button
-              type="button"
+              htmlType="button"
+              :disabled="!isEditable"
               class="rounded bg-purple-500 px-3 py-1 text-sm text-white hover:bg-purple-600"
               @click="handleCurve(row)"
             >

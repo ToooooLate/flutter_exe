@@ -17,7 +17,9 @@
           v-model="generatorSN"
           type="text"
           class="max-w-md flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          :placeholder="$t('experiment.current.insulation.placeholders.generatorSn')"
+          :placeholder="
+            $t('experiment.current.insulation.placeholders.generatorSn')
+          "
           :disabled="!isEditable"
         />
       </div>
@@ -26,12 +28,16 @@
     <!-- 测量结果表格 -->
     <div class="mb-6">
       <Grid />
-      <div class="mt-2 text-sm text-gray-500">{{ $t('experiment.current.insulation.units.mohm') }}</div>
+      <div class="mt-2 text-sm text-gray-500">
+        {{ $t('experiment.current.insulation.units.mohm') }}
+      </div>
     </div>
 
     <!-- 结论部分 -->
     <div class="mb-4">
-      <label class="mb-2 block text-sm font-medium">{{ $t('experiment.current.common.conclusionLabel') }}</label>
+      <label class="mb-2 block text-sm font-medium">{{
+        $t('experiment.current.common.conclusionLabel')
+      }}</label>
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusion"
@@ -57,8 +63,8 @@ import { canEditTable } from '#/composables/useExperimentPermissions';
 interface RowType {
   id: string;
   status: string;
-  measured: number;
-  standard: number;
+  measured: string;
+  standard: string;
 }
 
 const experimentStore = useExperimentStore();
@@ -116,8 +122,8 @@ function registerDataCollector() {
 
       const hotInsulationData = {
         generatorSn: generatorSN.value,
-        measured: Number(tableData?.measured) || 0,
-        standard: 5,
+        measured: tableData?.measured || '',
+        standard: tableData?.standard || '',
         conclusion: conclusion.value,
       };
 
@@ -146,8 +152,8 @@ function handleExperimentHotInsulationUpdate(data: any) {
     {
       id: hot.id || null,
       status: t('experiment.current.insulation.rows.hotStatus'),
-      measured: Number(hot.measured) || 0,
-      standard: 5,
+      measured: hot.measured || '',
+      standard: hot.standard || '',
     },
   ];
 
@@ -178,10 +184,11 @@ const gridOptions: VxeGridProps<RowType> = {
     },
     {
       editRender: {
-        name: 'VxeNumberInput',
+        // name: 'VxeNumberInput',
+        name: 'VxeInput',
         props: {
-          type: 'number',
-          precision: 1,
+          // type: 'number',
+          // precision: 1,
           placeholder: t('experiment.current.insulation.placeholders.mohm'),
         },
       },
@@ -197,20 +204,19 @@ const gridOptions: VxeGridProps<RowType> = {
       minWidth: 180,
       showOverflow: false,
       align: 'center',
-      cellRender: {
-        name: 'VxeText',
+      editRender: {
+        name: 'VxeInput',
         props: {
           text: t('experiment.current.insulation.thresholds.hot'),
         },
       },
-      formatter: () => t('experiment.current.insulation.thresholds.hot'),
     },
   ],
   data: [
     {
       id: '1',
       status: t('experiment.current.insulation.rows.hotStatus'),
-      measured: 0,
+      measured: '',
       standard: '≥5MΩ',
     },
   ],

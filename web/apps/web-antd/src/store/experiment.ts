@@ -28,7 +28,7 @@ interface ColdInsulation {
   id: string;
   generatorSn: string;
   measured: number;
-  standard: number;
+  standard: string;
   conclusion: string;
 }
 
@@ -529,6 +529,14 @@ export const useExperimentStore = defineStore('experiment', () => {
       speedSystemInsensitivity: '',
       nonlinearity: '',
       conclusion: ''
+    },{
+      id: '5',
+      serialNumber: 5,
+      item: '结论',
+      steadyFrequencyDeviation: '',
+      speedSystemInsensitivity: '',
+      nonlinearity: '',
+      conclusion: ''
     }
   ];
 }
@@ -1004,7 +1012,7 @@ export const useExperimentStore = defineStore('experiment', () => {
         id: '',
         generatorSn: '',
         measured: 0,
-        standard: 0,
+        standard: '',
         conclusion: '',
       },
       startPerformance: {

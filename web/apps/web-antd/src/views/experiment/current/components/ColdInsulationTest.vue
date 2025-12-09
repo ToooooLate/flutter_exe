@@ -17,7 +17,9 @@
           v-model="generatorSN"
           type="text"
           class="max-w-md flex-1 rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          :placeholder="$t('experiment.current.insulation.placeholders.generatorSn')"
+          :placeholder="
+            $t('experiment.current.insulation.placeholders.generatorSn')
+          "
           :disabled="!isEditable"
         />
       </div>
@@ -26,12 +28,16 @@
     <!-- 测量结果表格 -->
     <div class="mb-6">
       <Grid />
-      <div class="mt-2 text-sm text-gray-500">{{ $t('experiment.current.insulation.units.mohm') }}</div>
+      <div class="mt-2 text-sm text-gray-500">
+        {{ $t('experiment.current.insulation.units.mohm') }}
+      </div>
     </div>
 
     <!-- 结论部分 -->
     <div class="mb-4">
-      <label class="mb-2 block text-sm font-medium">{{ $t('experiment.current.common.conclusionLabel') }}</label>
+      <label class="mb-2 block text-sm font-medium">{{
+        $t('experiment.current.common.conclusionLabel')
+      }}</label>
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusion"
@@ -58,7 +64,7 @@ import { canEditTable } from '#/composables/useExperimentPermissions';
 interface RowType {
   id: string;
   status: string;
-  measured: number;
+  measured: string;
   standard: number;
 } // Store 实例
 const experimentStore = useExperimentStore();
@@ -118,8 +124,8 @@ function registerDataCollector() {
       const coldInsulationData = {
         id: experimentStore.state.currentExperiment?.coldInsulation?.id || '',
         generatorSn: generatorSN.value,
-        measured: Number(tableData?.measured) || 0,
-        standard: 2,
+        measured: tableData?.measured || '',
+        standard: tableData?.standard || '',
         conclusion: conclusion.value,
       };
 
@@ -149,8 +155,8 @@ function handleExperimentColdInsulationUpdate(data: any) {
     {
       id: data.id || '1',
       status: t('experiment.current.insulation.rows.coldStatus'),
-      measured: Number(cold.measured) || 0,
-      standard: 2,
+      measured: cold.measured || '',
+      standard: cold.standard || '',
     },
   ];
 
@@ -181,11 +187,7 @@ const gridOptions: VxeGridProps<RowType> = {
     },
     {
       editRender: {
-        name: 'input',
-        props: {
-          type: 'number',
-          min: 0,
-        },
+        name: 'VxeInput',
       },
       field: 'measured',
       title: t('experiment.current.insulation.columns.measured'),
@@ -198,24 +200,19 @@ const gridOptions: VxeGridProps<RowType> = {
       title: t('experiment.current.insulation.columns.standard'),
       minWidth: 150,
       showOverflow: false,
-      cellRender: {
-        name: 'VxeText',
-        props: {
-          style: {
-            whiteSpace: 'pre-wrap',
-            wordBreak: 'break-word',
-          },
-        },
+      editRender: {
+        name: 'VxeInput',
       },
-      formatter: () => t('experiment.current.insulation.thresholds.cold'),
+      align: 'center',
+      // formatter: () => t('experiment.current.insulation.thresholds.cold'),
     },
   ],
   data: [
     {
       id: '1',
       status: t('experiment.current.insulation.rows.coldStatus'),
-      measured: 0,
-      standard: 2,
+      measured: '',
+      standard: '≤2MΩ',
     },
   ],
   editConfig: {

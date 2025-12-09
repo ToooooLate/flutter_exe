@@ -25,7 +25,7 @@
         <template #action="{ row }">
           <div class="flex gap-2">
             <Button
-              type="button"
+              htmlType="button"
               :disabled="!isEditable"
               class="rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600"
               @click="handleMeasure(row)"
@@ -33,7 +33,8 @@
               {{ $t('experiment.current.transient.measure') }}
             </Button>
             <Button
-              type="button"
+              htmlType="button"
+              :disabled="!isEditable"
               class="rounded bg-purple-500 px-3 py-1 text-sm text-white hover:bg-purple-600"
               @click="handleCurve(row)"
             >
@@ -66,22 +67,31 @@
 
     <!-- 结论部分 -->
     <div class="mb-4">
-      <label class="mb-2 block text-sm font-medium">{{ $t('experiment.current.transient.conclusionLabel') }}</label>
+      <label class="mb-2 block text-sm font-medium">{{
+        $t('experiment.current.transient.conclusionLabel')
+      }}</label>
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusion"
           :readonly="!isEditable"
           class="h-full w-full resize-none border-0 outline-none"
-          :placeholder="$t('experiment.current.transient.placeholderConclusion')"
+          :placeholder="
+            $t('experiment.current.transient.placeholderConclusion')
+          "
         />
       </div>
     </div>
 
     <!-- 项目控制弹窗 -->
-    <ProjectControlModal class="w-[600px]" :title="$t('experiment.current.transient.projectControl')">
+    <ProjectControlModal
+      class="w-[600px]"
+      :title="$t('experiment.current.transient.projectControl')"
+    >
       <div class="p-4">
         <div class="mb-4">
-          <span class="text-sm text-gray-600">{{ $t('experiment.current.transient.selectItemsLabel') }}</span>
+          <span class="text-sm text-gray-600">{{
+            $t('experiment.current.transient.selectItemsLabel')
+          }}</span>
         </div>
         <CheckboxGroup
           :value="selectedRows"
@@ -95,7 +105,9 @@
     <!-- 曲线展示（与表格行对应） -->
     <div class="mt-6">
       <div class="mb-2 flex items-center justify-between">
-        <h5 class="text-sm font-medium text-gray-700">{{ $t('experiment.current.transient.chartSectionTitle') }}</h5>
+        <h5 class="text-sm font-medium text-gray-700">
+          {{ $t('experiment.current.transient.chartSectionTitle') }}
+        </h5>
         <Button
           type="primary"
           :disabled="renderedCount === 0"
@@ -378,6 +390,7 @@ const updateAllData = async () => {
 
 // 按钮处理函数
 const handleMeasure = async (row: RowType) => {
+  if (!isEditable.value) return;
   await updateAllData();
   if (!experimentStore.state.currentExperiment?.benchPosition) {
     message.error($t('experiment.current.message.benchPositionEmpty'));
@@ -423,6 +436,7 @@ const handleReturnStatic = async () => {
 };
 
 const handleCurve = (row: RowType) => {
+  if (!isEditable.value) return;
   // 仅使用后端返回的曲线数据，移除模拟数据后备逻辑
   if (!row.curveInfo) {
     message.error($t('experiment.current.message.curveDataEmpty'));
@@ -436,7 +450,8 @@ const handleCurve = (row: RowType) => {
 
   const key = String(row.serialNumber);
   chartsData.value[key] = points;
-  chartsTitles.value[key] = `${row.loadChangeState} - ${$t('experiment.current.transient.chartTitleSuffix')}`;
+  chartsTitles.value[key] =
+    `${row.loadChangeState} - ${$t('experiment.current.transient.chartTitleSuffix')}`;
   chartsRangeAreas.value[key] = defaultRangeArea.value;
   if (!renderedIds.value.includes(key)) {
     renderedIds.value.push(key);
@@ -512,6 +527,7 @@ function handleDownloadAllCharts() {
 }
 
 const handleEditProject = (row: RowType) => {
+  if (!isEditable.value) return;
   modalApi.open();
 };
 
@@ -693,7 +709,11 @@ onUnmounted(() => {
 const gridOptions: VxeGridProps = {
   data: tableData.value,
   columns: [
-    { field: 'serialNumber', title: $t('experiment.current.columns.serialNumber'), width: 80 },
+    {
+      field: 'serialNumber',
+      title: $t('experiment.current.columns.serialNumber'),
+      width: 80,
+    },
     {
       field: 'loadChangeState',
       title: $t('experiment.current.columns.loadChangeState'),
@@ -774,7 +794,11 @@ const gridOptions: VxeGridProps = {
       slots: { default: 'action' },
     },
   ],
-  editConfig: { trigger: 'click', mode: 'cell', beforeEditMethod: () => canEditTable() },
+  editConfig: {
+    trigger: 'click',
+    mode: 'cell',
+    beforeEditMethod: () => canEditTable(),
+  },
   checkboxConfig: {
     labelField: 'serialNumber',
     checkStrictly: true,
