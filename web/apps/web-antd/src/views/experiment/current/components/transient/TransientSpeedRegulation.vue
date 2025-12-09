@@ -54,8 +54,7 @@
         <div class="flex items-center gap-2">
           <span class="text-sm text-gray-600"> ± </span>
           <Input
-            :value="stabilizationTimeRange"
-            @update:value="(val) => (stabilizationTimeRange.value = val)"
+            v-model:value="stableFrequencyDeviationRange"
             type="text"
             :disabled="!isEditable"
             class="w-20 rounded-md border border-gray-300 px-3 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -323,7 +322,7 @@ const tableData = ref<RowType[]>([
   },
 ]);
 
-const stabilizationTimeRange = ref('');
+const stableFrequencyDeviationRange = ref('2');
 const conclusion = ref('');
 
 // Store 实例
@@ -363,8 +362,8 @@ const defaultRangeArea = computed<RangeArea>(() => {
   const baseVoltage = Number(
     experimentStore.state.currentExperiment?.ratedFrequency ?? 50,
   );
-  const deviationPercent = parseFloat(stabilizationTimeRange.value);
-  const p = isNaN(deviationPercent) ? 3 : deviationPercent; // 默认±5%
+  const deviationPercent = parseFloat(stableFrequencyDeviationRange.value);
+  const p = isNaN(deviationPercent) ? 2 : deviationPercent; // 默认±2%
   const min = Number((baseVoltage * (1 - p / 100)).toFixed(2));
   const max = Number((baseVoltage * (1 + p / 100)).toFixed(2));
   return {
@@ -607,12 +606,10 @@ const handleTransientSpeedData = (type: WebSocketMessageType, data: any) => {
       GridApi.grid.loadData(filteredData);
     });
 
-    console.log('filteredData', filteredData);
-
     // 更新其他配置数据
     const lastItem = data.transientSpeedList.at(-1);
     if (lastItem) {
-      stabilizationTimeRange.value =
+      stableFrequencyDeviationRange.value =
         lastItem.stableFrequencyDeviationRange || '';
       conclusion.value = lastItem.conclusion || '';
     }
@@ -644,7 +641,7 @@ const collector = {
     });
 
     const result = transientSpeedData.concat({
-      stableFrequencyDeviationRange: stabilizationTimeRange.value,
+      stableFrequencyDeviationRange: stableFrequencyDeviationRange.value,
       conclusion: conclusion.value || '',
     });
     return result;

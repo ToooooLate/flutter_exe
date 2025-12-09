@@ -550,7 +550,7 @@
       "editProject": "编辑项目",
       "measure": "测定",
       "curve": "曲线",
-      "stabilizationRange": "稳定时间范围设置",
+      "stabilizationRange": "稳定频率的范围设置",
       "conclusionLabel": "结论/Conclusion:",
       "placeholderConclusion": "请输入结论...",
       "projectControl": "项目控制",

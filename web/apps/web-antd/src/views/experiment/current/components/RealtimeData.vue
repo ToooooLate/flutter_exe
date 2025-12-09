@@ -15,12 +15,16 @@ import {
 import { WebSocketMessageType, useWebSocketStore } from '#/store/websocket';
 import { useExperimentStore } from '#/store/experiment';
 import type { MonitoringData, VoltageModulationData } from '#/store/websocket';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 
 // WebSocket 监听
 const webSocketStore = useWebSocketStore();
 
 // Experiment store
 const experimentStore = useExperimentStore();
+
+// 编辑权限（基于权限码与实验状态）
+const isEditable = computed(() => canEditTable());
 
 // 获取当前实验 ID，优先使用 store 中的值，如果没有则使用 props
 const currentExperimentId = computed(() => experimentStore.currentExperimentId);
@@ -127,31 +131,87 @@ const handlePushData = async () => {
 <template>
   <div class="space-y-6">
     <!-- 读数呈列：Ant Design Vue Descriptions（带边框与背景） -->
-    <Descriptions bordered :title="t('experiment.current.realtime.title')" :column="2" size="small">
+    <Descriptions
+      bordered
+      :title="t('experiment.current.realtime.title')"
+      :column="2"
+      size="small"
+    >
       <template #extra>
-        <Button type="primary" size="small" @click="handlePushData"
+        <Button
+          type="primary"
+          size="small"
+          :disabled="!isEditable"
+          @click="handlePushData"
           >{{ t('experiment.current.realtime.pushButton') }}</Button
         >
       </template>
-      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.ua')">{{ data.ua }}</DescriptionsItem>
-      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.ia')">{{ data.ia }}</DescriptionsItem>
-      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.ub')">{{ data.ub }}</DescriptionsItem>
-      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.ib')">{{ data.ib }}</DescriptionsItem>
-      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.uc')">{{ data.uc }}</DescriptionsItem>
-      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.ic')">{{ data.ic }}</DescriptionsItem>
-      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.powerKw')">{{ data.power }}</DescriptionsItem>
-      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.frequencyHz')">{{ data.frequency }}</DescriptionsItem>
+      <DescriptionsItem
+        :label="t('experiment.current.realtime.descriptions.ua')"
+        >{{ data.ua }}</DescriptionsItem
+      >
+      <DescriptionsItem
+        :label="t('experiment.current.realtime.descriptions.ia')"
+        >{{ data.ia }}</DescriptionsItem
+      >
+      <DescriptionsItem
+        :label="t('experiment.current.realtime.descriptions.ub')"
+        >{{ data.ub }}</DescriptionsItem
+      >
+      <DescriptionsItem
+        :label="t('experiment.current.realtime.descriptions.ib')"
+        >{{ data.ib }}</DescriptionsItem
+      >
+      <DescriptionsItem
+        :label="t('experiment.current.realtime.descriptions.uc')"
+        >{{ data.uc }}</DescriptionsItem
+      >
+      <DescriptionsItem
+        :label="t('experiment.current.realtime.descriptions.ic')"
+        >{{ data.ic }}</DescriptionsItem
+      >
+      <DescriptionsItem
+        :label="t('experiment.current.realtime.descriptions.powerKw')"
+        >{{ data.power }}</DescriptionsItem
+      >
+      <DescriptionsItem
+        :label="t('experiment.current.realtime.descriptions.frequencyHz')"
+        >{{ data.frequency }}</DescriptionsItem
+      >
       <!-- <DescriptionsItem label="负载(%)">{{ data.load }}</DescriptionsItem> -->
-      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.powerFactorCos')">{{ data.powerFactor }}</DescriptionsItem>
-      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.speedRpm')">{{ data.speed }}</DescriptionsItem>
-      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.oilTempC')">{{ data.oilTemperature }}</DescriptionsItem>
-      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.coolantTempC')">{{ data.coolantTemperature }}</DescriptionsItem>
-      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.exhaustTempC')">{{ data.exhaustTemp }}</DescriptionsItem>
-      <DescriptionsItem :label="t('experiment.current.realtime.descriptions.oilPressureBar')">{{ data.oilPressure }}</DescriptionsItem>
+      <DescriptionsItem
+        :label="t('experiment.current.realtime.descriptions.powerFactorCos')"
+        >{{ data.powerFactor }}</DescriptionsItem
+      >
+      <DescriptionsItem
+        :label="t('experiment.current.realtime.descriptions.speedRpm')"
+        >{{ data.speed }}</DescriptionsItem
+      >
+      <DescriptionsItem
+        :label="t('experiment.current.realtime.descriptions.oilTempC')"
+        >{{ data.oilTemperature }}</DescriptionsItem
+      >
+      <DescriptionsItem
+        :label="t('experiment.current.realtime.descriptions.coolantTempC')"
+        >{{ data.coolantTemperature }}</DescriptionsItem
+      >
+      <DescriptionsItem
+        :label="t('experiment.current.realtime.descriptions.exhaustTempC')"
+        >{{ data.exhaustTemp }}</DescriptionsItem
+      >
+      <DescriptionsItem
+        :label="t('experiment.current.realtime.descriptions.oilPressureBar')"
+        >{{ data.oilPressure }}</DescriptionsItem
+      >
     </Descriptions>
 
     <!-- 电压调制参数 -->
-    <Descriptions bordered :title="t('experiment.current.realtime.voltageModulationTitle')" :column="2" size="small">
+    <Descriptions
+      bordered
+      :title="t('experiment.current.realtime.voltageModulationTitle')"
+      :column="2"
+      size="small"
+    >
       <DescriptionsItem label="Umod.max">{{ data.umodMax }}</DescriptionsItem>
       <DescriptionsItem label="Umod.min">{{ data.umodMin }}</DescriptionsItem>
       <DescriptionsItem label="Umod.s%">{{

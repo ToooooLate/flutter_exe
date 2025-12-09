@@ -54,8 +54,7 @@
         <div class="flex items-center gap-2">
           <span class="text-sm text-gray-600"> ± </span>
           <Input
-            :value="stableVoltageDeviationRange"
-            @update:value="onStableRangeUpdate"
+            v-model:value="stableVoltageDeviationRange"
             type="text"
             :disabled="!isEditable"
             class="w-20 rounded-md border border-gray-300 px-3 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -293,11 +292,8 @@ const tableData = ref<RowType[]>([
   },
 ]);
 
-const stableVoltageDeviationRange = ref('');
+const stableVoltageDeviationRange = ref('3');
 const conclusion = ref('');
-const onStableRangeUpdate = (val: string) => {
-  stableVoltageDeviationRange.value = val ?? '';
-};
 
 // 折线图相关状态（多图，每行对应一个图表）
 const chartsData = ref<Record<string, ChartDataPoint[]>>({});

@@ -550,7 +550,7 @@
       "editProject": "Edit Items",
       "measure": "Measure",
       "curve": "Curve",
-      "stabilizationRange": "Stabilization time range",
+      "stabilizationRange": "Stable frequency range setting",
       "conclusionLabel": "Conclusion:",
       "placeholderConclusion": "Please enter conclusion...",
       "projectControl": "Project Control",
