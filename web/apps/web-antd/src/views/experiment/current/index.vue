@@ -17,6 +17,8 @@ import { useVbenModal } from '@vben/common-ui';
 import CredentialModalContent from './components/CredentialModalContent.vue';
 // @ts-ignore
 import RealtimeData from './components/RealtimeData.vue';
+// @ts-ignore
+import ExperimentVideo from './components/video/ExperimentVideo.vue';
 // 本地实验存储状态与清理方法
 // @ts-ignore
 import {
@@ -259,11 +261,8 @@ onBeforeRouteLeave((to, from, next) => {
                 <div v-if="tab.key === 'realtime'" class="min-h-[400px]">
                   <RealtimeData />
                 </div>
-                <div
-                  v-else-if="tab.key === 'monitoring'"
-                  class="text-center text-gray-500"
-                >
-                  {{ $t('experiment.current.monitoring.contentPlaceholder') }}
+                <div v-else-if="tab.key === 'monitoring'">
+                  <ExperimentVideo />
                 </div>
               </div>
             </TabPane>
