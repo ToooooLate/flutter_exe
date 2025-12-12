@@ -178,8 +178,10 @@
       "1990": "1990 Version",
       "2009": "2009 Version"
     },
-    "exportExcel": "Export Excel Report",
-    "exportFullReport": "Export Full Report",
+    "exportCNExcel": "Export Chinese Excel Report",
+    "exportENExcel": "Export English Excel Report",
+    "exportFullCNReport": "Export Full Chinese Report",
+    "exportFullENReport": "Export Full English Report",
     "message": {
       "missingExperimentId": "Missing experiment ID. Enter via a route with id or select/create an experiment first.",
       "downloadFailed": "Report download failed. Please try again later.",

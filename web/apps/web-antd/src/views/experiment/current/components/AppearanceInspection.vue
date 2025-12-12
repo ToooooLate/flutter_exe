@@ -1,25 +1,41 @@
 <template>
   <div class="appearance-inspection-container min-h-[400px] p-4">
     <div class="mb-4">
-      <h3 class="mb-1 text-lg font-semibold">{{ t('experiment.current.appearance.titleEn') }}</h3>
-      <p class="text-gray-600">{{ t('experiment.current.appearance.title') }}</p>
+      <h3 class="mb-1 text-lg font-semibold">
+        {{ t('experiment.current.appearance.titleEn') }}
+      </h3>
+      <p class="text-gray-600">
+        {{ t('experiment.current.appearance.title') }}
+      </p>
     </div>
 
     <div class="vp-raw w-full">
-      <Grid />
+      <Grid>
+        <template #open="{ row }">
+          <Switch
+            v-model="row.isRelate"
+            checkedChildren="1"
+            unCheckedChildren="0"
+          />
+        </template>
+      </Grid>
     </div>
 
     <!-- 结论部分 -->
     <div class="mt-6">
       <div class="mb-2">
-        <label class="text-sm font-medium">{{ t('experiment.current.appearance.conclusionLabel') }}</label>
+        <label class="text-sm font-medium">{{
+          t('experiment.current.appearance.conclusionLabel')
+        }}</label>
       </div>
       <div class="min-h-[60px] rounded border border-gray-300 p-3">
         <textarea
           v-model="conclusionValue"
           :readonly="!isEditable"
           class="h-full w-full resize-none border-none outline-none"
-          :placeholder="t('experiment.current.appearance.placeholderConclusion')"
+          :placeholder="
+            t('experiment.current.appearance.placeholderConclusion')
+          "
         ></textarea>
       </div>
     </div>
@@ -37,6 +53,7 @@ import { useDataCollector } from '#/composables/useDataCollector';
 import { useWebSocketStore, WebSocketMessageType } from '#/store/websocket';
 import { canEditTable } from '#/composables/useExperimentPermissions';
 import { useI18n } from '@vben/locales';
+import { Switch } from 'ant-design-vue';
 
 // 类型定义
 interface RowType {
@@ -69,7 +86,12 @@ const tableData = ref<RowType[]>([]);
 const gridOptions = () => {
   return {
     columns: [
-      { field: 'serialNumber', title: t('experiment.current.columns.serialNumber'), width: 60, align: 'center' },
+      {
+        field: 'serialNumber',
+        title: t('experiment.current.columns.serialNumber'),
+        width: 60,
+        align: 'center',
+      },
       {
         field: 'checkContent',
         title: t('experiment.current.columns.checkContent'),
@@ -99,6 +121,14 @@ const gridOptions = () => {
             },
           },
         },
+      },
+      {
+        cellRender: {
+          name: 'CellSwitch',
+        },
+        field: 'isRelate',
+        title: t('experiment.current.columns.isRelate'),
+        minWidth: 90,
       },
       {
         editRender: {
@@ -139,7 +169,28 @@ const gridOptions = () => {
 const [Grid, GridApi] = useVbenVxeGrid({ gridOptions: gridOptions() });
 
 // WebSocket 监听器函数 - 处理外观检查数据更新
-const handleAppearanceData = (data: any) => {
+const MERGE_CELLS = [
+  { row: 5, col: 1, rowspan: 3, colspan: 1 },
+  { row: 5, col: 4, rowspan: 3, colspan: 1 },
+  { row: 5, col: 5, rowspan: 3, colspan: 1 },
+  { row: 12, col: 1, rowspan: 2, colspan: 1 },
+  { row: 12, col: 4, rowspan: 2, colspan: 1 },
+  { row: 12, col: 5, rowspan: 2, colspan: 1 },
+];
+
+function applyMergeCells() {
+  const fullLen = GridApi.grid.getTableData()?.fullData?.length ?? 0;
+  // 过滤越界的合并项，避免在数据不足时报错或不生效
+  const safeMerges = MERGE_CELLS.filter(
+    (m) => m.row >= 0 && m.row + m.rowspan <= fullLen,
+  );
+  if (safeMerges.length) {
+    GridApi.grid.setMergeCells(safeMerges as any);
+  }
+}
+
+const handleAppearanceData = async (data: any) => {
+  if (!data?.appearanceList?.length) return;
   // 设置标志位，避免触发循环更新
   isUpdatingFromStore.value = true;
 
@@ -152,6 +203,7 @@ const handleAppearanceData = (data: any) => {
 
   setTimeout(() => {
     GridApi.grid.loadData(tableData.value);
+    applyMergeCells();
   });
 
   // 重置标志位

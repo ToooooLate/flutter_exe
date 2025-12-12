@@ -616,6 +616,7 @@
       "checkContent": "Inspection Item",
       "checkRequirement": "Requirement",
       "checkStatus": "Status",
+      "isRelate": "Is related",
       "remarks": "Remarks",
       "loadChangeState": "Load change state",
       "beforeChangeFrequency": "Pre-change frequency (Hz)",

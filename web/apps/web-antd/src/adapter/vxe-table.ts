@@ -9,7 +9,7 @@ import { setupVbenVxeTable,useVbenVxeGrid } from '@vben/plugins/vxe-table';
 import { get, isFunction, isString } from '@vben/utils';
 
 import { objectOmit } from '@vueuse/core';
-import { Button, Image, Popconfirm, Tag } from 'ant-design-vue';
+import { Button, Image, Popconfirm, Switch, Tag } from 'ant-design-vue';
 
 import { useVbenForm } from './form';
 
@@ -107,6 +107,32 @@ setupVbenVxeTable({
           },
           { default: () => tagItem?.label ?? value },
         );
+      },
+    });
+
+    vxeUI.renderer.add('CellSwitch', {
+      renderTableDefault({ attrs, props }, { column, row }) {
+        const loadingKey = `__loading_${column.field}`;
+        const finallyProps = {
+          checkedValue: 1,
+          unCheckedValue: 0,
+          ...props,
+          checked: row[column.field],
+          loading: row[loadingKey] ?? false,
+          'onUpdate:checked': onChange,
+        };
+        async function onChange(newVal: any) {
+          row[loadingKey] = true;
+          try {
+            const result = await attrs?.beforeChange?.(newVal, row);
+            if (result !== false) {
+              row[column.field] = newVal;
+            }
+          } finally {
+            row[loadingKey] = false;
+          }
+        }
+        return h(Switch, finallyProps);
       },
     });
 

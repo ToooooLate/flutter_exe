@@ -78,7 +78,7 @@ const tableData = [
   {
     id: '1',
     serialNumber: 1,
-    testItem: t('experiment.current.protection.test.items.oilPressureLowAlarm'),
+    testItem: '滑油压力低报警\nLubricating Oil Pressure',
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -90,9 +90,7 @@ const tableData = [
   {
     id: '2',
     serialNumber: 2,
-    testItem: t(
-      'experiment.current.protection.test.items.coolantTempHighAlarm',
-    ),
+    testItem: '冷却水温度高报警\nCoolant Temperature',
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -104,7 +102,7 @@ const tableData = [
   {
     id: '3',
     serialNumber: 3,
-    testItem: t('experiment.current.protection.test.items.lubOilTempHighAlarm'),
+    testItem: '滑油温度高报警\nLubricating Oil Temperature',
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -116,7 +114,7 @@ const tableData = [
   {
     id: '4',
     serialNumber: 4,
-    testItem: t('experiment.current.protection.test.items.fuelLeakage'),
+    testItem: '燃油泄漏\nFuel Leakage',
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -128,9 +126,7 @@ const tableData = [
   {
     id: '5',
     serialNumber: 5,
-    testItem: t(
-      'experiment.current.protection.test.items.controlPowerVoltageLowAlarm',
-    ),
+    testItem: '控制电源电压低报警\nControl Power Voltage',
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -142,7 +138,7 @@ const tableData = [
   {
     id: '6',
     serialNumber: 6,
-    testItem: t('experiment.current.protection.test.items.overspeedAlarm'),
+    testItem: '超速报警\Engine Speed',
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -154,9 +150,7 @@ const tableData = [
   {
     id: '7',
     serialNumber: 7,
-    testItem: t(
-      'experiment.current.protection.test.items.coolantLevelLowAlarm',
-    ),
+    testItem: '冷却水液位低报警\nCoolant Level Low',
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -168,9 +162,7 @@ const tableData = [
   {
     id: '8',
     serialNumber: 8,
-    testItem: t(
-      'experiment.current.protection.test.items.highCoolantTemperatureShutdown',
-    ),
+    testItem: '冷却水温度过高停车\nHigh Coolant Temperature Shutdown',
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -182,9 +174,7 @@ const tableData = [
   {
     id: '9',
     serialNumber: 9,
-    testItem: t(
-      'experiment.current.protection.test.items.lowLubOilPressureShutdown',
-    ),
+    testItem: '滑油压力过低停车\nLow Lub. Oil Pressure Shutdown',
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -196,7 +186,7 @@ const tableData = [
   {
     id: '10',
     serialNumber: 10,
-    testItem: t('experiment.current.protection.test.items.localEmergencyStop'),
+    testItem: '本地紧急停止\nLocal Emergency Stop',
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -208,7 +198,7 @@ const tableData = [
   {
     id: '11',
     serialNumber: 11,
-    testItem: t('experiment.current.protection.test.items.remoteEmergencyStop'),
+    testItem: '远程急停\nRemote Emergency Stop',
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -220,7 +210,7 @@ const tableData = [
   {
     id: '12',
     serialNumber: 12,
-    testItem: t('experiment.current.protection.test.items.overspeedShutdown'),
+    testItem: '超速停机\nOverspeed Shutdown',
     signalType: '',
     setValue: '',
     localDisplay: '',
@@ -232,7 +222,7 @@ const tableData = [
   {
     id: '13',
     serialNumber: 13,
-    testItem: t('experiment.current.protection.test.items.startFailure'),
+    testItem: '启动失败\nStart Failure',
     signalType: '',
     setValue: '',
     localDisplay: '',

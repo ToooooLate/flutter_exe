@@ -10,6 +10,7 @@ interface BuildParams {
   backgroundColor?: string;
   gridColor?: string;
   t?: (key: string) => string;
+  locale?: string;
 }
 
 const defaultT = (s: string) => s;
@@ -25,6 +26,7 @@ export function buildLineChartOptions(params: BuildParams) {
     backgroundColor = '#ffffff',
     gridColor = '#f0f0f0',
     t = defaultT,
+    locale = '',
   } = params;
 
   if (!data || data.length === 0) return {};
@@ -43,7 +45,7 @@ export function buildLineChartOptions(params: BuildParams) {
 
   const series: any[] = [
     {
-      name: t('experiment.current.chart.seriesData'),
+      // name: t('experiment.current.chart.seriesData'),
       type: 'line',
       data: data.map((p) => [Number(p.x), p.y]),
       smooth: true,

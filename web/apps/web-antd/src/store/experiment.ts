@@ -442,31 +442,37 @@ export const useExperimentStore = defineStore('experiment', () => {
       '检查附件、管路、电气线路的连接是否可靠\nCheck accessories, piping, electrical wiring',
       '检查各系统管路有否漏油、漏水现象\ncheck there is oil, fuel and water leakage, or not',
       '检查起动系统是否正常\nCheck starting system',
+      '检查起动系统是否正常\nCheck starting system',
+      '检查起动系统是否正常\nCheck starting system',
       '检查进出水阀是否在启动准备状态\nCheck water inlet/outlet connection',
       '检查仪表板状态\nCheck control panel',
-      '检查机组有无异物\n',
-      '机组轴向间隙检查\n',
+      '检查机组有无异物\nCheck the generator set for foreign objects',
+      '机组轴向间隙检查\nCheck the generator set axial clearance',
+      '柴油机和发电机连接安装方式\nCheck engine, generator connection',
       '柴油机和发电机连接安装方式\nCheck engine, generator connection',
     ];
 
     const defaultRequirements = [
-      '按工艺卡检查',
-      '检查润滑油、冷却水加满',
-      '燃油联好，并排除空气',
-      '必须联接可靠',
-      '不能有漏水漏油的情况',
-      '电启动，蓄电池的容量必须正常 ☐\n气启动，气瓶的容量必须正常 ☐\n储能启动，储能的能量必须正常 ☐',
-      '阀门必须打开',
-      '仪表显示正常',
-      '无异物',
-      '按装配要求',
-      '弹性安装☐\n钢性安装☐',
+      '按工艺卡检查\nCheck according to process sheet',
+      '检查润滑油、冷却水加满\nEnsure lube oil and cooling water are full',
+      '燃油联好，并排除空气\nFuel system is connected properly, and air is eliminated',
+      '必须联接可靠\nConnections must be reliable',
+      '不能有漏水漏油的情况\nNo oil or water dripping/leakage is allowed',
+      '电启动，蓄电池的容量必须正常\nFor electric start, battery capacity must be normal',
+      '气启动，气瓶的容量必须正常\nFor air start, air bottle capacity must be normal',
+      '储能启动，储能的能量必须正常\nFor energy storage start, stored energy must be normal',
+      '阀门必须打开\nValves must be open',
+      '仪表显示正常\nInstrument displays must be normal',
+      '无异物\nMust be free of foreign objects',
+      '按装配要求\nAccording to assembly requirements',
+      '弹性安装\nFlexible mounting',
+      '钢性安装\nRigid mounting',
     ];
 
     const appearanceList: AppearanceCheckItem[] = [];
 
     // 添加1-11序号的检查项目
-    for (let i = 1; i <= 11; i++) {
+    for (let i = 1; i <= defaultContents.length; i++) {
       appearanceList.push({
         id: '',
         serialNumber: i,

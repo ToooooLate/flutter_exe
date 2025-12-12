@@ -178,8 +178,10 @@
       "1990": "1990版",
       "2009": "2009版"
     },
-    "exportExcel": "导出Excel报告",
-    "exportFullReport": "导出完整报告",
+    "exportCNExcel": "导出中文Excel报告",
+    "exportENExcel": "导出英文Excel报告",
+    "exportFullCNReport": "导出完整中文报告",
+    "exportFullENReport": "导出完整英文报告",
     "message": {
       "missingExperimentId": "缺少实验ID，请从带有 id 的路由进入或先选择/创建实验",
       "downloadFailed": "报告下载失败，请稍后重试",

@@ -616,6 +616,7 @@
       "checkContent": "检查内容",
       "checkRequirement": "检查要求",
       "checkStatus": "检查情况",
+      "isRelate": "是否涉及",
       "remarks": "备注",
       "loadChangeState": "负载变化状态",
       "beforeChangeFrequency": "突变前频率(Hz)",

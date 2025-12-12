@@ -13,17 +13,33 @@
           type="primary"
           size="small"
           :loading="exporting"
-          @click="onExportClick"
+          @click="onExportClick('cn')"
         >
-          {{ $t('page.report.exportExcel') }}
+          {{ $t('page.report.exportCNExcel') }}
         </Button>
         <Button
           type="primary"
           size="small"
           :loading="exporting"
-          @click="onExportFullClick"
+          @click="onExportClick('en')"
         >
-          {{ $t('page.report.exportFullReport') }}
+          {{ $t('page.report.exportENExcel') }}
+        </Button>
+        <Button
+          type="primary"
+          size="small"
+          :loading="exporting"
+          @click="onExportFullClick('cn')"
+        >
+          {{ $t('page.report.exportFullCNReport') }}
+        </Button>
+        <Button
+          type="primary"
+          size="small"
+          :loading="exporting"
+          @click="onExportFullClick('en')"
+        >
+          {{ $t('page.report.exportFullENReport') }}
         </Button>
       </div>
     </div>
@@ -169,6 +185,7 @@ function saveBlob(blob: Blob, fileName: string) {
 
 async function fetchExcelBlob(
   version: '1990' | '2009',
+  langParam: 'cn' | 'en',
 ): Promise<{ blob: Blob; fileName: string } | null> {
   // 优先从路由读取ID（支持 params 或 query），再回退到当前实验ID
   const routeId = (route.params?.id ?? route.query?.id ?? '') as string;
@@ -180,7 +197,7 @@ async function fetchExcelBlob(
     return null;
   }
 
-  const status = getLanguageStatus();
+  const status = langParam ? (langParam === 'cn' ? 0 : 1) : getLanguageStatus();
   try {
     const path =
       version === '1990'
@@ -188,7 +205,7 @@ async function fetchExcelBlob(
         : '/api/sg/export/experiment2009';
     const params = new URLSearchParams({
       id,
-      status: String(status),
+      status,
     }).toString();
     const requestUrl = `${path}?${params}`;
 
@@ -316,7 +333,6 @@ async function generateOffscreenChartsAndUpload() {
     ];
 
     if (!all.length) {
-      message.warning(t('experiment.current.message.noChartsToDownload'));
       return;
     }
 
@@ -342,7 +358,7 @@ async function generateOffscreenChartsAndUpload() {
       const yAxisNameKey = isVoltage
         ? 'experiment.current.transientVoltage.charts.yAxisVoltage'
         : 'experiment.current.transient.yAxisFrequency';
-      const title = `${row.label} - ${t(titleSuffixKey)}`;
+      const title = `${row.label} - ${t(titleSuffixKey, {}, { locale: 'en-US' })}`;
 
       // 计算范围区间（与瞬态页面默认规则一致）
       const rangeArea = (() => {
@@ -378,13 +394,20 @@ async function generateOffscreenChartsAndUpload() {
       let option = buildLineChartOptions({
         data: points,
         title,
-        xAxisName: t('experiment.current.transient.xAxisTime'),
-        yAxisName: t(yAxisNameKey),
+        xAxisName: t(
+          'experiment.current.transient.xAxisTime',
+          {},
+          {
+            locale: 'en-US',
+          },
+        ),
+        yAxisName: t(yAxisNameKey, {}, { locale: 'en-US' }),
         rangeArea,
         lineColor: '#1890ff',
         backgroundColor: '#ffffff',
         gridColor: '#f0f0f0',
         t,
+        locale: 'en-US',
       }) as any;
 
       // 离屏导出时禁用动画，确保立即完成渲染
@@ -447,12 +470,12 @@ async function generateOffscreenChartsAndUpload() {
   }
 }
 
-async function onExportFullClick() {
+async function onExportFullClick(langParam?: 'cn' | 'en') {
   const routeId = (route.params?.id ?? route.query?.id ?? '') as string;
   const id = String(
     routeId || experimentStore.state.currentExperiment?.id || '',
   );
-  const status = getLanguageStatus();
+  const status = langParam ? (langParam === 'cn' ? 0 : 1) : getLanguageStatus();
   if (!id) {
     message.warning(t('page.report.message.missingExperimentId'));
     return;
@@ -610,10 +633,10 @@ async function renderTableFromBlob(blob: Blob) {
   }
 }
 
-async function onExportClick() {
+async function onExportClick(lang: string) {
   exporting.value = true;
   try {
-    const result = await fetchExcelBlob(selectedVersion.value);
+    const result = await fetchExcelBlob(selectedVersion.value, lang);
     if (!result) return;
     saveBlob(result.blob, result.fileName);
     message.success(t('page.report.message.downloadStarted'));
