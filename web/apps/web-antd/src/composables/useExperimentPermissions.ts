@@ -7,7 +7,7 @@ import {
 
 /**
  * 判断是否可以编辑：
- * 满足权限 `AC_200120` 且实验状态为进行中（status === 0）
+ * 满足权限 `AC_100110` 且实验状态为进行中（status === 0）
  */
 // 响应式跟踪实验状态：来自本地存储并监听变更事件
 const experimentStatus = ref<number | null>(getLocalExperimentStatus());
@@ -24,6 +24,6 @@ try {
 
 export function canEditTable(): boolean {
   const accessStore = useAccessStore();
-  const hasPermission = (accessStore?.accessCodes ?? []).includes('AC_200120');
+  const hasPermission = (accessStore?.accessCodes ?? []).includes('AC_100110');
   return hasPermission && experimentStatus.value === 0;
 }
