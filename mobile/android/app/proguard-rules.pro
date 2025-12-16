@@ -1,0 +1,4 @@
+-dontwarn kotlinx.parcelize.**
+-keep class kotlinx.parcelize.** { *; }
+-dontwarn com.giphy.**
+-keep class com.giphy.** { *; }
