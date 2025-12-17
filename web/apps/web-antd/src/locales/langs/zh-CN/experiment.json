@@ -591,7 +591,8 @@
         "stabilityTime": "稳定时间t(s)",
         "transientVoltageChangeRate": "瞬态电压变化率Δu(%)",
         "action": "操作"
-      }
+      },
+      "countdownMessage": "瞬态电压变化率测定正在进行中，请耐心等待..."
     },
     "columns": {
       "serialNumber": "序号",

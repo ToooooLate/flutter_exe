@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:io' show Platform;
 import 'package:jitsi_meet_flutter_sdk/jitsi_meet_flutter_sdk.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MeetingHome extends StatefulWidget {
   const MeetingHome({super.key});
@@ -59,6 +60,16 @@ class _MeetingHomeState extends State<MeetingHome> {
       });
       return;
     }
+    final cam = await Permission.camera.request();
+    final mic = await Permission.microphone.request();
+    final granted = cam.isGranted && mic.isGranted;
+    if (!granted) {
+      setState(() {
+        loading = false;
+        error = '请授予摄像头与麦克风权限后再加入会议';
+      });
+      return;
+    }
     final options = JitsiMeetConferenceOptions(
       serverURL: 'https://meet.jit.si',
       room: room,
@@ -77,9 +88,18 @@ class _MeetingHomeState extends State<MeetingHome> {
       },
       conferenceTerminated: (url, error) {
         debugPrint('conferenceTerminated: $url error=$error');
+        setState(() {
+          this.error = (error?.toString() ?? '会议已结束或加入失败');
+        });
       },
     );
-    await jitsi.join(options, listener);
+    try {
+      await jitsi.join(options, listener);
+    } catch (e) {
+      setState(() {
+        error = e.toString();
+      });
+    }
     setState(() {
       loading = false;
     });

@@ -591,7 +591,8 @@
         "stabilityTime": "Stabilization time t (s)",
         "transientVoltageChangeRate": "Transient voltage change rate Δu (%)",
         "action": "Action"
-      }
+      },
+      "countdownMessage": "Transient voltage change rate measurement in progress, please wait..."
     },
     "columns": {
       "serialNumber": "No.",

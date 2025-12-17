@@ -150,7 +150,7 @@
       ref="countdownModalRef"
       :countdown-seconds="15"
       :title="$t('experiment.current.transient.countdownTitle')"
-      :message="$t('experiment.current.transient.countdownMessage')"
+      :message="$t('experiment.current.transientVoltage.countdownMessage')"
       :show-return-button="true"
       @countdown-end="handleCountdownEnd"
       @return-static="handleReturnStatic"

@@ -2,3 +2,7 @@
 -keep class kotlinx.parcelize.** { *; }
 -dontwarn com.giphy.**
 -keep class com.giphy.** { *; }
+-dontwarn org.jitsi.**
+-keep class org.jitsi.** { *; }
+-dontwarn org.webrtc.**
+-keep class org.webrtc.** { *; }
