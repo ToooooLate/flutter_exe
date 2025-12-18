@@ -2,7 +2,7 @@
 import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue';
 import { useI18n } from '@vben/locales';
 import { useCurrentExperiment } from '../../hooks';
-import { Button } from 'ant-design-vue';
+import { Button, QRCode, Modal } from 'ant-design-vue';
 import { useUserStore } from '#/store/user';
 
 const { t } = useI18n();
@@ -11,7 +11,8 @@ const userStore = useUserStore();
 
 // 统一的房间名：优先本 hooks 的 experimentNo，其次从全局 store 读取
 const roomNameRef = computed(() => {
-  const storeNo = (experimentStore.state.currentExperiment as any)?.experimentNo || '';
+  const storeNo =
+    (experimentStore.state.currentExperiment as any)?.experimentNo || '';
   return experimentNo.value || storeNo || '';
 });
 
@@ -21,7 +22,8 @@ const displayNameRef = computed(() => {
 });
 
 // Jitsi 服务域名（含端口）
-const JITSI_DOMAIN = '192.168.112.205:8443';
+// const JITSI_DOMAIN = '192.168.112.205:8443';
+const JITSI_DOMAIN = 'meet.jit.si';
 const JITSI_EXTERNAL_API_SRC = `https://${JITSI_DOMAIN}/external_api.js`;
 
 // 容器元素
@@ -29,6 +31,12 @@ const meetEl = ref<HTMLElement | null>(null);
 // Jitsi API 实例
 let jitsiApi: any | null = null;
 const meetingStarted = ref(false);
+const showQr = ref(false);
+
+const qrUrlRef = computed(() => {
+  if (!roomNameRef.value) return '';
+  return `https://${JITSI_DOMAIN}/${roomNameRef.value}`;
+});
 
 function loadExternalApiScript(): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -75,30 +83,37 @@ function initJitsi(roomName: string) {
     configOverwrite: {
       prejoinPageEnabled: true,
       disableThirdPartyRequests: true,
+      startWithAudioMuted: false,
+      startWithVideoMuted: true,
     },
     interfaceConfigOverwrite: {
       TOOLBAR_BUTTONS: [
-          'microphone',
-          'camera',
-          'chat',
-          'raisehand',
-          'tileview',
-          'hangup',
-        ],
+        'microphone',
+        'camera',
+        'fullscreen',
+        'chat',
+        'tileview',
+        'hangup',
+      ],
     },
   };
   jitsiApi = new ExternalAPI(JITSI_DOMAIN, options);
 
-  // 再次同步显示名，避免用户信息在会议创建后变更未更新
   try {
     if (displayNameRef.value) {
       jitsiApi.executeCommand?.('displayName', displayNameRef.value);
     }
   } catch {}
 
-  // 事件监听示例
   jitsiApi.addEventListeners?.({
-    videoConferenceJoined: (e: any) => console.log('joined', e),
+    videoConferenceJoined: (e: any) => {
+      console.log('joined', e);
+      try {
+        jitsiApi?.executeCommand?.('startRecording', { mode: 'file' });
+      } catch (err) {
+        console.error('auto startRecording failed', err);
+      }
+    },
     videoConferenceLeft: (e: any) => console.log('left', e),
     participantJoined: (p: any) => console.log('participant joined', p),
     participantLeft: (p: any) => console.log('participant left', p),
@@ -162,15 +177,37 @@ async function startMeeting() {
   <div class="w-full">
     <div class="mb-2 flex items-center justify-between">
       <div class="text-sm text-gray-500">房间：{{ roomNameRef || '-' }}</div>
-      <Button type="primary" :disabled="!roomNameRef" @click="startMeeting">发起视频</Button>
+      <div class="space-x-2">
+        <Button type="primary" :disabled="!roomNameRef" @click="startMeeting">
+          发起视频
+        </Button>
+        <Button
+          :disabled="!roomNameRef || !meetingStarted"
+          @click="showQr = true"
+        >
+          二维码加入
+        </Button>
+      </div>
     </div>
     <div ref="meetEl" class="h-[360px] w-full"></div>
-    <!-- 无房间名时显示占位提示 -->
     <div v-if="!roomNameRef" class="mt-2 text-center text-gray-500">
       {{ t('experiment.current.monitoring.contentPlaceholder') }}
     </div>
+    <Modal
+      v-model:open="showQr"
+      :footer="null"
+      title="扫码加入会议"
+      centered
+      destroyOnClose
+    >
+      <div class="flex flex-col items-center">
+        <QRCode :value="qrUrlRef as string" :size="192" />
+        <div class="mt-2 break-all text-xs text-gray-500">
+          {{ qrUrlRef }}
+        </div>
+      </div>
+    </Modal>
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

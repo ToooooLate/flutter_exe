@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'dart:io' show Platform;
 import 'package:jitsi_meet_flutter_sdk/jitsi_meet_flutter_sdk.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 class MeetingHome extends StatefulWidget {
   const MeetingHome({super.key});
@@ -13,43 +14,18 @@ class MeetingHome extends StatefulWidget {
 
 class _MeetingHomeState extends State<MeetingHome> {
   final jitsi = JitsiMeet();
-  bool loading = true;
-  String? activeRoom;
+  bool loading = false;
   String? error;
-  final roomController = TextEditingController(text: 'jitsiIsAwesome');
+  final roomController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkAndJoin();
-    });
-  }
-
-  Future<void> _checkAndJoin() async {
-    setState(() {
-      loading = true;
-      error = null;
-    });
-    try {
-      final room = await MeetingService.checkActiveMeeting();
-      if (room != null && room.isNotEmpty) {
-        setState(() {
-          activeRoom = room;
-          loading = false;
-        });
-      } else {
-        setState(() {
-          activeRoom = null;
-          loading = false;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        error = e.toString();
-        loading = false;
-      });
-    }
+    final now = DateTime.now();
+    final y = now.year.toString().padLeft(4, '0');
+    final m = now.month.toString().padLeft(2, '0');
+    final d = now.day.toString().padLeft(2, '0');
+    roomController.text = 'T-$y$m$d';
   }
 
   Future<void> _join(String room) async {
@@ -128,53 +104,108 @@ class _MeetingHomeState extends State<MeetingHome> {
                   children: [
                     if (error != null)
                       Text(error!, style: const TextStyle(color: Colors.red)),
-                    if (activeRoom == null) ...[
-                      const Text('暂无正在召开的会议'),
-                      const SizedBox(height: 12),
-                      TextField(
-                        controller: roomController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: '房间号',
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: roomController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: '房间号',
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => _join(roomController.text),
+                          child: const Text('手动加入'),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            onPressed: _checkAndJoin,
-                            child: const Text('重新检查'),
-                          ),
-                          const SizedBox(width: 12),
-                          ElevatedButton(
-                            onPressed: () => _join(roomController.text),
-                            child: const Text('手动加入'),
-                          ),
-                        ],
-                      ),
-                    ] else ...[
-                      Text('检测到会议：$activeRoom'),
-                      const SizedBox(height: 12),
-                      ElevatedButton(
-                        onPressed: () => _join(activeRoom!),
-                        child: const Text('进入会议'),
-                      ),
-                    ],
+                        const SizedBox(width: 12),
+                        ElevatedButton(
+                          onPressed: _scanAndJoin,
+                          child: const Text('扫码加入'),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
       ),
     );
   }
+
+  Future<void> _scanAndJoin() async {
+    if (!(Platform.isAndroid || Platform.isIOS)) {
+      return;
+    }
+    final cam = await Permission.camera.request();
+    if (!cam.isGranted) {
+      setState(() {
+        error = '请授予摄像头权限后再扫码加入会议';
+      });
+      return;
+    }
+    final navigator = Navigator.of(context);
+    final result = await navigator.push<String?>(
+      MaterialPageRoute(builder: (_) => const _QrScanPage()),
+    );
+    if (result == null || result.isEmpty) {
+      return;
+    }
+    Uri? uri;
+    try {
+      uri = Uri.parse(result);
+    } catch (_) {
+      setState(() {
+        error = '二维码内容无效';
+      });
+      return;
+    }
+    String room = '';
+    if (uri.scheme.startsWith('http') &&
+        uri.host == 'meet.jit.si' &&
+        uri.pathSegments.isNotEmpty) {
+      room = uri.pathSegments.first;
+    } else if (uri.scheme.isEmpty && uri.host.isEmpty) {
+      room = result;
+    }
+    if (room.isEmpty) {
+      setState(() {
+        error = '二维码不是有效的会议地址';
+      });
+      return;
+    }
+    setState(() {
+      roomController.text = room;
+    });
+    await _join(room);
+  }
 }
 
-class MeetingService {
-  static Future<String?> checkActiveMeeting() async {
-    await Future.delayed(const Duration(seconds: 1));
-    final now = DateTime.now().second;
-    if (now % 2 == 0) {
-      return 'jitsiIsAwesomeWithFlutter';
-    }
-    return null;
+class _QrScanPage extends StatefulWidget {
+  const _QrScanPage();
+
+  @override
+  State<_QrScanPage> createState() => _QrScanPageState();
+}
+
+class _QrScanPageState extends State<_QrScanPage> {
+  bool handled = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('扫码加入会议')),
+      body: MobileScanner(
+        onDetect: (capture) {
+          if (handled) return;
+          final barcodes = capture.barcodes;
+          if (barcodes.isEmpty) return;
+          final value = barcodes.first.rawValue;
+          if (value == null || value.isEmpty) return;
+          handled = true;
+          Navigator.of(context).pop<String>(value);
+        },
+      ),
+    );
   }
 }
