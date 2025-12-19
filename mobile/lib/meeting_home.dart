@@ -47,7 +47,7 @@ class _MeetingHomeState extends State<MeetingHome> {
       return;
     }
     final options = JitsiMeetConferenceOptions(
-      serverURL: 'https://meet.jit.si',
+      serverURL: 'https://qingzhi.sangoai.com:9443',
       room: room,
       configOverrides: {
         'startWithAudioMuted': false,
@@ -162,7 +162,7 @@ class _MeetingHomeState extends State<MeetingHome> {
     }
     String room = '';
     if (uri.scheme.startsWith('http') &&
-        uri.host == 'meet.jit.si' &&
+        uri.host == 'qingzhi.sangoai.com' &&
         uri.pathSegments.isNotEmpty) {
       room = uri.pathSegments.first;
     } else if (uri.scheme.isEmpty && uri.host.isEmpty) {

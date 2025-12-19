@@ -3,6 +3,7 @@ import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue';
 import { useI18n } from '@vben/locales';
 import { useCurrentExperiment } from '../../hooks';
 import { Button, QRCode, Modal } from 'ant-design-vue';
+import { canEditTable } from '#/composables/useExperimentPermissions';
 import { useUserStore } from '#/store/user';
 
 const { t } = useI18n();
@@ -23,7 +24,8 @@ const displayNameRef = computed(() => {
 
 // Jitsi 服务域名（含端口）
 // const JITSI_DOMAIN = '192.168.112.205:8443';
-const JITSI_DOMAIN = 'meet.jit.si';
+// const JITSI_DOMAIN = 'meet.jit.si';
+const JITSI_DOMAIN = 'qingzhi.sangoai.com:9443';
 const JITSI_EXTERNAL_API_SRC = `https://${JITSI_DOMAIN}/external_api.js`;
 
 // 容器元素
@@ -32,6 +34,8 @@ const meetEl = ref<HTMLElement | null>(null);
 let jitsiApi: any | null = null;
 const meetingStarted = ref(false);
 const showQr = ref(false);
+
+const canEdit = computed(() => canEditTable());
 
 const qrUrlRef = computed(() => {
   if (!roomNameRef.value) return '';
@@ -177,7 +181,7 @@ async function startMeeting() {
   <div class="w-full">
     <div class="mb-2 flex items-center justify-between">
       <div class="text-sm text-gray-500">房间：{{ roomNameRef || '-' }}</div>
-      <div class="space-x-2">
+      <div v-if="canEdit" class="space-x-2">
         <Button type="primary" :disabled="!roomNameRef" @click="startMeeting">
           发起视频
         </Button>
