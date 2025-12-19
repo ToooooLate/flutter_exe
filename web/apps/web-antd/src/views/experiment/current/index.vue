@@ -255,14 +255,25 @@ onBeforeRouteLeave((to, from, next) => {
 
         <!-- 右侧监控模块 (25%固定宽度) -->
         <Card class="w-1/4 min-w-0 flex-shrink-0">
-          <Tabs :activeKey="activeMonitorTab" @change="handleMonitorTabChange">
-            <TabPane v-for="tab in monitorTabs" :key="tab.key" :tab="tab.label">
+          <Tabs
+            :activeKey="activeMonitorTab"
+            :destroyInactiveTabPane="false"
+            @change="handleMonitorTabChange"
+          >
+            <TabPane
+              v-for="tab in monitorTabs"
+              :key="tab.key"
+              :tab="tab.label"
+              :force-render="true"
+            >
               <div class="min-h-[400px] overflow-hidden">
                 <div v-if="tab.key === 'realtime'" class="min-h-[400px]">
                   <RealtimeData />
                 </div>
                 <div v-else-if="tab.key === 'monitoring'">
-                  <ExperimentVideo />
+                  <KeepAlive>
+                    <ExperimentVideo />
+                  </KeepAlive>
                 </div>
               </div>
             </TabPane>

@@ -23,7 +23,6 @@ const displayNameRef = computed(() => {
 });
 
 // Jitsi 服务域名（含端口）
-// const JITSI_DOMAIN = '192.168.112.205:8443';
 // const JITSI_DOMAIN = 'meet.jit.si';
 const JITSI_DOMAIN = 'qingzhi.sangoai.com:9443';
 const JITSI_EXTERNAL_API_SRC = `https://${JITSI_DOMAIN}/external_api.js`;
@@ -34,6 +33,7 @@ const meetEl = ref<HTMLElement | null>(null);
 let jitsiApi: any | null = null;
 const meetingStarted = ref(false);
 const showQr = ref(false);
+const meetingEnded = ref(false);
 
 const canEdit = computed(() => canEditTable());
 
@@ -85,7 +85,10 @@ function initJitsi(roomName: string) {
     parentNode: meetEl.value,
     userInfo: { displayName: displayNameRef.value },
     configOverwrite: {
-      prejoinPageEnabled: true,
+      prejoinPageEnabled: false,
+      prejoinConfig: {
+        enabled: false,
+      },
       disableThirdPartyRequests: true,
       startWithAudioMuted: false,
       startWithVideoMuted: true,
@@ -112,13 +115,22 @@ function initJitsi(roomName: string) {
   jitsiApi.addEventListeners?.({
     videoConferenceJoined: (e: any) => {
       console.log('joined', e);
+      meetingEnded.value = false;
       try {
         jitsiApi?.executeCommand?.('startRecording', { mode: 'file' });
       } catch (err) {
         console.error('auto startRecording failed', err);
       }
     },
-    videoConferenceLeft: (e: any) => console.log('left', e),
+    videoConferenceLeft: (e: any) => {
+      console.log('left', e);
+      meetingStarted.value = false;
+      meetingEnded.value = true;
+      try {
+        jitsiApi?.dispose?.();
+      } catch {}
+      jitsiApi = null;
+    },
     participantJoined: (p: any) => console.log('participant joined', p),
     participantLeft: (p: any) => console.log('participant left', p),
   });
