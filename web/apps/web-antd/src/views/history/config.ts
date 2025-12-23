@@ -237,6 +237,11 @@ export function useColumns<T = HistoryRecord>(
             text: $t('page.history.operation.startByTemplate'),
             show: (row: any) => isEngineerRole && row.status === 1 && row.isTemplate === 1,
           },
+          {
+            code: 'downloadVideo',
+            text: $t('page.history.operation.downloadVideo'),
+            show: (row: any) => isEngineerRole,
+          },
         ],
         name: 'CellOperation',
       },

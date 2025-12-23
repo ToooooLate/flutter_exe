@@ -90,7 +90,8 @@
       "saveAsTemplate": "保存为模版",
       "deleteTemplate": "取消模版",
       "startByTemplate": "以模版开启实验",
-      "nameTitle": "实验编号"
+      "nameTitle": "实验编号",
+      "downloadVideo": "下载视频"
     },
     "message": {
       "loadedExperiment": "已加载实验：{0}",
@@ -98,7 +99,23 @@
       "missingExperimentIdOrNo": "缺少实验ID或编号，无法查看报告",
       "operationSuccess": "操作成功",
       "startExperimentSuccess": "已开启实验：{0}",
-      "startExperimentFailed": "开启实验失败"
+      "startExperimentFailed": "开启实验失败",
+      "noVideoToDownload": "暂无可下载视频",
+      "fetchVideoListFailed": "获取视频列表失败",
+      "downloadVideoFailed": "下载视频失败"
+    },
+    "videoModal": {
+      "loading": "加载中...",
+      "empty": "暂无可下载视频",
+      "table": {
+        "fileName": "文件名",
+        "fileSize": "大小",
+        "actions": "操作"
+      },
+      "action": {
+        "downloading": "下载中...",
+        "download": "下载"
+      }
     }
   },
   "system": {

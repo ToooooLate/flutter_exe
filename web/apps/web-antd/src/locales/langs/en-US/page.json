@@ -90,7 +90,8 @@
       "saveAsTemplate": "Save as Template",
       "deleteTemplate": "Remove Template",
       "startByTemplate": "Start by Template",
-      "nameTitle": "Experiment No"
+      "nameTitle": "Experiment No",
+      "downloadVideo": "Download Video"
     },
     "message": {
       "loadedExperiment": "Experiment loaded: {0}",
@@ -98,7 +99,23 @@
       "missingExperimentIdOrNo": "Missing experiment ID or number, cannot view report",
       "operationSuccess": "Operation succeeded",
       "startExperimentSuccess": "Experiment started: {0}",
-      "startExperimentFailed": "Failed to start experiment"
+      "startExperimentFailed": "Failed to start experiment",
+      "noVideoToDownload": "No videos available for download",
+      "fetchVideoListFailed": "Failed to get video list",
+      "downloadVideoFailed": "Failed to download video"
+    },
+    "videoModal": {
+      "loading": "Loading...",
+      "empty": "No videos available for download",
+      "table": {
+        "fileName": "File Name",
+        "fileSize": "Size",
+        "actions": "Actions"
+      },
+      "action": {
+        "downloading": "Downloading...",
+        "download": "Download"
+      }
     }
   },
   "system": {

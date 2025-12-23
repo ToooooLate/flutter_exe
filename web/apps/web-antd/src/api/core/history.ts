@@ -146,3 +146,22 @@ export async function saveAsTemplateApi(data: {
   return requestClient.post(`/api/sg/experiment/saveAsTemplate`, data);
 }
 
+/**
+ * 查询视频下载地址
+ */
+export async function getVideoDownloadUrlApi(params: {
+  experimentNo: string;
+}) {
+  return requestClient.get(`/api/sg/video/list`, { params });
+}
+
+/**
+ * 下载视频
+ */
+export async function downloadVideoApi(params: {
+  fileName: string;
+}) {
+  const query = new URLSearchParams({ fileName: params.fileName }).toString();
+  const url = `/api/sg/video/download?${query}`;
+  return requestClient.download<Blob>(url);
+}

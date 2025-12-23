@@ -37,6 +37,7 @@ node_modules/
 *.apk
 artifacts/
 downloads/*.apk
+downloads/*.zip
 desktop/build/
 mobile/build/
 

@@ -1,9 +1,7 @@
 <template>
-  <Page
-    :description="pageDescription"
-    :title="pageTitle"
-  >
+  <Page :description="pageDescription" :title="pageTitle">
     <Grid />
+    <VideoModal />
   </Page>
 </template>
 
@@ -13,7 +11,7 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 
 import { message } from 'ant-design-vue';
 
-import { Page } from '@vben/common-ui';
+import { Page, useVbenModal } from '@vben/common-ui';
 import { $t } from '#/locales';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { useRouter } from 'vue-router';
@@ -27,6 +25,7 @@ import {
 } from '#/api/core';
 import type { HistoryRecord } from './config';
 import { useColumns, useGridFormSchema } from './config';
+import VideoDownloadModal from './VideoDownloadModal.vue';
 
 // 在组件 setup 顶层获取路由实例，避免在事件中获取导致上下文缺失
 const router = useRouter();
@@ -34,6 +33,10 @@ const router = useRouter();
 // 页面文案
 const pageTitle = $t('page.history.list.title');
 const pageDescription = $t('page.history.list.description');
+
+const [VideoModal, videoModalApi] = useVbenModal({
+  connectedComponent: VideoDownloadModal,
+});
 
 // 操作点击处理
 const onActionClick = ({
@@ -61,6 +64,9 @@ const onActionClick = ({
     case 'startByTemplate':
       handleStartByTemplate(row);
       break;
+    case 'downloadVideo':
+      handleDownloadVideo(row);
+      break;
   }
 };
 
@@ -70,7 +76,9 @@ const handleView = (record: HistoryRecord) => {
   try {
     // 将实验信息写入本地存储（包含状态）
     saveExperimentToStorage(record.experimentNo, record.id, record.status);
-    message.success($t('page.history.message.loadedExperiment', [record.experimentNo]));
+    message.success(
+      $t('page.history.message.loadedExperiment', [record.experimentNo]),
+    );
     // 跳转到当前实验页面
     router?.push({ path: '/experiment' });
   } catch (error) {
@@ -119,7 +127,9 @@ const handleStartByTemplate = async (record: HistoryRecord) => {
     });
     if (res) {
       saveExperimentToStorage(res.experimentNo, res.id, res.status);
-      message.success($t('page.history.message.startExperimentSuccess', [res.experimentNo]));
+      message.success(
+        $t('page.history.message.startExperimentSuccess', [res.experimentNo]),
+      );
       // 跳转到当前实验页面
       router?.push({ path: '/experiment' });
     }
@@ -129,13 +139,33 @@ const handleStartByTemplate = async (record: HistoryRecord) => {
   }
 };
 
+// 下载视频
+const handleDownloadVideo = (record: HistoryRecord) => {
+  const experimentNo = String(record.experimentNo ?? '');
+  if (!experimentNo) {
+    message.warning($t('page.history.message.missingExperimentIdOrNo'));
+    return;
+  }
+  videoModalApi
+    .setData({
+      experimentNo,
+    })
+    .open();
+};
+
 // 表单配置
 const formOptions: VbenFormProps = {
   // 默认展开
   collapsed: false,
   schema: useGridFormSchema(),
   // 将 RangePicker 的值映射为 createTimeStart/createTimeEnd，并格式化为整天范围（带时区）
-  fieldMappingTime: [['createTime', ['createTimeStart', 'createTimeEnd'], ['YYYY-MM-DD[T]00:00:00Z', 'YYYY-MM-DD[T]23:59:59Z']]],
+  fieldMappingTime: [
+    [
+      'createTime',
+      ['createTimeStart', 'createTimeEnd'],
+      ['YYYY-MM-DD[T]00:00:00Z', 'YYYY-MM-DD[T]23:59:59Z'],
+    ],
+  ],
   // 控制表单是否显示折叠按钮
   showCollapseButton: true,
   // submitButtonOptions: {
