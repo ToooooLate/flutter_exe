@@ -9,7 +9,7 @@ const routes: RouteRecordRaw[] = [
       order: 10,
       affixTab: true,
       title: $t('page.experiment.title'),
-      // authority: ['admin'], // 只有admin角色可以访问
+      // keepAlive: true,
     },
     name: 'Experiment',
     path: '/experiment',

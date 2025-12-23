@@ -53,7 +53,12 @@
       "generatedCurve": "Generated transient curve for {state} with {count} points",
       "noChartsToDownload": "No rendered charts available for download",
       "dcuEnableSuccess": "DCU enabled successfully",
-      "dcuEnableFailed": "Failed to enable DCU"
+      "dcuEnableFailed": "Failed to enable DCU",
+      "fetchedCredentialSuccess": "Access credential fetched successfully",
+      "generatedCredentialSuccess": "Access credential generated successfully",
+      "credentialProcessFailed": "Failed to process access credential",
+      "copiedToClipboard": "Copied to clipboard",
+      "copyFailed": "Copy failed, please try again later"
     },
     "buttons": {
       "create": "New Experiment",
@@ -82,7 +87,12 @@
       "monitoring": "Device Monitoring"
     },
     "monitoring": {
-      "contentPlaceholder": "Device monitoring content area"
+      "contentPlaceholder": "Device monitoring content area",
+      "roomLabel": "Room: ",
+      "startMeeting": "Start meeting",
+      "qrJoin": "Join via QR code",
+      "joinMeeting": "Join meeting",
+      "qrTitle": "Join meeting via QR code"
     },
     "startup": {
       "title": "Check start performance at ambient temperature (Start Batteries)",
@@ -670,7 +680,7 @@
     },
     "leaveConfirm": {
       "title": "Submit data before leaving?",
-      "content": "Submit to sync experiment data before leaving, or leave without submitting.",
+      "content": "Submit to sync experiment data before leaving, or leave without submitting. If recording is in progress, leaving will interrupt the recording. Return to continue recording.",
       "okText": "Submit",
       "cancelText": "Don't submit"
     }

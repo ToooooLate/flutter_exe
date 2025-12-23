@@ -201,3 +201,10 @@ export async function transientVoltageCheckApi(data: any) {
 export async function getExperimentIdByNoApi(params: { experimentNo: string }) {
   return requestClient.get(`/api/sg/experiment/getIdByNo`, { params } );
 }
+
+/**
+ * 获取JWT
+ */
+export async function getJwtApi(data: { roomName: string,userName: string,userEmail: string }) {
+  return requestClient.post(`/api/sg/jitsi/generate-token`, data);
+}

@@ -5,6 +5,11 @@ import { useCurrentExperiment } from '../../hooks';
 import { Button, QRCode, Modal } from 'ant-design-vue';
 import { canEditTable } from '#/composables/useExperimentPermissions';
 import { useUserStore } from '#/store/user';
+import { getJwtApi } from '#/api';
+import {
+  getLocalExperimentStatus,
+  EXPERIMENT_STATUS_EVENT,
+} from '#/composables/useExperimentStorage';
 
 const { t } = useI18n();
 const { experimentNo, experimentStore } = useCurrentExperiment();
@@ -17,14 +22,23 @@ const roomNameRef = computed(() => {
   return experimentNo.value || storeNo || '';
 });
 
+// 实验状态是否为正在召开状态（使用本地存储+事件，保持响应式）
+const experimentStatus = ref<number | null>(getLocalExperimentStatus());
+try {
+  window.addEventListener(EXPERIMENT_STATUS_EVENT, (e: Event) => {
+    const detail = (e as CustomEvent).detail as any;
+    experimentStatus.value = detail?.status ?? null;
+  });
+} catch (e) {}
+const isMeetingActive = computed(() => experimentStatus.value === 0);
+
 // 当前登录用户显示名（使用用户名）
 const displayNameRef = computed(() => {
   return userStore.userInfo?.username || '';
 });
 
 // Jitsi 服务域名（含端口）
-// const JITSI_DOMAIN = 'meet.jit.si';
-const JITSI_DOMAIN = 'qingzhi.sangoai.com:9443';
+const JITSI_DOMAIN = import.meta.env.VITE_JITSI_DOMAIN;
 const JITSI_EXTERNAL_API_SRC = `https://${JITSI_DOMAIN}/external_api.js`;
 
 // 容器元素
@@ -68,7 +82,7 @@ function loadExternalApiScript(): Promise<void> {
   });
 }
 
-function initJitsi(roomName: string) {
+function initJitsi(roomName: string, jwt?: string) {
   if (!meetEl.value || !roomName) return;
   // 清理旧实例
   if (jitsiApi) {
@@ -80,9 +94,20 @@ function initJitsi(roomName: string) {
   const ExternalAPI = (window as any).JitsiMeetExternalAPI;
   if (!ExternalAPI) return;
 
+  const toolbarButtons = [
+    'microphone',
+    'camera',
+    ...(canEdit.value ? ['recording'] : []),
+    'fullscreen',
+    'chat',
+    'tileview',
+    'hangup',
+  ];
+
   const options = {
     roomName,
     parentNode: meetEl.value,
+    jwt: jwt || '',
     userInfo: { displayName: displayNameRef.value },
     configOverwrite: {
       prejoinPageEnabled: false,
@@ -94,14 +119,7 @@ function initJitsi(roomName: string) {
       startWithVideoMuted: true,
     },
     interfaceConfigOverwrite: {
-      TOOLBAR_BUTTONS: [
-        'microphone',
-        'camera',
-        'fullscreen',
-        'chat',
-        'tileview',
-        'hangup',
-      ],
+      TOOLBAR_BUTTONS: toolbarButtons,
     },
   };
   jitsiApi = new ExternalAPI(JITSI_DOMAIN, options);
@@ -117,7 +135,8 @@ function initJitsi(roomName: string) {
       console.log('joined', e);
       meetingEnded.value = false;
       try {
-        jitsiApi?.executeCommand?.('startRecording', { mode: 'file' });
+        if (canEdit.value)
+          jitsiApi?.executeCommand?.('startRecording', { mode: 'file' });
       } catch (err) {
         console.error('auto startRecording failed', err);
       }
@@ -181,7 +200,16 @@ async function startMeeting() {
   if (!room) return;
   try {
     await loadExternalApiScript();
-    initJitsi(room);
+    let token = '';
+    if (canEdit.value) {
+      const jwt = await getJwtApi({
+        roomName: room,
+        userName: displayNameRef.value,
+        userEmail: 'enginer@example.com',
+      });
+      token = jwt.token || '';
+    }
+    initJitsi(room, token);
     meetingStarted.value = true;
   } catch (e) {
     console.error('启动会议失败:', e);
@@ -192,16 +220,24 @@ async function startMeeting() {
 <template>
   <div class="w-full">
     <div class="mb-2 flex items-center justify-between">
-      <div class="text-sm text-gray-500">房间：{{ roomNameRef || '-' }}</div>
+      <div class="text-sm text-gray-500">
+        {{ t('experiment.current.monitoring.roomLabel')
+        }}{{ roomNameRef || '-' }}
+      </div>
       <div v-if="canEdit" class="space-x-2">
         <Button type="primary" :disabled="!roomNameRef" @click="startMeeting">
-          发起视频
+          {{ t('experiment.current.monitoring.joinMeeting') }}
         </Button>
         <Button
           :disabled="!roomNameRef || !meetingStarted"
           @click="showQr = true"
         >
-          二维码加入
+          {{ t('experiment.current.monitoring.qrJoin') }}
+        </Button>
+      </div>
+      <div v-else-if="isMeetingActive" class="text-sm text-green-500">
+        <Button type="primary" @click="startMeeting">
+          {{ t('experiment.current.monitoring.joinMeeting') }}
         </Button>
       </div>
     </div>
@@ -212,7 +248,7 @@ async function startMeeting() {
     <Modal
       v-model:open="showQr"
       :footer="null"
-      title="扫码加入会议"
+      :title="t('experiment.current.monitoring.qrTitle')"
       centered
       destroyOnClose
     >

@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <application
         tools:replace="android:label"
-        android:label="mobile"
+        android:label="青智移动端"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

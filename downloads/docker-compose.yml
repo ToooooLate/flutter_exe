@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  qingzhi-download:
+    image: nginx:stable-alpine
+    container_name: qingzhi-download
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/usr/share/nginx/html:ro
+

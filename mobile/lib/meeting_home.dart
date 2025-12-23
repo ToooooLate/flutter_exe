@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 import 'package:jitsi_meet_flutter_sdk/jitsi_meet_flutter_sdk.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'app_config.dart';
 
 class MeetingHome extends StatefulWidget {
   const MeetingHome({super.key});
@@ -47,14 +48,22 @@ class _MeetingHomeState extends State<MeetingHome> {
       return;
     }
     final options = JitsiMeetConferenceOptions(
-      serverURL: 'https://qingzhi.sangoai.com:9443',
+      serverURL: AppConfig.jitsiServerUrl,
       room: room,
       configOverrides: {
         'startWithAudioMuted': false,
         'startWithVideoMuted': false,
+        'toolbarButtons': [
+          'microphone',
+          'camera',
+          'fullscreen',
+          'chat',
+          'tileview',
+          'hangup',
+        ],
       },
       userInfo: JitsiMeetUserInfo(
-        displayName: 'Flutter User',
+        displayName: 'Camera Device',
         email: 'user@example.com',
       ),
     );
@@ -162,7 +171,7 @@ class _MeetingHomeState extends State<MeetingHome> {
     }
     String room = '';
     if (uri.scheme.startsWith('http') &&
-        uri.host == 'qingzhi.sangoai.com' &&
+        uri.host == AppConfig.jitsiHost &&
         uri.pathSegments.isNotEmpty) {
       room = uri.pathSegments.first;
     } else if (uri.scheme.isEmpty && uri.host.isEmpty) {
