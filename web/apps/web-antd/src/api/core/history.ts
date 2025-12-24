@@ -163,5 +163,5 @@ export async function downloadVideoApi(params: {
 }) {
   const query = new URLSearchParams({ fileName: params.fileName }).toString();
   const url = `/api/sg/video/download?${query}`;
-  return requestClient.download<Blob>(url);
+  return requestClient.download<Blob>(url,{timeout:0});
 }

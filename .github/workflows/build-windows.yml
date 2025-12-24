@@ -2,9 +2,9 @@ name: Build Windows Desktop App
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, dev ]
   pull_request:
-    branches: [ main ]
+    branches: [ dev ]
   workflow_dispatch:  # 允许手动触发
 
 jobs:

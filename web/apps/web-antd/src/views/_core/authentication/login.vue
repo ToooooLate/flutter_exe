@@ -46,6 +46,7 @@ const formSchema = computed((): VbenFormSchema[] => {
     :show-register="false"
     :show-remember-me="false"
     :show-third-party-login="false"
+    :showRememberMe="true"
     @submit="authStore.authLogin"
   />
 </template>

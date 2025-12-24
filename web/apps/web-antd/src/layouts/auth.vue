@@ -16,7 +16,7 @@ const logo = computed(() => preferences.logo.source);
     :logo="logo"
     :page-description="$t('authentication.pageDesc')"
     :page-title="$t('authentication.pageTitle')"
-    :toolbarList="['color', 'layout', 'theme']"
+    :toolbarList="[]"
   >
     <!-- 自定义工具栏 -->
     <!-- <template #toolbar></template> -->
