@@ -19,6 +19,7 @@ export function useAppConfig(
     VITE_GLOB_API_URL,
     VITE_GLOB_AUTH_DINGDING_CORP_ID,
     VITE_GLOB_AUTH_DINGDING_CLIENT_ID,
+    VITE_GLOB_JITSI_DOMAIN,
   } = config;
 
   const applicationConfig: ApplicationConfig = {
@@ -30,6 +31,10 @@ export function useAppConfig(
       clientId: VITE_GLOB_AUTH_DINGDING_CLIENT_ID,
       corpId: VITE_GLOB_AUTH_DINGDING_CORP_ID,
     };
+  }
+
+  if (VITE_GLOB_JITSI_DOMAIN) {
+    applicationConfig.jitsiDomain = VITE_GLOB_JITSI_DOMAIN;
   }
 
   return applicationConfig;

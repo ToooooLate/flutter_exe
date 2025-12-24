@@ -11,6 +11,7 @@ export interface VbenAdminProAppConfigRaw {
   VITE_GLOB_API_URL: string;
   VITE_GLOB_AUTH_DINGDING_CLIENT_ID: string;
   VITE_GLOB_AUTH_DINGDING_CORP_ID: string;
+  VITE_GLOB_JITSI_DOMAIN: string;
 }
 
 interface AuthConfig {
@@ -23,6 +24,7 @@ interface AuthConfig {
 export interface ApplicationConfig {
   apiURL: string;
   auth: AuthConfig;
+  jitsiDomain?: string;
 }
 
 declare global {

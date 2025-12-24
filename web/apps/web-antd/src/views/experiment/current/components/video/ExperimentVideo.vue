@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue';
 import { useI18n } from '@vben/locales';
+import { useAppConfig } from '@vben/hooks';
 import { useCurrentExperiment } from '../../hooks';
 import { Button, QRCode, Modal } from 'ant-design-vue';
 import { canEditTable } from '#/composables/useExperimentPermissions';
@@ -38,7 +39,8 @@ const displayNameRef = computed(() => {
 });
 
 // Jitsi 服务域名（含端口）
-const JITSI_DOMAIN = import.meta.env.VITE_JITSI_DOMAIN;
+const { jitsiDomain } = useAppConfig(import.meta.env, import.meta.env.PROD);
+const JITSI_DOMAIN = jitsiDomain || import.meta.env.VITE_JITSI_DOMAIN;
 const JITSI_EXTERNAL_API_SRC = `https://${JITSI_DOMAIN}/external_api.js`;
 
 // 容器元素
