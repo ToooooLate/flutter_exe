@@ -83,7 +83,6 @@ class _StartupGateState extends State<StartupGate> {
   }
 
   Future<void> _checkReachable() async {
-    if (config == null) return;
     final healthUrl = Uri.parse(
       '${config!.webBaseUrl}${config!.healthCheckPath}',
     );
@@ -417,7 +416,8 @@ class _WebShellState extends State<WebShell> {
       }
       if (url.startsWith('blob:')) {
         // blob: 无法在原生侧直接拉取，需要前端钩子转为 base64。此处提示并退出。
-        debugPrint('blob: URL received in native. Expect front-end hook to send base64 instead.');
+        debugPrint(
+            'blob: URL received in native. Expect front-end hook to send base64 instead.');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('无法直接下载 blob:，请重试导出')),

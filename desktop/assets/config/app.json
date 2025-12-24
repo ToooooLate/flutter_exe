@@ -1,5 +1,5 @@
 {
-  "webBaseUrl": "http://192.168.120.55:5888/",
-  "healthCheckPath": "auth/login",
+  "webBaseUrl": "https://qingzhi.sangoai.com:8001/",
+  "healthCheckPath": "",
   "timeoutMs": 3000
 }

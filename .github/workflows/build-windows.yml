@@ -32,25 +32,11 @@ jobs:
       run: flutter build windows --release
       working-directory: ./desktop
       
-    - name: Create release archive
-      run: |
-        $releaseDirPreferred = "desktop/build/windows/x64/runner/Release"
-        $releaseDirLegacy = "desktop/build/windows/runner/Release"
-        if (Test-Path $releaseDirPreferred) {
-          cd $releaseDirPreferred
-        } elseif (Test-Path $releaseDirLegacy) {
-          cd $releaseDirLegacy
-        } else {
-          Write-Host "Release directory not found. Printing build tree for debugging:"
-          Get-ChildItem -Recurse "desktop/build/windows" -Name
-          exit 1
-        }
-        7z a -tzip "$env:GITHUB_WORKSPACE/qingzhi-desktop-windows.zip" *
-      shell: pwsh
-        
     - name: Upload Windows build artifact
       uses: actions/upload-artifact@v4
       with:
         name: qingzhi-desktop-windows
-        path: qingzhi-desktop-windows.zip
+        path: |
+          desktop/build/windows/x64/runner/Release
+          desktop/build/windows/runner/Release
         retention-days: 30
