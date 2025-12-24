@@ -290,7 +290,11 @@ class _WebShellState extends State<WebShell> {
   @override
   void initState() {
     super.initState();
-    _controller = WebViewController()
+    _controller = WebViewController(
+      onPermissionRequest: (request) {
+        request.grant();
+      },
+    )
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..addJavaScriptChannel(
         'DownloadBridge',
