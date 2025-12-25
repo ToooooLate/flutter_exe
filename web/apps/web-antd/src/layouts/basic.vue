@@ -22,25 +22,31 @@ import { $t } from '#/locales';
 import { useAuthStore } from '#/store';
 import LoginForm from '#/views/_core/authentication/login.vue';
 import ChangePasswordModal from '#/views/_core/authentication/change-password-modal.vue';
+import { useUserRole } from '#/composables/useUserRole';
 
 const notifications = ref<NotificationItem[]>([]);
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const accessStore = useAccessStore();
+const { isGuest } = useUserRole();
 const { destroyWatermark, updateWatermark } = useWatermark();
 const showDot = computed(() =>
   notifications.value.some((item) => !item.isRead),
 );
 
 const changePasswordModalRef = ref<any>(null);
-const menus = computed(() => [
-  {
-    text: $t('authentication.changePassword'),
-    icon: LockKeyhole,
-    handler: () => changePasswordModalRef.value?.open?.(),
-  },
-]);
+const menus = computed(() =>
+  isGuest.value
+    ? []
+    : [
+        {
+          text: $t('authentication.changePassword'),
+          icon: LockKeyhole,
+          handler: () => changePasswordModalRef.value?.open?.(),
+        },
+      ],
+);
 
 const avatar = computed(() => {
   return userStore.userInfo?.avatar ?? preferences.app.defaultAvatar;

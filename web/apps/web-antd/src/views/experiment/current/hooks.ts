@@ -287,7 +287,7 @@ export function useCurrentExperiment() {
   const copyText = async (text: string) => {
     try {
       await copy(text);
-      message.success($t('experiment.current.message.copied'));
+      message.success($t('experiment.current.message.copiedToClipboard'));
     } catch {
       message.error($t('experiment.current.message.copyFailed'));
     }
@@ -316,9 +316,9 @@ export function useCurrentExperiment() {
         begin: accessCredential.value.begin ?? 0,
         end: endTs ?? 0,
       };
-      message.success($t('experiment.current.message.extendSuccess'));
+      message.success($t('experiment.current.credential.extendSuccess'));
     } catch (e) {
-      message.error($t('experiment.current.message.extendFailed'));
+      message.error($t('experiment.current.credential.extendFailed'));
     }
   };
 

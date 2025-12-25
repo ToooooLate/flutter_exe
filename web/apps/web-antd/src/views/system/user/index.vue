@@ -2,14 +2,20 @@
   <Page class="h-full">
     <template #title>
       <div class="flex items-center justify-between">
-        <span class="text-lg font-bold">{{ $t('page.system.user.title') }}</span>
+        <span class="text-lg font-bold">{{
+          $t('page.system.user.title')
+        }}</span>
       </div>
     </template>
 
     <Grid>
       <!-- 工具栏：新增账号按钮 -->
       <template #toolbar-tools>
-        <Button type="primary" size="small" class="w-32" @click="onAddAccount"
+        <Button
+          type="primary"
+          size="small"
+          class="w-32"
+          @click="onAddAccount"
           >{{ $t('page.system.user.addAccount') }}</Button
         >
       </template>
@@ -19,8 +25,12 @@
           :okText="$t('page.common.reset')"
           :cancelText="$t('page.common.cancel')"
           @confirm="onResetPassword(row)"
+          :disabled="row.roleCode === 'guest'"
         >
-          <Button type="link" size="small" :disabled="row.roleCode === 'guest'"
+          <Button
+            type="link"
+            size="small"
+            :disabled="row.roleCode === 'guest'"
             >{{ $t('page.system.user.resetPassword') }}</Button
           >
         </Popconfirm>
@@ -37,7 +47,9 @@
           :cancelText="$t('page.common.cancel')"
           @confirm="onDeleteAccount(row)"
         >
-          <Button type="link" size="small" danger>{{ $t('page.common.delete') }}</Button>
+          <Button type="link" size="small" danger>{{
+            $t('page.common.delete')
+          }}</Button>
         </Popconfirm>
       </template>
     </Grid>
@@ -154,7 +166,11 @@ const gridOptions: VxeGridProps = {
   columnConfig: { resizable: true },
   columns: [
     { type: 'seq', title: $t('page.common.index'), width: 80, align: 'center' },
-    { field: 'username', title: $t('page.system.user.username'), minWidth: 200 },
+    {
+      field: 'username',
+      title: $t('page.system.user.username'),
+      minWidth: 200,
+    },
     {
       field: 'roleCode',
       title: $t('page.system.user.role'),
@@ -179,8 +195,16 @@ const gridOptions: VxeGridProps = {
       cellRender: {
         name: 'CellTag',
         options: [
-          { value: 1, label: $t('page.system.user.status.locked'), color: 'error' },
-          { value: 0, label: $t('page.system.user.status.available'), color: 'success' },
+          {
+            value: 1,
+            label: $t('page.system.user.status.locked'),
+            color: 'error',
+          },
+          {
+            value: 0,
+            label: $t('page.system.user.status.available'),
+            color: 'success',
+          },
         ],
       },
     },
@@ -241,7 +265,9 @@ const [AccountForm, accountFormApi] = useVbenForm({
       message.success($t('page.common.editSuccess'));
     } else {
       const res = await addUserAccountApi(params);
-      res ? message.success($t('page.common.addSuccess')) : message.error($t('page.common.addFailed'));
+      res
+        ? message.success($t('page.common.addSuccess'))
+        : message.error($t('page.common.addFailed'));
     }
     await GridApi.query();
     modalApi.close();
@@ -252,7 +278,9 @@ const [AccountForm, accountFormApi] = useVbenForm({
       fieldName: 'username',
       label: $t('page.system.user.username'),
       rules: 'required',
-      componentProps: { placeholder: $t('page.system.user.usernamePlaceholder') },
+      componentProps: {
+        placeholder: $t('page.system.user.usernamePlaceholder'),
+      },
     },
     {
       component: 'Select',
@@ -328,7 +356,10 @@ const [AccountModal, modalApi] = useVbenModal({
       // @ts-ignore 更新标题（若支持）
       try {
         modalApi?.setState?.({
-          title: mode === 'edit' ? $t('page.system.user.editAccount') : $t('page.system.user.addAccount'),
+          title:
+            mode === 'edit'
+              ? $t('page.system.user.editAccount')
+              : $t('page.system.user.addAccount'),
         });
       } catch {}
     }

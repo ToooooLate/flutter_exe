@@ -98,3 +98,5 @@ vite.config.ts.*
 .history
 .cursor
 /.trae/rules/
+
+*.sh

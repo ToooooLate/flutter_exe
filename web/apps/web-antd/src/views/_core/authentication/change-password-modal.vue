@@ -21,6 +21,7 @@ const [Modal, modalApi] = useVbenModal({
   },
   onCancel() {
     resetForm();
+    modalApi.close();
   },
 });
 
@@ -70,7 +71,9 @@ defineExpose({ open, close });
   <Modal :title="$t('authentication.changePassword')">
     <div class="flex flex-col gap-4 py-2">
       <div class="flex flex-col gap-2">
-        <span class="text-sm text-gray-600">{{ $t('authentication.oldPassword') }}</span>
+        <span class="text-sm text-gray-600">{{
+          $t('authentication.oldPassword')
+        }}</span>
         <InputPassword
           v-model:value="oldPassword"
           type="password"
@@ -78,7 +81,9 @@ defineExpose({ open, close });
         />
       </div>
       <div class="flex flex-col gap-2">
-        <span class="text-sm text-gray-600">{{ $t('authentication.newPassword') }}</span>
+        <span class="text-sm text-gray-600">{{
+          $t('authentication.newPassword')
+        }}</span>
         <InputPassword
           v-model:value="newPassword"
           type="password"
@@ -86,7 +91,9 @@ defineExpose({ open, close });
         />
       </div>
       <div class="flex flex-col gap-2">
-        <span class="text-sm text-gray-600">{{ $t('authentication.confirmNewPassword') }}</span>
+        <span class="text-sm text-gray-600">{{
+          $t('authentication.confirmNewPassword')
+        }}</span>
         <InputPassword
           v-model:value="confirmPassword"
           type="password"
