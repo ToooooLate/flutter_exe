@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { useAccessStore } from '@vben/stores';
 import { downloadFileFromBlob } from '@vben/utils';
 import { message } from 'ant-design-vue';
 
@@ -17,6 +18,7 @@ interface VideoFileItem {
 const videoList = ref<VideoFileItem[]>([]);
 const videoLoading = ref(false);
 const downloadingVideoName = ref<string | null>(null);
+const accessStore = useAccessStore();
 
 const [Modal, modalApi] = useVbenModal({
   title: $t('page.history.operation.downloadVideo'),
@@ -50,6 +52,32 @@ const [Modal, modalApi] = useVbenModal({
 
 const handleDownloadVideoFile = async (item: VideoFileItem) => {
   if (!item.fileName) return;
+
+  // 检查是否在 Flutter 桌面端环境
+  if ((window as any).DownloadBridge) {
+    const query = new URLSearchParams({
+      fileName: item.relativePath || item.fileName,
+    }).toString();
+    const url = `${window.location.origin}/api/sg/video/download?${query}`;
+    const token = accessStore.accessToken;
+    const payload = {
+      type: 'url',
+      url,
+      fileName: item.fileName,
+      headers: {
+        'sg-Token': token || '',
+      },
+    };
+    try {
+      (window as any).DownloadBridge.postMessage(JSON.stringify(payload));
+      message.success($t('common.downloading'));
+    } catch (e) {
+      console.error('Bridge download failed', e);
+      message.error($t('page.history.message.downloadVideoFailed'));
+    }
+    return;
+  }
+
   downloadingVideoName.value = item.fileName;
   try {
     const blob = (await downloadVideoApi({
@@ -131,4 +159,3 @@ const handleDownloadVideoFile = async (item: VideoFileItem) => {
     </div>
   </Modal>
 </template>
-

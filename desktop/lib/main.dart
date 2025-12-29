@@ -452,10 +452,19 @@ class _WebShellState extends State<WebShell> {
         }
         return;
       }
-      final resp = await http.get(Uri.parse(url), headers: headers);
-      if (resp.statusCode < 200 || resp.statusCode >= 300) {
-        throw Exception('HTTP ${resp.statusCode}');
+      // create a request
+      final request = http.Request('GET', Uri.parse(url));
+      if (headers != null) {
+        request.headers.addAll(headers);
       }
+
+      final client = http.Client();
+      final http.StreamedResponse response = await client.send(request);
+
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        throw Exception('HTTP ${response.statusCode}');
+      }
+
       final result = await getSaveLocation(suggestedName: fileName);
       if (result == null) {
         if (mounted) {
@@ -465,8 +474,16 @@ class _WebShellState extends State<WebShell> {
         }
         return;
       }
-      final xfile = XFile.fromData(resp.bodyBytes, name: fileName);
-      await xfile.saveTo(result.path);
+
+      final file = File(result.path);
+      final sink = file.openWrite();
+      try {
+        await response.stream.pipe(sink);
+      } finally {
+        await sink.close();
+        client.close();
+      }
+
       debugPrint('Saved file (url) to: ${result.path}');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
