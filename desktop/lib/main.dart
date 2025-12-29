@@ -12,6 +12,76 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+// Simple in-memory log manager
+class LogManager {
+  static final List<String> _logs = [];
+  static final ValueNotifier<int> notifier = ValueNotifier(0);
+
+  static void add(String message) {
+    final timestamp = DateTime.now().toIso8601String().split('T').last;
+    _logs.add('[$timestamp] $message');
+    if (_logs.length > 1000) _logs.removeAt(0); // Keep last 1000 logs
+    notifier.value++;
+  }
+
+  static List<String> get logs => List.unmodifiable(_logs);
+
+  static void clear() {
+    _logs.clear();
+    notifier.value++;
+  }
+}
+
+// Global log function
+void appLog(String message) {
+  debugPrint(message);
+  LogManager.add(message);
+}
+
+class LogViewer extends StatelessWidget {
+  const LogViewer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('应用日志'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: LogManager.clear,
+          ),
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
+      body: ValueListenableBuilder<int>(
+        valueListenable: LogManager.notifier,
+        builder: (context, _, __) {
+          final logs = LogManager.logs.reversed.toList();
+          return ListView.builder(
+            itemCount: logs.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                child: SelectableText(
+                  logs[index],
+                  style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
 void main() {
   runApp(const MyApp());
 }
@@ -42,11 +112,27 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Engine Metrics Viewer',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
+      builder: (context, child) {
+        return CallbackShortcuts(
+          bindings: {
+            const SingleActivator(LogicalKeyboardKey.f12): () {
+              navigatorKey.currentState?.push(
+                MaterialPageRoute(builder: (_) => const LogViewer()),
+              );
+            },
+          },
+          child: Focus(
+            autofocus: true,
+            child: child ?? const SizedBox(),
+          ),
+        );
+      },
       home: const StartupGate(),
     );
   }
@@ -100,7 +186,7 @@ class _StartupGateState extends State<StartupGate> {
       Permission.microphone,
     ].request();
 
-    debugPrint('Permissions status: $statuses');
+    appLog('Permissions status: $statuses');
   }
 
   Future<void> _checkReachable() async {
@@ -313,7 +399,7 @@ class _WebShellState extends State<WebShell> {
     super.initState();
     _controller = WebViewController(
       onPermissionRequest: (WebViewPermissionRequest request) {
-        debugPrint('WebView permission requested for: ${request.types}');
+        appLog('WebView permission requested for: ${request.types}');
         // 授予所有请求的权限
         request.grant();
       },
@@ -325,7 +411,7 @@ class _WebShellState extends State<WebShell> {
           try {
             final Map<String, dynamic> data = jsonDecode(message.message);
             final String type = (data['type'] ?? '') as String;
-            debugPrint('DownloadBridge message: $type');
+            appLog('DownloadBridge message: $type');
             if (type == 'base64') {
               final String fileName = (data['fileName'] ??
                       'download-${DateTime.now().millisecondsSinceEpoch}.bin')
@@ -416,14 +502,14 @@ class _WebShellState extends State<WebShell> {
       final bytes = base64Decode(pureBase64);
       final xfile = XFile.fromData(bytes, name: fileName);
       await xfile.saveTo(result.path);
-      debugPrint('Saved file (base64) to: ${result.path}');
+      appLog('Saved file (base64) to: ${result.path}');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('已保存到: ${result.path}')),
         );
       }
     } catch (e) {
-      debugPrint('Save As (base64) failed: $e');
+      appLog('Save As (base64) failed: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('下载处理失败: $e')),
@@ -443,7 +529,7 @@ class _WebShellState extends State<WebShell> {
       }
       if (url.startsWith('blob:')) {
         // blob: 无法在原生侧直接拉取，需要前端钩子转为 base64。此处提示并退出。
-        debugPrint(
+        appLog(
             'blob: URL received in native. Expect front-end hook to send base64 instead.');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -452,29 +538,6 @@ class _WebShellState extends State<WebShell> {
         }
         return;
       }
-      // create a request
-      final request = http.Request('GET', Uri.parse(url));
-      // 添加默认 User-Agent，模拟浏览器行为，避免部分服务器拦截
-      request.headers['User-Agent'] =
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
-
-      if (headers != null) {
-        request.headers.addAll(headers);
-      }
-
-      final client = http.Client();
-      debugPrint('Starting download from: $url');
-      debugPrint('Headers: $headers');
-
-      final http.StreamedResponse response = await client.send(request);
-
-      debugPrint('Response status: ${response.statusCode}');
-      debugPrint('Response content-length: ${response.contentLength}');
-
-      if (response.statusCode < 200 || response.statusCode >= 300) {
-        throw Exception('HTTP ${response.statusCode}');
-      }
-
       final result = await getSaveLocation(suggestedName: fileName);
       if (result == null) {
         if (mounted) {
@@ -485,37 +548,94 @@ class _WebShellState extends State<WebShell> {
         return;
       }
 
-      final file = File(result.path);
-      final sink = file.openWrite();
-      int downloadedBytes = 0;
+      appLog('Starting download from: $url');
+
+      // 使用原生 HttpClient 替代 http package，以更好控制流和超时
+      final client = HttpClient();
+      // 设置超时时间为无限制 (实际上设置为365天，确保大文件下载不中断)
+      client.connectionTimeout = const Duration(days: 365);
+      client.idleTimeout = const Duration(days: 365);
 
       try {
-        await response.stream.forEach((chunk) {
-          sink.add(chunk);
-          downloadedBytes += chunk.length;
-        });
-        await sink.flush();
-        debugPrint('Download complete. Total bytes: $downloadedBytes');
-      } catch (e) {
-        debugPrint('Download stream error: $e');
-        await sink.close();
-        if (await file.exists()) {
-          await file.delete();
+        final request = await client.getUrl(Uri.parse(url));
+
+        // 设置 Headers
+        request.headers.set(HttpHeaders.userAgentHeader,
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+
+        // 禁用压缩，避免大文件内存解压问题
+        request.headers.set(HttpHeaders.acceptEncodingHeader, 'identity');
+
+        // 设置 Cookie
+        try {
+          String cookieHeader = '';
+          try {
+            final Object res = await _controller
+                .runJavaScriptReturningResult('document.cookie');
+            final String jsCookies = res.toString();
+            if (jsCookies.isNotEmpty &&
+                jsCookies != '""' &&
+                jsCookies != 'null') {
+              cookieHeader = jsCookies.replaceAll(RegExp(r'^"|"$'), '');
+            }
+          } catch (_) {}
+
+          if (cookieHeader.isNotEmpty) {
+            request.headers.set(HttpHeaders.cookieHeader, cookieHeader);
+          }
+        } catch (_) {}
+
+        if (headers != null) {
+          headers.forEach((k, v) => request.headers.add(k, v));
         }
-        rethrow;
+
+        final response = await request.close();
+        appLog('Response status: ${response.statusCode}');
+        appLog('Response content-length: ${response.contentLength}');
+
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+          throw Exception('HTTP ${response.statusCode}');
+        }
+
+        final file = File(result.path);
+        // 使用 pipe 直接将响应流传输到文件流，性能更好且不易内存溢出
+        await response.pipe(file.openWrite());
+
+        // 校验文件大小
+        final fileSize = await file.length();
+        appLog('Download complete. File size: $fileSize');
+
+        if (fileSize == 0) {
+          await file.delete();
+          throw Exception('Downloaded file is empty (0 bytes).');
+        }
+
+        appLog('Saved file (url) to: ${result.path}');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('已保存到: ${result.path}')),
+          );
+        }
+      } catch (e) {
+        appLog('Download error: $e');
+        // 尝试清理残余文件
+        try {
+          final file = File(result.path);
+          if (await file.exists()) {
+            await file.delete();
+          }
+        } catch (_) {}
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('下载失败: $e')),
+          );
+        }
       } finally {
-        await sink.close();
         client.close();
       }
-
-      debugPrint('Saved file (url) to: ${result.path}');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('已保存到: ${result.path}')),
-        );
-      }
     } catch (e) {
-      debugPrint('URL download failed: $e');
+      appLog('URL download failed: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('URL 下载失败: $e')),
@@ -562,7 +682,7 @@ void _setWebView2Env(String url) {
       _setEnv("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", args);
     }
   } catch (e) {
-    debugPrint('Error parsing URL for env setup: $e');
+    appLog('Error parsing URL for env setup: $e');
   }
 }
 
@@ -580,8 +700,8 @@ void _setEnv(String key, String value) {
 
     calloc.free(keyPtr);
     calloc.free(valPtr);
-    debugPrint('Set env $key = $value');
+    appLog('Set env $key = $value');
   } catch (e) {
-    debugPrint('Failed to set env: $e');
+    appLog('Failed to set env: $e');
   }
 }
