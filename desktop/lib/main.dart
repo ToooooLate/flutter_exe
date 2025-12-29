@@ -1,3 +1,6 @@
+import 'dart:ffi';
+import 'dart:io';
+import 'package:ffi/ffi.dart';
 import 'dart:convert';
 import 'package:file_selector/file_selector.dart';
 import 'package:cross_file/cross_file.dart';
@@ -7,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(const MyApp());
@@ -73,6 +77,13 @@ class _StartupGateState extends State<StartupGate> {
       final cfgStr = await rootBundle.loadString('assets/config/app.json');
       final cfgJson = jsonDecode(cfgStr) as Map<String, dynamic>;
       config = AppConfig.fromJson(cfgJson);
+
+      // 设置 WebView2 环境变量以支持 HTTP 媒体权限
+      _setWebView2Env(config!.webBaseUrl);
+
+      // 请求系统权限（尤其是 Windows 平台）
+      await _requestPermissions();
+
       await _checkReachable();
     } catch (e) {
       setState(() {
@@ -80,6 +91,16 @@ class _StartupGateState extends State<StartupGate> {
         message = '加载配置失败：$e';
       });
     }
+  }
+
+  Future<void> _requestPermissions() async {
+    // 请求麦克风和摄像头权限
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.camera,
+      Permission.microphone,
+    ].request();
+
+    debugPrint('Permissions status: $statuses');
   }
 
   Future<void> _checkReachable() async {
@@ -98,7 +119,7 @@ class _StartupGateState extends State<StartupGate> {
     } catch (e) {
       // fallback to basic connectivity
       final conn = await Connectivity().checkConnectivity();
-      if (conn == ConnectivityResult.none) {
+      if (conn.contains(ConnectivityResult.none)) {
         setState(() {
           status = GateStatus.error;
           message = '网络不可用，请检查网络后重试。';
@@ -291,7 +312,9 @@ class _WebShellState extends State<WebShell> {
   void initState() {
     super.initState();
     _controller = WebViewController(
-      onPermissionRequest: (request) {
+      onPermissionRequest: (WebViewPermissionRequest request) {
+        debugPrint('WebView permission requested for: ${request.types}');
+        // 授予所有请求的权限
         request.grant();
       },
     )
@@ -474,5 +497,50 @@ class _WebShellState extends State<WebShell> {
     return Scaffold(
       body: SafeArea(child: WebViewWidget(controller: _controller)),
     );
+  }
+}
+
+// Windows Environment Helpers
+typedef SetEnvironmentVariableC = Int32 Function(
+    Pointer<Utf16> lpName, Pointer<Utf16> lpValue);
+typedef SetEnvironmentVariableDart = int Function(
+    Pointer<Utf16> lpName, Pointer<Utf16> lpValue);
+
+void _setWebView2Env(String url) {
+  if (!Platform.isWindows) return;
+
+  try {
+    final uri = Uri.parse(url);
+    // 如果是 HTTP，设置不安全来源白名单
+    if (uri.scheme == 'http') {
+      final origin = '${uri.scheme}://${uri.host}:${uri.port}';
+      // 允许不安全来源并自动播放
+      final args =
+          '--unsafely-treat-insecure-origin-as-secure=$origin --autoplay-policy=no-user-gesture-required';
+
+      _setEnv("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", args);
+    }
+  } catch (e) {
+    debugPrint('Error parsing URL for env setup: $e');
+  }
+}
+
+void _setEnv(String key, String value) {
+  try {
+    final kernel32 = DynamicLibrary.open('kernel32.dll');
+    final SetEnvironmentVariableDart setEnv = kernel32.lookupFunction<
+        SetEnvironmentVariableC,
+        SetEnvironmentVariableDart>('SetEnvironmentVariableW');
+
+    final keyPtr = key.toNativeUtf16();
+    final valPtr = value.toNativeUtf16();
+
+    setEnv(keyPtr, valPtr);
+
+    calloc.free(keyPtr);
+    calloc.free(valPtr);
+    debugPrint('Set env $key = $value');
+  } catch (e) {
+    debugPrint('Failed to set env: $e');
   }
 }
