@@ -34,7 +34,6 @@
             </Button>
             <Button
               htmlType="button"
-              :disabled="!isEditable"
               class="rounded bg-purple-500 px-3 py-1 text-sm text-white hover:bg-purple-600"
               @click="handleCurve(row)"
             >
@@ -435,7 +434,7 @@ const handleReturnStatic = async () => {
 };
 
 const handleCurve = (row: RowType) => {
-  if (!isEditable.value) return;
+  // if (!isEditable.value) return;
   // 仅使用后端返回的曲线数据，移除模拟数据后备逻辑
   if (!row.curveInfo) {
     message.error($t('experiment.current.message.curveDataEmpty'));

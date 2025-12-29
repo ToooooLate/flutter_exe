@@ -34,7 +34,6 @@
             </Button>
             <Button
               htmlType="button"
-              :disabled="!isEditable"
               class="rounded bg-purple-500 px-3 py-1 text-sm text-white hover:bg-purple-600"
               @click="handleCurve(row)"
             >
