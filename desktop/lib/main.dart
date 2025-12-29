@@ -3,10 +3,8 @@ import 'dart:io';
 import 'package:ffi/ffi.dart';
 import 'dart:convert';
 import 'package:file_selector/file_selector.dart';
-import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -293,10 +291,14 @@ class WebShell extends StatefulWidget {
 
 class _WebShellState extends State<WebShell> {
   late final WebViewController _controller;
+  final Map<String, _Base64ChunkSession> _base64ChunkSessions = {};
   static const String _downloadHookJs = r"""
     (function(){
       // Map blob object URLs to original Blob objects
       const __blobUrlMap = new Map();
+      const __chunkStates = new Map();
+      const __chunkThreshold = 8 * 1024 * 1024;
+      const __chunkSize = 512 * 1024;
       const __origCreateObjectURL = URL.createObjectURL;
       URL.createObjectURL = function(obj){
         try {
@@ -324,6 +326,74 @@ class _WebShellState extends State<WebShell> {
         } catch(err) {}
       }
 
+      function __sendBase64ChunkStart(transferId, fileName, total){
+        try {
+          const payload = { type: 'base64_chunk_start', transferId, fileName: fileName || ('download-' + Date.now()), total: total || 0 };
+          if (typeof DownloadBridge !== 'undefined') {
+            DownloadBridge.postMessage(JSON.stringify(payload));
+          }
+        } catch(err) {}
+      }
+
+      function __sendBase64Chunk(transferId, index, total, base64){
+        try {
+          const payload = { type: 'base64_chunk', transferId, index: index || 0, total: total || 0, data: base64 || '' };
+          if (typeof DownloadBridge !== 'undefined') {
+            DownloadBridge.postMessage(JSON.stringify(payload));
+          }
+        } catch(err) {}
+      }
+
+      function __sendBase64ChunkError(transferId, message){
+        try {
+          const payload = { type: 'base64_chunk_error', transferId, message: String(message || '') };
+          if (typeof DownloadBridge !== 'undefined') {
+            DownloadBridge.postMessage(JSON.stringify(payload));
+          }
+        } catch(err) {}
+      }
+
+      function __readBlobAsDataURL(blob){
+        return new Promise((resolve, reject) => {
+          try {
+            const reader = new FileReader();
+            reader.onload = () => resolve(String(reader.result || ''));
+            reader.onerror = () => reject(reader.error || new Error('FileReader error'));
+            reader.readAsDataURL(blob);
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      window.__downloadChunkResume = function(transferId){
+        try {
+          const state = __chunkStates.get(transferId);
+          if (!state) return;
+          if (state.index >= state.total) {
+            __chunkStates.delete(transferId);
+            return;
+          }
+          const start = state.index * state.chunkSize;
+          const end = Math.min(state.size, (state.index + 1) * state.chunkSize);
+          const slice = state.blob.slice(start, end);
+          __readBlobAsDataURL(slice).then((dataUrl) => {
+            const base64 = String(dataUrl || '').includes(',') ? String(dataUrl).split(',')[1] : '';
+            __sendBase64Chunk(transferId, state.index, state.total, base64);
+            state.index++;
+          }).catch((e) => {
+            __chunkStates.delete(transferId);
+            __sendBase64ChunkError(transferId, e && e.message ? e.message : e);
+          });
+        } catch(_) {}
+      };
+
+      window.__downloadChunkCancel = function(transferId){
+        try {
+          __chunkStates.delete(transferId);
+        } catch(_) {}
+      };
+
       // Try to infer filename from data URI mime type
       function __inferNameFromDataUri(dataUri){
         try {
@@ -348,6 +418,17 @@ class _WebShellState extends State<WebShell> {
             if (isBlob) {
               const blob = __blobUrlMap.get(href);
               if (blob) {
+                try {
+                  const size = Number(blob.size || 0);
+                  if (size > __chunkThreshold) {
+                    const total = Math.max(1, Math.ceil(size / __chunkSize));
+                    const transferId = 't' + Date.now() + '_' + Math.random().toString(16).slice(2);
+                    __chunkStates.set(transferId, { blob: blob, index: 0, total: total, size: size, chunkSize: __chunkSize });
+                    __sendBase64ChunkStart(transferId, name, total);
+                    return;
+                  }
+                } catch (_) {}
+
                 const reader = new FileReader();
                 reader.onload = () => {
                   try {
@@ -390,6 +471,17 @@ class _WebShellState extends State<WebShell> {
             if (isBlob) {
               const blob = __blobUrlMap.get(href);
               if (blob) {
+                try {
+                  const size = Number(blob.size || 0);
+                  if (size > __chunkThreshold) {
+                    const total = Math.max(1, Math.ceil(size / __chunkSize));
+                    const transferId = 't' + Date.now() + '_' + Math.random().toString(16).slice(2);
+                    __chunkStates.set(transferId, { blob: blob, index: 0, total: total, size: size, chunkSize: __chunkSize });
+                    __sendBase64ChunkStart(transferId, name, total);
+                    return null;
+                  }
+                } catch (_) {}
+
                 const reader = new FileReader();
                 reader.onload = () => {
                   try {
@@ -439,6 +531,35 @@ class _WebShellState extends State<WebShell> {
                   as String;
               final String base64 = data['data'] as String? ?? '';
               await _saveBase64WithDialog(base64, fileName);
+            } else if (type == 'base64_chunk_start') {
+              final String transferId = (data['transferId'] ?? '') as String;
+              final String fileName = (data['fileName'] ??
+                      'download-${DateTime.now().millisecondsSinceEpoch}.bin')
+                  as String;
+              final int total = (data['total'] is int)
+                  ? data['total'] as int
+                  : int.tryParse('${data['total'] ?? ''}') ?? 0;
+              await _startBase64ChunkDownload(
+                  transferId: transferId, fileName: fileName, totalChunks: total);
+            } else if (type == 'base64_chunk') {
+              final String transferId = (data['transferId'] ?? '') as String;
+              final int index = (data['index'] is int)
+                  ? data['index'] as int
+                  : int.tryParse('${data['index'] ?? ''}') ?? 0;
+              final int total = (data['total'] is int)
+                  ? data['total'] as int
+                  : int.tryParse('${data['total'] ?? ''}') ?? 0;
+              final String base64 = data['data'] as String? ?? '';
+              await _handleBase64Chunk(
+                  transferId: transferId,
+                  index: index,
+                  totalChunks: total,
+                  base64Chunk: base64);
+            } else if (type == 'base64_chunk_error') {
+              final String transferId = (data['transferId'] ?? '') as String;
+              final String errorMessage = (data['message'] ?? '') as String;
+              await _failBase64ChunkDownload(
+                  transferId: transferId, errorMessage: errorMessage);
             } else if (type == 'url') {
               final String url = (data['url'] ?? '') as String;
               final String fileName = (data['fileName'] ??
@@ -502,10 +623,6 @@ class _WebShellState extends State<WebShell> {
     );
   }
 
-  void _refreshPage() {
-    _controller.reload();
-  }
-
   Future<void> _saveBase64WithDialog(String base64, String fileName) async {
     try {
       final result = await getSaveLocation(suggestedName: fileName);
@@ -521,6 +638,9 @@ class _WebShellState extends State<WebShell> {
           ? _extractBase64FromDataUrl(base64)
           : base64;
       final bytes = base64Decode(pureBase64);
+      if (bytes.isEmpty) {
+        throw Exception('下载内容为空');
+      }
       final xfile = XFile.fromData(bytes, name: fileName);
       await xfile.saveTo(result.path);
       appLog('Saved file (base64) to: ${result.path}');
@@ -674,13 +794,132 @@ class _WebShellState extends State<WebShell> {
     return dataUrl; // already pure base64
   }
 
+  Future<void> _startBase64ChunkDownload(
+      {required String transferId,
+      required String fileName,
+      required int totalChunks}) async {
+    if (transferId.isEmpty) return;
+
+    if (_base64ChunkSessions.containsKey(transferId)) {
+      await _failBase64ChunkDownload(
+          transferId: transferId, errorMessage: '重复的下载任务');
+      return;
+    }
+
+    final result = await getSaveLocation(suggestedName: fileName);
+    if (result == null) {
+      await _controller.runJavaScript(
+          'window.__downloadChunkCancel && window.__downloadChunkCancel(${jsonEncode(transferId)});');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('已取消保存')),
+        );
+      }
+      return;
+    }
+
+    final file = File(result.path);
+    final sink = file.openWrite(mode: FileMode.write);
+    _base64ChunkSessions[transferId] = _Base64ChunkSession(
+        path: result.path, sink: sink, totalChunks: totalChunks);
+
+    await _controller.runJavaScript(
+        'window.__downloadChunkResume && window.__downloadChunkResume(${jsonEncode(transferId)});');
+  }
+
+  Future<void> _handleBase64Chunk(
+      {required String transferId,
+      required int index,
+      required int totalChunks,
+      required String base64Chunk}) async {
+    final session = _base64ChunkSessions[transferId];
+    if (session == null) return;
+
+    if (totalChunks > 0 && session.totalChunks != totalChunks) {
+      await _failBase64ChunkDownload(
+          transferId: transferId, errorMessage: '分片总数不一致');
+      return;
+    }
+
+    if (index != session.receivedChunks) {
+      await _failBase64ChunkDownload(
+          transferId: transferId, errorMessage: '分片顺序错误');
+      return;
+    }
+
+    final bytes = base64Decode(base64Chunk);
+    if (bytes.isEmpty) {
+      await _failBase64ChunkDownload(
+          transferId: transferId, errorMessage: '收到空分片');
+      return;
+    }
+
+    session.sink.add(bytes);
+    session.bytesWritten += bytes.length;
+    session.receivedChunks++;
+
+    final int lastIndex = (session.totalChunks <= 0)
+        ? totalChunks - 1
+        : session.totalChunks - 1;
+
+    if (session.receivedChunks - 1 == lastIndex) {
+      await session.sink.flush();
+      await session.sink.close();
+      _base64ChunkSessions.remove(transferId);
+
+      final file = File(session.path);
+      final fileSize = await file.length();
+      if (fileSize == 0) {
+        try {
+          await file.delete();
+        } catch (_) {}
+        throw Exception('Downloaded file is empty (0 bytes).');
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('已保存到: ${session.path}')),
+        );
+      }
+    } else {
+      await _controller.runJavaScript(
+          'window.__downloadChunkResume && window.__downloadChunkResume(${jsonEncode(transferId)});');
+    }
+  }
+
+  Future<void> _failBase64ChunkDownload(
+      {required String transferId, required String errorMessage}) async {
+    final session = _base64ChunkSessions.remove(transferId);
+    if (session != null) {
+      try {
+        await session.sink.flush();
+        await session.sink.close();
+      } catch (_) {}
+      try {
+        final file = File(session.path);
+        if (await file.exists()) {
+          await file.delete();
+        }
+      } catch (_) {}
+    }
+
+    await _controller.runJavaScript(
+        'window.__downloadChunkCancel && window.__downloadChunkCancel(${jsonEncode(transferId)});');
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('下载失败: $errorMessage')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(child: WebViewWidget(controller: _controller)),
       floatingActionButton: FloatingActionButton(
         mini: true,
-        backgroundColor: Colors.blue.withOpacity(0.5),
+        backgroundColor: Colors.blue.withValues(alpha: 0.5),
         onPressed: () {
           navigatorKey.currentState?.push(
             MaterialPageRoute(builder: (_) => const LogViewer()),
@@ -690,6 +929,17 @@ class _WebShellState extends State<WebShell> {
       ),
     );
   }
+}
+
+class _Base64ChunkSession {
+  final String path;
+  final IOSink sink;
+  final int totalChunks;
+  int receivedChunks = 0;
+  int bytesWritten = 0;
+
+  _Base64ChunkSession(
+      {required this.path, required this.sink, required this.totalChunks});
 }
 
 // Windows Environment Helpers
