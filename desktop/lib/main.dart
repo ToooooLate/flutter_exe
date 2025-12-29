@@ -454,12 +454,22 @@ class _WebShellState extends State<WebShell> {
       }
       // create a request
       final request = http.Request('GET', Uri.parse(url));
+      // 添加默认 User-Agent，模拟浏览器行为，避免部分服务器拦截
+      request.headers['User-Agent'] =
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
       if (headers != null) {
         request.headers.addAll(headers);
       }
 
       final client = http.Client();
+      debugPrint('Starting download from: $url');
+      debugPrint('Headers: $headers');
+
       final http.StreamedResponse response = await client.send(request);
+
+      debugPrint('Response status: ${response.statusCode}');
+      debugPrint('Response content-length: ${response.contentLength}');
 
       if (response.statusCode < 200 || response.statusCode >= 300) {
         throw Exception('HTTP ${response.statusCode}');
@@ -477,8 +487,22 @@ class _WebShellState extends State<WebShell> {
 
       final file = File(result.path);
       final sink = file.openWrite();
+      int downloadedBytes = 0;
+
       try {
-        await response.stream.pipe(sink);
+        await response.stream.forEach((chunk) {
+          sink.add(chunk);
+          downloadedBytes += chunk.length;
+        });
+        await sink.flush();
+        debugPrint('Download complete. Total bytes: $downloadedBytes');
+      } catch (e) {
+        debugPrint('Download stream error: $e');
+        await sink.close();
+        if (await file.exists()) {
+          await file.delete();
+        }
+        rethrow;
       } finally {
         await sink.close();
         client.close();
