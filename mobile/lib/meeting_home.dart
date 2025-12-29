@@ -53,6 +53,7 @@ class _MeetingHomeState extends State<MeetingHome> {
       configOverrides: {
         'startWithAudioMuted': false,
         'startWithVideoMuted': false,
+        'defaultLanguage': 'zh',
         'toolbarButtons': [
           'microphone',
           'camera',
