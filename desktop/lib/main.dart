@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:path_provider/path_provider.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -18,12 +19,30 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 class LogManager {
   static final List<String> _logs = [];
   static final ValueNotifier<int> notifier = ValueNotifier(0);
+  static File? _logFile;
+
+  static Future<void> init() async {
+    try {
+      final dir = await getApplicationDocumentsDirectory();
+      _logFile = File('${dir.path}/app.log');
+      // Append a session start marker
+      final timestamp = DateTime.now().toIso8601String();
+      await _logFile?.writeAsString('\n=== Session Start: $timestamp ===\n',
+          mode: FileMode.append);
+    } catch (e) {
+      debugPrint('Failed to init log file: $e');
+    }
+  }
 
   static void add(String message) {
     final timestamp = DateTime.now().toIso8601String().split('T').last;
-    _logs.add('[$timestamp] $message');
+    final logMsg = '[$timestamp] $message';
+    _logs.add(logMsg);
     if (_logs.length > 1000) _logs.removeAt(0); // Keep last 1000 logs
     notifier.value++;
+
+    // Write to file
+    _logFile?.writeAsString('$logMsg\n', mode: FileMode.append).ignore();
   }
 
   static List<String> get logs => List.unmodifiable(_logs);
@@ -160,6 +179,8 @@ class _StartupGateState extends State<StartupGate> {
 
   Future<void> _init() async {
     try {
+      await LogManager.init(); // Initialize log file
+
       final cfgStr = await rootBundle.loadString('assets/config/app.json');
       final cfgJson = jsonDecode(cfgStr) as Map<String, dynamic>;
       config = AppConfig.fromJson(cfgJson);
@@ -657,6 +678,16 @@ class _WebShellState extends State<WebShell> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(child: WebViewWidget(controller: _controller)),
+      floatingActionButton: FloatingActionButton(
+        mini: true,
+        backgroundColor: Colors.blue.withOpacity(0.5),
+        onPressed: () {
+          navigatorKey.currentState?.push(
+            MaterialPageRoute(builder: (_) => const LogViewer()),
+          );
+        },
+        child: const Icon(Icons.bug_report),
+      ),
     );
   }
 }
