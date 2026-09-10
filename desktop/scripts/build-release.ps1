@@ -2,6 +2,10 @@
 param([switch]$SkipRuntimePreparation)
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
+# Flutter 3.32 selects the target architecture from the host, not a CLI flag.
+if ($env:PROCESSOR_ARCHITECTURE -ne 'AMD64') {
+    throw 'Build this x64 release in a Windows x64 PowerShell environment.'
+}
 $project = Split-Path $PSScriptRoot -Parent
 Push-Location $project
 try {
@@ -12,7 +16,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Flutter dependency resolution failed.' }
     & dart test/scripts/check_bundled_webview2.dart
     if ($LASTEXITCODE -ne 0) { throw 'WebView2 startup tests failed.' }
-    & flutter build windows --release --target-platform windows-x64
+    & flutter build windows --release
     if ($LASTEXITCODE -ne 0) { throw 'Flutter Windows build failed.' }
 
     $build = Join-Path $project 'build\windows\x64\runner\Release'

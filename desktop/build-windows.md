@@ -55,7 +55,7 @@ $env:WEBVIEW2_FIXED_CAB = 'D:\dependencies\Microsoft.WebView2.FixedVersionRuntim
 cd desktop
 .\scripts\prepare-webview2.ps1
 flutter pub get
-flutter build windows --release --target-platform windows-x64
+flutter build windows --release
 .\scripts\verify-windows-bundle.ps1 -BundlePath .\build\windows\x64\runner\Release
 ```
 
