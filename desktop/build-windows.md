@@ -10,6 +10,8 @@ Windows 发布版保留 Flutter + webview_win_floating，随程序携带固定�
 
 需要 Windows、Flutter 3.32.2（与 GitHub Actions 一致）、Visual Studio 的
 “使用 C++ 的桌面开发”工作负载和 Windows SDK。macOS 不能直接构建 Windows EXE。
+GitHub Actions 固定使用 `windows-2022`（Visual Studio 2022），避免 `windows-latest`
+升级到 VS 2026 后与 Flutter 3.32.2 的生成器选择逻辑不兼容。
 
 在仓库根目录执行：
 
