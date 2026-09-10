@@ -4,6 +4,8 @@ param(
     [string]$CabPath = $env:WEBVIEW2_FIXED_CAB
 )
 $ErrorActionPreference = 'Stop'
+# Windows PowerShell progress rendering is expensive for large downloads.
+$ProgressPreference = 'SilentlyContinue'
 Set-StrictMode -Version Latest
 $project = Split-Path $PSScriptRoot -Parent
 $manifestPath = Join-Path $PSScriptRoot 'webview2-runtime.json'
@@ -17,6 +19,7 @@ if (!$CabPath) {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         $partial = "$CabPath.partial"
         try {
+            Write-Host "Downloading fixed WebView2 $($manifest.version) ($($manifest.architecture))..."
             Invoke-WebRequest -UseBasicParsing -Uri $manifest.url -OutFile $partial
             Move-Item -LiteralPath $partial -Destination $CabPath -Force
         } finally {
@@ -25,6 +28,7 @@ if (!$CabPath) {
     }
 }
 $CabPath = (Resolve-Path -LiteralPath $CabPath).Path
+Write-Host "Verifying WebView2 CAB: $CabPath"
 if ((Get-FileHash -LiteralPath $CabPath -Algorithm SHA256).Hash -ne $manifest.sha256) {
     throw "WebView2 CAB SHA256 mismatch: $CabPath. Remove the cached CAB or supply the pinned offline CAB."
 }
@@ -33,6 +37,7 @@ if ((Get-FileHash -LiteralPath $CabPath -Algorithm SHA256).Hash -ne $manifest.sh
 $staging = Join-Path $cache ([Guid]::NewGuid().ToString())
 New-Item -ItemType Directory -Path $staging | Out-Null
 try {
+    Write-Host 'Extracting fixed WebView2 runtime...'
     & "$env:SystemRoot\System32\expand.exe" $CabPath '-F:*' $staging | Out-Null
     if ($LASTEXITCODE -ne 0) { throw 'Failed to extract fixed WebView2 CAB.' }
     $executables = @(Get-ChildItem -LiteralPath $staging -Filter msedgewebview2.exe -Recurse)

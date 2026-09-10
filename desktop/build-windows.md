@@ -33,6 +33,7 @@ GitHub Actions 和 GitLab CI 均调用上述流程。CAB 缺失、校验失败�
 
 GitHub Actions 使用 `actions/cache` 跨运行缓存清单指定的 CAB，缓存键包含操作系统、
 版本、架构和 SHA256；命中缓存后仍校验 SHA256。每次构建重新解压运行时。
+CAB 校验和解压成功后立即保存缓存，后续编译失败也不会丢失这次下载。
 上传已生成的 ZIP 时设置 `compression-level: 0`，避免二次压缩；发布 ZIP 的生成
 和上传仍会耗时，具体耗时以流水线实际运行结果为准。
 

@@ -1,11 +1,11 @@
 [CmdletBinding()]
-param()
+param([switch]$SkipRuntimePreparation)
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $project = Split-Path $PSScriptRoot -Parent
 Push-Location $project
 try {
-    & "$PSScriptRoot\prepare-webview2.ps1"
+    if (!$SkipRuntimePreparation) { & "$PSScriptRoot\prepare-webview2.ps1" }
     & flutter config --enable-windows-desktop
     if ($LASTEXITCODE -ne 0) { throw 'Flutter configuration failed.' }
     & flutter pub get

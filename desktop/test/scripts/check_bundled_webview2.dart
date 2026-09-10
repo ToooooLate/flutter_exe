@@ -46,9 +46,13 @@ Future<void> main() async {
     Directory('${runtime.path}/locales').createSync();
     File('${runtime.path}/locales/en-US.pak').writeAsStringSync('fixture');
     await configure();
-    check(env['WEBVIEW2_BROWSER_EXECUTABLE_FOLDER'] == runtime.absolute.path,
+    check(
+        FileSystemEntity.identicalSync(
+            env['WEBVIEW2_BROWSER_EXECUTABLE_FOLDER']!, runtime.path),
         'Runtime must resolve against exe, including spaces/Unicode, not cwd');
-    check(env['WEBVIEW2_USER_DATA_FOLDER'] == '${root.path}/profile',
+    check(
+        FileSystemEntity.identicalSync(
+            env['WEBVIEW2_USER_DATA_FOLDER']!, '${root.path}/profile'),
         'Browser profile must be outside the runtime');
     check(Directory('${root.path}/profile').existsSync(), 'Profile must exist');
     check(grants == 1, 'Incomplete bundles must not trigger ACL changes');
