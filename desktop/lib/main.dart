@@ -4,12 +4,14 @@ import 'package:ffi/ffi.dart';
 import 'dart:convert';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
+import 'bundled_webview2.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -179,6 +181,17 @@ class _StartupGateState extends State<StartupGate> {
     try {
       await LogManager.init(); // Initialize log file
 
+      if (Platform.isWindows) {
+        final support = await getApplicationSupportDirectory();
+        await configureBundledWebView2(
+          executable: Platform.resolvedExecutable,
+          userDataDirectory: '${support.path}\\WebView2UserData',
+          required: !kDebugMode,
+          setEnvironment: _setEnv,
+          grantAccess: _grantWebView2Access,
+        );
+      }
+
       final cfgStr = await rootBundle.loadString('assets/config/app.json');
       final cfgJson = jsonDecode(cfgStr) as Map<String, dynamic>;
       config = AppConfig.fromJson(cfgJson);
@@ -193,7 +206,7 @@ class _StartupGateState extends State<StartupGate> {
     } catch (e) {
       setState(() {
         status = GateStatus.error;
-        message = '加载配置失败：$e';
+        message = '启动失败：$e';
       });
     }
   }
@@ -249,7 +262,7 @@ class _StartupGateState extends State<StartupGate> {
               children: [
                 CircularProgressIndicator(),
                 SizedBox(height: 12),
-                Text('正在检测网络与服务可达性...'),
+                Text('正在初始化并检测服务可达性...'),
               ],
             ),
           ),
@@ -260,14 +273,14 @@ class _StartupGateState extends State<StartupGate> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.wifi_off, size: 48, color: Colors.redAccent),
+                const Icon(Icons.error_outline, size: 48, color: Colors.redAccent),
                 const SizedBox(height: 12),
                 Text(message ?? '网络不可用或服务不可达'),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () async {
                     setState(() => status = GateStatus.loading);
-                    await _checkReachable();
+                    await _init();
                   },
                   child: const Text('重试'),
                 ),
@@ -967,22 +980,39 @@ void _setWebView2Env(String url) {
   }
 }
 
+Future<void> _grantWebView2Access(String runtime) async {
+  final windows = Platform.environment['SystemRoot'];
+  if (windows == null) throw StateError('无法定位 Windows 系统目录');
+  final result = await Process.run(
+    '$windows\\System32\\icacls.exe',
+    [
+      runtime,
+      '/grant',
+      '*S-1-15-2-1:(OI)(CI)(RX)',
+      '*S-1-15-2-2:(OI)(CI)(RX)',
+    ],
+  );
+  if (result.exitCode != 0) {
+    throw FileSystemException(
+      '无法设置浏览器目录权限，请将完整程序解压到当前用户可写的本地目录后重试。',
+      runtime,
+    );
+  }
+}
+
 void _setEnv(String key, String value) {
+  final kernel32 = DynamicLibrary.open('kernel32.dll');
+  final setEnv = kernel32.lookupFunction<SetEnvironmentVariableC,
+      SetEnvironmentVariableDart>('SetEnvironmentVariableW');
+  final keyPtr = key.toNativeUtf16();
+  final valPtr = value.toNativeUtf16();
   try {
-    final kernel32 = DynamicLibrary.open('kernel32.dll');
-    final SetEnvironmentVariableDart setEnv = kernel32.lookupFunction<
-        SetEnvironmentVariableC,
-        SetEnvironmentVariableDart>('SetEnvironmentVariableW');
-
-    final keyPtr = key.toNativeUtf16();
-    final valPtr = value.toNativeUtf16();
-
-    setEnv(keyPtr, valPtr);
-
+    if (setEnv(keyPtr, valPtr) == 0) {
+      throw StateError('无法设置浏览器运行环境：$key');
+    }
+    appLog('Set env $key = $value');
+  } finally {
     calloc.free(keyPtr);
     calloc.free(valPtr);
-    appLog('Set env $key = $value');
-  } catch (e) {
-    appLog('Failed to set env: $e');
   }
 }

@@ -15,11 +15,10 @@ build_windows_release:
     # 进入桌面项目目录并调用现有 bat 脚本
     - cmd.exe /C "cd desktop && scripts\\build-release.bat"
   artifacts:
-    when: always
+    when: on_success
     expire_in: 14 days
     paths:
-      - desktop/build/windows/runner/Release/
-      - desktop/releases/
+      - desktop/releases/*.zip
   # 可在需要时限制触发来源
   rules:
     - if: $CI_PIPELINE_SOURCE == "push"

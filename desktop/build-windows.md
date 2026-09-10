@@ -1,143 +1,118 @@
-# Flutter Windows 桌面应用构建指南
+# Windows 桌面版构建与交付
 
-## 问题说明
+Windows 发布版保留 Flutter + webview_win_floating，随程序携带固定版 WebView2。
+当前锁定 152.0.4191.62 x64，CAB 实测约 354.6 MiB，完整内核文件约 798.4 MiB
+（不含 Flutter 应用与浏览器用户数据，最终 ZIP 以构建输出为准）。
+目标为 Windows 10/11 x64；不依赖目标机器预装 WebView2，也不在启动时下载运行时。
+网页本身仍需要连接配置的业务服务。程序需解压到本地磁盘，不支持从 UNC/网络共享运行。
 
-在 macOS 开发环境下，Flutter 无法直接构建 Windows 平台的可执行文件（.exe）。Flutter 的跨平台构建有平台限制：
-- macOS 可以构建：macOS、iOS、Web、Android
-- Windows 可以构建：Windows、Web、Android
-- Linux 可以构建：Linux、Web、Android
+## 构建
 
-## 解决方案
+需要 Windows、Flutter 3.32.2（与 GitHub Actions 一致）、Visual Studio 的
+“使用 C++ 的桌面开发”工作负载和 Windows SDK。macOS 不能直接构建 Windows EXE。
 
-### 方案一：使用 GitHub Actions（推荐）
+在仓库根目录执行：
 
-我们已经为项目配置了 GitHub Actions 工作流，可以自动在 Windows 环境下构建应用。
+```powershell
+.\desktop\scripts\build-release.ps1
+```
 
-#### 使用步骤：
-1. 将代码推送到 GitHub 仓库
-2. GitHub Actions 会自动触发构建
-3. 构建完成后，在 Actions 页面下载构建产物
+CMD 可执行 `desktop\scripts\build-release.bat`，Git Bash 可执行
+`bash desktop/scripts/build-release.sh`；三个入口使用同一套打包逻辑。
 
-#### 手动触发构建：
-1. 进入 GitHub 仓库的 Actions 页面
-2. 选择 "Build Windows Desktop App" 工作流
-3. 点击 "Run workflow" 按钮
-4. 等待构建完成，下载 `qingzhi-desktop-windows.zip`
+脚本完成以下步骤：
 
-### 方案二：使用 Windows 虚拟机
+1. 按 `scripts/webview2-runtime.json` 下载固定 x64 CAB 并校验 SHA256。
+2. 用 Windows `expand.exe` 解压到 `desktop/.webview2/runtime/`，验证版本及必要文件。
+3. 运行启动逻辑检查并构建 Flutter Windows x64 Release。
+4. CMake 将**完整运行时**复制到 EXE 同级的 `WebView2/`，更新时先清除旧副本。
+5. 检查产物，并调用随包 SDK 加载器核对实际识别的内核版本，生成 `desktop/releases/qingzhi-desktop-windows-x64-时间.zip`，输出体积。
 
-#### 在 macOS 上运行 Windows 虚拟机：
+GitHub Actions 和 GitLab CI 均调用上述流程。CAB 缺失、校验失败、构建失败或产物
+不完整都会令构建失败，不生成新的交付 ZIP。下载缓存与运行时不提交到 Git。
 
-**使用 Parallels Desktop（推荐）：**
-1. 安装 Parallels Desktop
-2. 创建 Windows 11 虚拟机
-3. 在虚拟机中安装开发环境
+GitHub Actions 使用 `actions/cache` 跨运行缓存清单指定的 CAB，缓存键包含操作系统、
+版本、架构和 SHA256；命中缓存后仍校验 SHA256。每次构建重新解压运行时。
+上传已生成的 ZIP 时设置 `compression-level: 0`，避免二次压缩；发布 ZIP 的生成
+和上传仍会耗时，具体耗时以流水线实际运行结果为准。
 
-**使用 VMware Fusion：**
-1. 安装 VMware Fusion
-2. 创建 Windows 虚拟机
-3. 配置开发环境
+### 离线准备运行时
 
-#### Windows 虚拟机环境配置：
-```bash
-# 1. 安装 Flutter
-# 下载 Flutter SDK for Windows
-# 解压到 C:\flutter
-# 添加到 PATH 环境变量
+提前保留清单指定的 CAB，在构建机器上设置：
 
-# 2. 安装 Visual Studio
-# 下载 Visual Studio Community
-# 安装时选择 "Desktop development with C++" 工作负载
+```powershell
+$env:WEBVIEW2_FIXED_CAB = 'D:\dependencies\Microsoft.WebView2.FixedVersionRuntime.152.0.4191.62.x64.cab'
+.\desktop\scripts\build-release.ps1
+```
 
-# 3. 安装 Git
-# 下载并安装 Git for Windows
+这仅免去 WebView2 下载；Flutter、Pub、NuGet 和 Windows 编译工具依赖仍需事先准备。
+不能用 Evergreen 安装 EXE 替代 Fixed Version CAB。
 
-# 4. 克隆项目
-git clone <your-repo-url>
-cd qingzhi/desktop
+### 直接使用 Flutter 命令
 
-# 5. 启用 Windows 桌面支持
-flutter config --enable-windows-desktop
-
-# 6. 安装依赖
+```powershell
+cd desktop
+.\scripts\prepare-webview2.ps1
 flutter pub get
-
-# 7. 构建应用
-flutter build windows --release
+flutter build windows --release --target-platform windows-x64
+.\scripts\verify-windows-bundle.ps1 -BundlePath .\build\windows\x64\runner\Release
 ```
 
-### 方案三：使用云端 Windows 环境
+Release/Profile 的 CMake 安装阶段要求本地已准备运行时；Debug 未携带运行时时允许
+继续使用开发机系统 WebView2。Debug 目录若已存在 WebView2，则也要求内容完整。
 
-#### GitHub Codespaces：
-1. 在 GitHub 仓库中创建 Codespace
-2. 选择 Windows 环境
-3. 按照上述步骤配置和构建
+## 交付目录
 
-#### Azure Virtual Machines：
-1. 创建 Windows 虚拟机
-2. 远程连接配置开发环境
-3. 构建应用
-
-### 方案四：寻找 Windows 设备
-
-如果有 Windows 电脑或朋友的 Windows 设备：
-1. 安装必要的开发工具
-2. 克隆项目代码
-3. 本地构建
-
-## 构建产物说明
-
-构建成功后，Windows 可执行文件位于：
-```
-desktop/build/windows/runner/Release/
+```text
+qingzhi_desktop.exe
+flutter_windows.dll
+WebView2Loader.dll
+其他插件 DLL
+data/
+WebView2/
+  msedgewebview2.exe
+  msedge.dll
+  icudtl.dat
+  resources.pak
+  locales/
+  runtime-manifest.json
+  ……其余官方运行时文件，必须全部保留
 ```
 
-该目录包含：
-- `desktop.exe` - 主程序
-- 各种 `.dll` 文件 - 运行时依赖
-- `data/` 目录 - 应用资源
+用户应解压**完整 ZIP**到当前用户可写的本地目录，再启动 `qingzhi_desktop.exe`。
+启动时根据 EXE 位置定位内核，不依赖工作目录；设置进程级
+`WEBVIEW2_BROWSER_EXECUTABLE_FOLDER`，不修改系统级环境变量。
+浏览器数据保存在当前用户的应用支持目录下 `WebView2UserData/`，避免写入程序目录。
 
-## 分发注意事项
+程序通过 `icacls.exe` 给运行时目录授予两个 AppContainer 组读取/执行权限，满足
+Windows 10 上 Fixed Runtime 120+ 的要求。权限失败时提示重新解压到用户可写目录；
+不自动提权。发布版缺少运行时会显示错误，不回退到系统浏览器；点击重试会重新检查。
+VC++ 运行库等 Flutter 自身依赖仍需满足，这个方案解决的是 WebView2 分发依赖。
 
-1. **完整目录分发**：需要分发整个 `Release` 目录，不能只分发 `.exe` 文件
-2. **WebView2 运行时**：目标机器需要安装 Microsoft Edge WebView2 Runtime
-3. **Visual C++ 运行时**：可能需要 Visual C++ Redistributable
+## 验证
 
-## 自动化构建配置
+跨平台逻辑检查：
 
-项目已配置 GitHub Actions，每次推送代码到 main 或 develop 分支时会自动构建。
-
-构建产物会保存 30 天，可以在 Actions 页面下载。
-
-## 本地测试
-
-在 macOS 上可以继续进行开发和测试：
-```bash
-# 运行 macOS 桌面版本进行开发测试
-flutter run -d macos
-
-# 运行 Web 版本测试 WebView 功能
-flutter run -d chrome
+```sh
+cd desktop
+dart test/scripts/check_bundled_webview2.dart
+# 另需 Python 3 和 CMake，用于验证实际复制规则
+python test/scripts/check_windows_install.py
 ```
 
-## 故障排除
+Windows 交付验收（应使用没有系统 WebView2 的干净测试机）：
 
-### 常见问题：
-1. **Flutter 版本**：确保使用 Flutter 3.0+ 版本
-2. **Windows SDK**：确保安装了 Windows 10/11 SDK
-3. **Visual Studio**：必须安装 C++ 桌面开发工作负载
-4. **WebView2**：确保系统安装了 Edge WebView2 Runtime
+- 完整 ZIP 解压到带中文和空格的目录，从其他工作目录启动 EXE。
+- 业务网页能打开；任务管理器确认 `msedgewebview2.exe` 路径属于此应用的 `WebView2`。
+- 系统有其他 WebView2 版本时，仍使用随包版本。
+- 临时移走 `WebView2` 或其中的 `msedge.dll`，应显示启动错误；重试不能跳过检查。
+- 恢复文件后重试，应正常启动；测试下载、文件选择、摄像头、麦克风及重启后的登录状态。
+- 分别在 Windows 10 和 Windows 11 的普通用户账户验证目录权限和浏览器子进程启动。
 
-### 构建失败处理：
-```bash
-# 清理构建缓存
-flutter clean
-flutter pub get
+## 升级内核
 
-# 检查 Windows 桌面支持
-flutter config --enable-windows-desktop
-flutter doctor
+从微软官网下载新的 Fixed Version x64 CAB，更新 `scripts/webview2-runtime.json`
+中的版本、URL、SHA256，重新构建并完成上述验收。固定版不会自行更新，需要随应用维护。
+微软可能下架旧版本，需在内部依赖存储中保留已验证的 CAB，可用 `WEBVIEW2_FIXED_CAB` 提供。
 
-# 重新构建
-flutter build windows --release --verbose
-```
+参考：[微软 WebView2 固定版分发文档](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution#the-fixed-version-runtime-distribution-mode)。

@@ -43,3 +43,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Downloaded fixed WebView2 runtime and release archives
+/.webview2/
+/releases/

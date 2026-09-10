@@ -14,29 +14,39 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
+    - name: Read fixed WebView2 cache metadata
+      id: webview2
+      shell: powershell
+      run: |
+        $runtime = Get-Content -LiteralPath 'desktop/scripts/webview2-runtime.json' -Raw | ConvertFrom-Json
+        @(
+          "version=$($runtime.version)"
+          "architecture=$($runtime.architecture)"
+          "sha256=$($runtime.sha256)"
+        ) | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+    - name: Cache fixed WebView2 CAB
+      uses: actions/cache@v4
+      with:
+        path: desktop/.webview2/WebView2-${{ steps.webview2.outputs.version }}-${{ steps.webview2.outputs.architecture }}.cab
+        key: ${{ runner.os }}-webview2-cab-v1-${{ steps.webview2.outputs.version }}-${{ steps.webview2.outputs.architecture }}-${{ steps.webview2.outputs.sha256 }}
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.32.2'
         channel: 'stable'
         
-    - name: Enable Windows Desktop
-      run: flutter config --enable-windows-desktop
-      
-    - name: Install dependencies
-      run: flutter pub get
-      working-directory: ./desktop
-      
-    - name: Build Windows app
-      run: flutter build windows --release
-      working-directory: ./desktop
-      
+    - name: Build Windows app with fixed WebView2
+      shell: powershell
+      run: ./desktop/scripts/build-release.ps1
+
     - name: Upload Windows build artifact
       uses: actions/upload-artifact@v4
       with:
         name: qingzhi-desktop-windows
-        path: |
-          desktop/build/windows/x64/runner/Release
-          desktop/build/windows/runner/Release
+        path: desktop/releases/*.zip
+        if-no-files-found: error
         retention-days: 30
+        compression-level: 0
